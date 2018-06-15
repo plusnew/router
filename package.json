@@ -1,0 +1,40 @@
+{
+  "name": "plusnew-router",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/app.js",
+  "scripts": {
+    "start": "./scripts/start.js",
+    "build": "webpack --config configs/webpack.base.conf.js",
+    "build:test": "webpack --config configs/webpack.test.conf.js",
+    "test": "npm run build:test && karma start configs/karma.conf.js --no-auto-watch --single-run",
+    "test:watch": "./scripts/test.watch.sh",
+    "karma:watch": "karma start configs/karma.conf.js"
+  },
+  "keywords": [
+    "plusnew"
+  ],
+  "author": "",
+  "dependencies": {
+    "plusnew": "^0.5.105"
+  },
+  "devDependencies": {
+    "@types/jasmine": "^2.8.8",
+    "awesome-typescript-loader": "^5.0.0",
+    "copy-webpack-plugin": "^4.5.1",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-plusnew": "^0.5.102",
+    "jasmine-core": "^3.1.0",
+    "karma": "^2.0.2",
+    "karma-chrome-launcher": "^2.2.0",
+    "karma-coverage": "^1.1.2",
+    "karma-jasmine": "^1.1.2",
+    "karma-sourcemap-loader": "^0.3.7",
+    "ts-loader": "^4.4.1",
+    "tslint": "^5.10.0",
+    "tslint-config-airbnb": "^5.9.2",
+    "typescript": "^2.9.1",
+    "webpack": "^4.12.0",
+    "webpack-cli": "^3.0.3"
+  }
+}
