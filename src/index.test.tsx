@@ -6,8 +6,8 @@ import { componentPartial } from './test';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
-describe('test App.tsx', () => {
-  it('button should be found', () => {
+describe('test router', () => {
+  it('link should be found and be clickable', () => {
     const Component = component(
       'Component',
       () => ({}),
@@ -25,12 +25,16 @@ describe('test App.tsx', () => {
 
     const wrapper = mount(
       <>
-        <route.Link bar={2} foo="foovalue" />
+        <route.Link bar={2} foo={"3"} />
         <route.Component />
       </>,
     );
 
     expect(wrapper.contains(<a href="/namespace/foo/foovalue/bar/2" />)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+
+    wrapper.search(<a href="/namespace/foo/foovalue/bar/2" />).simulate('click')
+
+    expect(wrapper.contains(<Component foo="foovalue" bar={2}/>)).toBe(true);
   });
 });
