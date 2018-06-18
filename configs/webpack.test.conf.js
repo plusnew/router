@@ -22,6 +22,7 @@ getTestFiles(SOURCE_DIRECTORY);
 
 config.entry = testfiles;
 config.output.filename = 'app.test.js';
+config.externals = {};
 
 config.plugins.push(
   new webpack.SourceMapDevToolPlugin({
