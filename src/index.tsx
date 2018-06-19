@@ -1,16 +1,20 @@
-import { RouteParamsSpec, SpecToType } from './types';
-import buildUrl from './buildUrl';
 import plusnew, { component } from 'plusnew';
+import { RouteParamsSpec, SpecToType } from './types';
+import urlFactory from './buildUrl';
+import store from './store';
 
-export default function <Params extends RouteParamsSpec>(namespace: string, parameters: Params, componentBuilder: (params: SpecToType<Params>) => plusnew.JSX.Element) {
+export default function <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, componentBuilder: (params: SpecToType<Spec>) => plusnew.JSX.Element) {
+  const buildUrl = urlFactory(namespace, spec);
   const Link = component(
-   'Link',
-   () => ({}),
-   (props: SpecToType<Params>) => <a href={buildUrl(props)}/>,
+    'Link',
+    () => ({}),
+    (props: SpecToType<Spec>) => <a href={buildUrl(props)} onclick={() => {
+      store.dispatch(buildUrl(props));
+    }}/>,
   );
 
   const Component = component(
-    'Link',
+    'ComponentRoute',
     () => ({}),
     () => null
    );
@@ -18,6 +22,6 @@ export default function <Params extends RouteParamsSpec>(namespace: string, para
   return {
     Link,
     Component,
-    buildUrl: <Params extends RouteParamsSpec>(params: SpecToType<Params>) => buildUrl(params),
+    buildUrl,
   };
 }

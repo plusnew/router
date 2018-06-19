@@ -25,12 +25,12 @@ describe('test router', () => {
 
     const wrapper = mount(
       <>
-        <route.Link bar={2} foo={"3"} />
+        <route.Link bar={2} foo={"foovalue"} />
         <route.Component />
       </>,
     );
 
-    expect(wrapper.contains(<a href="/namespace/foo/foovalue/bar/2" />)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/namespace/foo/foovalue/bar/2" />)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
     wrapper.search(<a href="/namespace/foo/foovalue/bar/2" />).simulate('click')
