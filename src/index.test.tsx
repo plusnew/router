@@ -11,7 +11,7 @@ describe('test router', () => {
     const Component = component(
       'Component',
       () => ({}),
-      (props: {foo: string, bar: number}) => <div />,
+      (_props: {foo: string, bar: number}) => <div />,
     );
 
     const ComponentPartial = componentPartial(Component);
@@ -35,6 +35,7 @@ describe('test router', () => {
 
     wrapper.search(<a href="/namespace/foo/foovalue/bar/2" />).simulate('click')
 
-    expect(wrapper.contains(<Component foo="foovalue" bar={2}/>)).toBe(true);
+    console.log(wrapper.find(Component).props());
+    expect(wrapper.contains(<Component foo="foovalue" bar={2} />)).toBe(true);
   });
 });
