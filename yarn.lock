@@ -1418,9 +1418,9 @@ entities@^1.1.1, entities@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/entities/-/entities-1.1.1.tgz#6e5c2d0a5621b5dadaecef80b90edfb5cd7772f0"
 
-enzyme-adapter-plusnew@^0.5.102:
-  version "0.5.102"
-  resolved "https://registry.yarnpkg.com/enzyme-adapter-plusnew/-/enzyme-adapter-plusnew-0.5.102.tgz#cc89a84541883b5efe092cf7e0e29958c0d120f7"
+enzyme-adapter-plusnew@^0.6.2:
+  version "0.6.2"
+  resolved "https://registry.yarnpkg.com/enzyme-adapter-plusnew/-/enzyme-adapter-plusnew-0.6.2.tgz#8b317b724c5bb0a0a2174ad9c073a185392508ee"
 
 enzyme@^3.3.0:
   version "3.3.0"
@@ -3655,11 +3655,9 @@ pkg-dir@^2.0.0:
   dependencies:
     find-up "^2.1.0"
 
-plusnew@^0.5.105:
-  version "0.5.105"
-  resolved "https://registry.yarnpkg.com/plusnew/-/plusnew-0.5.105.tgz#ebe410098da959da698a7aaccb25490501e121f5"
-  dependencies:
-    redchain "0.5.102"
+plusnew@^0.6.3:
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/plusnew/-/plusnew-0.6.3.tgz#13de91474c3abb0c39b3f6c2c795320876866cd0"
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
@@ -3892,10 +3890,6 @@ readdirp@^2.0.0:
     minimatch "^3.0.2"
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
-
-redchain@0.5.102:
-  version "0.5.102"
-  resolved "https://registry.yarnpkg.com/redchain/-/redchain-0.5.102.tgz#37693e07fbff6c397a62b0fcdf7eadbe7c471873"
 
 redent@^1.0.0:
   version "1.0.0"
@@ -4744,9 +4738,9 @@ typedarray@^0.0.6:
   version "0.0.6"
   resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
 
-typescript@^2.9.1:
-  version "2.9.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.9.1.tgz#fdb19d2c67a15d11995fd15640e373e09ab09961"
+typescript@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.0.1.tgz#43738f29585d3a87575520a4b93ab6026ef11fdb"
 
 uglify-es@^3.3.4:
   version "3.3.9"

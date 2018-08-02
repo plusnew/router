@@ -1,33 +1,38 @@
-import plusnew, { component } from 'plusnew';
+import plusnew, { component, Props } from 'plusnew';
 import { RouteParamsSpec, SpecToType } from './types';
 import urlFactory from './buildUrl';
 import store from './store';
 import { getUrlParts, getCurrentParams, isCurrentNamspace } from './params';
+import NoRoute, { hasRoute } from './NoRoute';
 
 export default function <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, componentBuilder: (params: SpecToType<Spec>) => plusnew.JSX.Element) {
   const buildUrl = urlFactory(namespace, spec);
   const Link = component(
     'Link',
-    () => ({}),
-    (props: SpecToType<Spec>) => <a href={buildUrl(props)} onclick={() => {
-      store.dispatch({
-        type: 'push',
-        url: buildUrl(props),
-      });
-    }}/>,
+    (Props: Props<SpecToType<Spec>>) => 
+      <Props render={props =>
+        <a href={buildUrl(props)} onclick={() => {
+          store.dispatch({
+            type: 'push',
+            url: buildUrl(props),
+          });
+        }}>{props.children}</a>
+      } />
   );
 
   const Component = component(
     'ComponentRoute',
-    () => ({ store }),
-    () => {
-      const urlParts = getUrlParts(store.state);
-      if (isCurrentNamspace(namespace, urlParts)) {
-        const params = getCurrentParams(spec, urlParts);
-        return componentBuilder(params);
-      }
-      return null;
-    },
+    () =>
+      <store.Observer render={state => {
+        const urlParts = getUrlParts(state);
+        if (isCurrentNamspace(namespace, urlParts)) {
+          const params = getCurrentParams(spec, urlParts);
+          hasRoute.dispatch(true);
+
+          return componentBuilder(params);
+        }
+        return null;
+      }} />
   );
 
   return {
@@ -36,3 +41,5 @@ export default function <Spec extends RouteParamsSpec>(namespace: string, spec: 
     buildUrl,
   };
 }
+
+export { NoRoute }
