@@ -33,10 +33,10 @@ describe('test router', () => {
     console.log(wrapper.debug());
     expect(wrapper.contains(<span>404</span>)).toBe(true);
 
-    expect(wrapper.containsMatchingElement(<a href="/namespace/foo/foovalue/bar/2">link</a>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/namespace/foo/foovalue/bar/2">{["link"]}</a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
-    wrapper.search(<a href="/namespace/foo/foovalue/bar/2">link</a>).simulate('click')
+    wrapper.search(<a href="/namespace/foo/foovalue/bar/2">{["link"]}</a>).simulate('click')
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component foo="foovalue" bar={2} />)).toBe(true);
