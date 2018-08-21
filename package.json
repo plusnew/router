@@ -4,12 +4,10 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
-    "start": "./scripts/start.js",
-    "build": "webpack --config configs/webpack.base.conf.js",
-    "build:test": "webpack --config configs/webpack.test.conf.js",
-    "test": "npm run build:test && karma start configs/karma.conf.js --no-auto-watch --single-run",
-    "test:watch": "./scripts/test.watch.sh",
-    "karma:watch": "karma start configs/karma.conf.js"
+    "start": "webpack-dev-server --config config/webpack.dev.js",
+    "build": "webpack --config config/webpack.prod.conf.js",
+    "test": "karma start config/karma.conf.js",
+    "test:watch": "karma start config/karma.conf.js --auto-watch --no-single-run"
   },
   "keywords": [
     "plusnew"
@@ -21,15 +19,19 @@
   "devDependencies": {
     "@types/jasmine": "^2.8.8",
     "awesome-typescript-loader": "^5.0.0",
+    "clean-webpack-plugin": "^0.1.19",
     "copy-webpack-plugin": "^4.5.1",
     "enzyme": "^3.3.0",
     "enzyme-adapter-plusnew": "^0.6.2",
+    "istanbul-instrumenter-loader": "^3.0.1",
     "jasmine-core": "^3.1.0",
     "karma": "^2.0.2",
     "karma-chrome-launcher": "^2.2.0",
     "karma-coverage": "^1.1.2",
+    "karma-coverage-istanbul-reporter": "^2.0.1",
     "karma-jasmine": "^1.1.2",
     "karma-sourcemap-loader": "^0.3.7",
+    "karma-webpack": "^3.0.0",
     "ts-loader": "^4.4.1",
     "tslint": "^5.10.0",
     "tslint-config-airbnb": "^5.9.2",
