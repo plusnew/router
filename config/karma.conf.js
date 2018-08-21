@@ -42,7 +42,7 @@ module.exports = function karmaConfig(config) {
 
     coverageIstanbulReporter: {
       reports: ['html', 'lcov', 'text-summary'],
-      dir: path.join(__dirname, '..', '..', 'coverage'),
+      dir: path.join(__dirname, '..', 'coverage'),
     },
 
     // web server port

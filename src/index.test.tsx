@@ -30,7 +30,6 @@ describe('test router', () => {
       </>
     );
 
-    console.log(wrapper.debug());
     expect(wrapper.contains(<span>404</span>)).toBe(true);
 
     expect(wrapper.containsMatchingElement(<a href="/namespace/foo/foovalue/bar/2">link<span /></a>)).toBe(true);
