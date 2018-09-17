@@ -4,5 +4,9 @@
     "import-name": false,
     "align": false,
     "variable-name": false,
+    "max-line-length": [
+      true,
+      180
+    ]
   }
 }

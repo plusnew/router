@@ -1,6 +1,6 @@
 import { ComponentContainer } from 'plusnew';
 
-export function componentPartial<P>(component: ComponentContainer<P>) {
+export function buildComponentPartial<P>(component: ComponentContainer<P>) {
   const componentpartial = component as ComponentContainer<Partial<P>>;
   return componentpartial;
 }
