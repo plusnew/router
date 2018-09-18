@@ -1,29 +1,20 @@
 import enzymeAdapterPlusnew, { mount } from 'enzyme-adapter-plusnew';
 import { configure } from 'enzyme';
-import plusnew, { component, Props } from 'plusnew';
-import Router, { providerType } from './index';
+import plusnew, { component, Props, storeType, store } from 'plusnew';
+import Router from './index';
 import { buildComponentPartial } from './test';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
 describe('test router', () => {
-  let testProvider: providerType;
+  let testUrlStore: storeType<string, string>;
 
   beforeEach(() => {
-    testProvider = {
-      url: '/',
-      stream: {} as any,
-      push: jasmine.createSpy('pushSpy', (url: string) => {
-        testProvider.url = url;
-      }).and.callThrough(),
-      pop: jasmine.createSpy('popSpy', () => {
-        testProvider.url = 'popped';
-      }).and.callThrough(),
-    };
+    testUrlStore = store('/', (_state, action: string) => action);
   });
 
   it('link should be found and be clickable', () => {
-    const router = new Router(testProvider);
+    const router = new Router(testUrlStore);
 
     const Component = component(
       'Component',
