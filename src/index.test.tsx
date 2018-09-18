@@ -12,6 +12,7 @@ describe('test router', () => {
   beforeEach(() => {
     testProvider = {
       url: '/',
+      stream: {} as any,
       push: jasmine.createSpy('pushSpy', (url: string) => {
         testProvider.url = url;
       }).and.callThrough(),
@@ -36,7 +37,7 @@ describe('test router', () => {
 
     const wrapper = mount(
       <>
-        <route.Link params={{ param2:'foovalue', param1: 2 }}>link<span /></route.Link>
+        <route.Link parameter={{ param2:'foovalue', param1: 2 }}>link<span /></route.Link>
         <route.Component />
         <router.NotFound><span>404</span><div /></router.NotFound>
       </>,
