@@ -1,13 +1,14 @@
 import { provider } from '../types/provider';
-import route from './route';
+import Route from './Route';
 
 export default class Router {
   provider: provider;
+  route: Route;
+  createRoute: typeof Route.prototype.createRoute;
+
   constructor(provider: provider) {
     this.provider = provider;
-    this.createRoute = route(this);
+    this.route = new Route(this);
+    this.createRoute = this.route.createRoute;
   }
-  createRoute: () => {
-
-  };
 }

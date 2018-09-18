@@ -32,7 +32,7 @@ describe('test router', () => {
     const route = router.createRoute('namespace', {
       param1: 'string',
       param2: 'number',
-    }, params => <Component {...params}/>);
+    }, params => <Component {...params} />);
 
     const wrapper = mount(
       <>
@@ -48,7 +48,7 @@ describe('test router', () => {
     expect(wrapper.containsMatchingElement(<a href="/namespace/foo/foovalue/bar/2">link<span /></a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
-    wrapper.find('a').simulate('click')
+    wrapper.find('a').simulate('click');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component param1="foovalue" param2={2} />)).toBe(true);
