@@ -1,14 +1,13 @@
 import { provider } from '../../types/provider';
 import Router from '../index';
-import { RouteParamsSpec, SpecToType } from '../../types/mapper';
+import { RouteParamsSpec } from '../../types/mapper';
 import urlBuilderFactory from './urlBuilderFactory';
 import linkFactory from './linkFactory';
 import storeFactory from './storeFactory';
-import componentFactory from './componentFactory';
-import { ApplicationElement, ComponentContainer } from 'plusnew';
+import componentFactory, { routeCallback } from './componentFactory';
+import { ComponentContainer } from 'plusnew';
 import { props } from 'plusnew/dist/src/interfaces/component';
 
-type routeCallback<params extends RouteParamsSpec, props> = (params: SpecToType<params>, props: props) => ApplicationElement;
 
 export default class Route {
   private router: Router;
@@ -19,6 +18,7 @@ export default class Route {
 
   createRoute<params extends RouteParamsSpec, componentProps extends Partial<props>>(namespace: string, params: params, callback: routeCallback<params, componentProps>) {
     const buildUrl = urlBuilderFactory(namespace, params);
+    // const 
 
     return {
       buildUrl,

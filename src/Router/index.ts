@@ -1,13 +1,13 @@
 import Route from './Route';
-import { storeType } from 'plusnew';
+import { provider } from 'types/provider';
 
 export default class Router {
-  urlStore: storeType<string, string>;
+  provider: provider;
   route: Route;
   createRoute: typeof Route.prototype.createRoute;
 
-  constructor(urlStore: storeType<string, string>) {
-    this.urlStore = urlStore;
+  constructor(provider: provider) {
+    this.provider = provider;
     this.route = new Route(this);
     this.createRoute = this.route.createRoute;
   }

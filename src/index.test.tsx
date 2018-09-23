@@ -7,14 +7,20 @@ import { buildComponentPartial } from './test';
 configure({ adapter: new enzymeAdapterPlusnew() });
 
 describe('test router', () => {
-  let testUrlStore: storeType<string, string>;
+  let testProvider: {
+    store: storeType<string, string>;
+    push: (url: string) => void;
+  };
 
   beforeEach(() => {
-    testUrlStore = store('/', (_state, action: string) => action);
+    testProvider = {
+      store: store('/', (_state, action: string) => action),
+      push: (url: string) => testProvider.store.dispatch(url),
+    };
   });
 
   it('link should be found and be clickable', () => {
-    const router = new Router(testUrlStore);
+    const router = new Router(testProvider);
 
     const Component = component(
       'Component',
