@@ -34,7 +34,7 @@ describe('test router', () => {
 
     const wrapper = mount(
       <>
-        <route.Link parameter={{ param2:'foovalue', param1: 2 }}>link<span /></route.Link>
+        <route.Link parameter={{ param2: 2, param1: 'foo' }}>link<span /></route.Link>
         <route.Component />
         <router.NotFound><span>404</span><div /></router.NotFound>
       </>,
@@ -43,12 +43,12 @@ describe('test router', () => {
     const ComponentPartial = buildComponentPartial(Component);
     expect(wrapper.contains(<span>404</span>)).toBe(true);
 
-    expect(wrapper.containsMatchingElement(<a href="/namespace/foo/foovalue/bar/2">link<span /></a>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/namespace/param1/foo/param2/2">link<span /></a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
     wrapper.find('a').simulate('click');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<Component param1="foovalue" param2={2} />)).toBe(true);
+    expect(wrapper.contains(<Component param1="foo" param2={2} />)).toBe(true);
   });
 });

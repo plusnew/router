@@ -5,6 +5,7 @@ import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
 
 export type routeCallback<params extends RouteParamsSpec, props> = (params: SpecToType<params>, props: props) => ApplicationElement;
 
+// tslint:disable-next-line:space-before-function-paren
 function componentFactory<params extends RouteParamsSpec, componentProps extends Partial<props>>
 (router: Router, namespace: string, params: params, callback: routeCallback<params, componentProps>) {
   return class RouterComponent extends Component<{}>{
