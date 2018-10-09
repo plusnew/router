@@ -3,7 +3,7 @@ import Router from '../index';
 import { RouteParamsSpec } from '../../types/mapper';
 import UrlHandler from './UrlHandler';
 import linkFactory from './linkFactory';
-import Store from './Store';
+import storeFactory from './storeFactory';
 import componentFactory, { routeCallback } from './componentFactory';
 import { ComponentContainer } from 'plusnew';
 import { props } from 'plusnew/dist/src/interfaces/component';
@@ -17,7 +17,7 @@ export default class Route {
 
   createRoute<params extends RouteParamsSpec, componentProps extends Partial<props>>(namespace: string, params: params, callback: routeCallback<params, componentProps>) {
     const urlHandler = new UrlHandler(namespace, params);
-    const store = new Store(this.router, urlHandler);
+    const store = storeFactory(this.router, urlHandler);
 
     return {
       urlHandler,

@@ -2,6 +2,7 @@ export interface SpecToTypeMapping {
   'string': string;
   'number': number;
   'boolean': boolean;
+  'date': Date;
 }
 
 export type RouteParamsSpec = {

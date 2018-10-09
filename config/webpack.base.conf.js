@@ -4,7 +4,7 @@ const CleanWebpackPlugin = require("clean-webpack-plugin")
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 
 module.exports = {
-  entry: ['./src/index.tsx'],
+  entry: ['./src/index.ts'],
   mode: 'development',
   output: {
       path: __dirname + '/../dist',
