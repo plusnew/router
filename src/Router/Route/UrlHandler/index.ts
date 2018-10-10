@@ -12,6 +12,15 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
   }
 
   private serializer = {
+    boolean(value: string) {
+      if (value === 'true') {
+        return true;
+      }
+      if (value === 'false') {
+        return false;
+      }
+      throw new Error(`${value} is not a valid boolean`);
+    },
     number(value: string) {
       const result = Number(value);
 
@@ -21,11 +30,14 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
       return result;
     },
     date(value: string) {
-      const date = new Date(value);
+      const date = new Date(this.number(value));
       if (isNaN(date.getTime()) === true) {
         throw new Error(`${value} is not a valid date`);
       }
       return date;
+    },
+    string(value: string) {
+      return value;
     },
   };
 
@@ -52,14 +64,18 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
       throw new Error('Can not parse Url for wrong namespace');
     }
 
-    const paramUrlParts = this.formatPath(url).slice(this.namespace.length, - 1).split(PATH_DELIMITER);
+    const paramUrlParts = this.formatPath(url).slice(this.namespace.length).split(PATH_DELIMITER);
 
-    const result: Partial<SpecToType<Spec>> = {};
+    const result: any = {};
     for (let i = 0; i < paramUrlParts.length; i += 2) {
       const paramKey = paramUrlParts[i];
       if (paramKey) {
         if (paramKey in this.spec) {
-          result[paramKey] = undefined;
+          try {
+            result[paramKey] = this.serializer[this.spec[paramKey]](paramUrlParts[i + 1]);
+          } catch (err) {
+            throw new Error(`The url ${url} has incorrect parameter ${paramKey}`);
+          }
         } else {
           throw new Error(`The url ${url} has unknown parameter ${paramKey}`);
         }
@@ -68,7 +84,6 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
 
     Object.keys(this.spec).forEach((paramKey) => {
       if (paramKey in result === false) {
-        console.log('params:', arguments);
         throw new Error(`The url ${url} is missing the parameter ${paramKey}`);
       }
     });

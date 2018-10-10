@@ -72,6 +72,18 @@ describe('test Urlhandler', () => {
       expect(urlHandler.buildUrl({ foo: date })).toBe(`/name/space/foo/${date.getTime()}/`);
     });
 
+    it('with boolean', () => {
+      const urlHandler = new UrlHandler('name/space', { foo: 'boolean' });
+
+      expect(urlHandler.buildUrl({ foo: true })).toBe(`/name/space/foo/true/`);
+    });
+
+    it('with boolean', () => {
+      const urlHandler = new UrlHandler('name/space', { foo: 'boolean' });
+
+      expect(urlHandler.buildUrl({ foo: false })).toBe(`/name/space/foo/false/`);
+    });
+
     it('with number string and date', () => {
       const urlHandler = new UrlHandler('name/space', { foo: 'string', bar: 'number', baz: 'date' });
 
@@ -120,6 +132,17 @@ describe('test Urlhandler', () => {
       expect(urlHandler.parseUrl('/name/space/foo/bar/')).toEqual({ foo: 'bar' });
       expect(urlHandler.parseUrl('/name/space/foo/2')).toEqual({ foo: '2' });
       expect(urlHandler.parseUrl('/name/space/foo/2/')).toEqual({ foo: '2' });
+      expect(urlHandler.parseUrl('/name/space/foo//')).toEqual({ foo: '' });
+      expect(urlHandler.parseUrl('/name/space/foo/')).toEqual({ foo: '' });
+    });
+
+    it('with boolean params', () => {
+      const urlHandler = new UrlHandler('name/space', { foo: 'boolean' });
+
+      expect(urlHandler.parseUrl('/name/space/foo/true')).toEqual({ foo: true });
+      expect(urlHandler.parseUrl('/name/space/foo/true/')).toEqual({ foo: true });
+      expect(urlHandler.parseUrl('/name/space/foo/false/')).toEqual({ foo: false });
+      expect(urlHandler.parseUrl('/name/space/foo/false')).toEqual({ foo: false });
     });
 
     it('with number params', () => {
@@ -144,11 +167,11 @@ describe('test Urlhandler', () => {
       const date = new Date();
 
       expect(
-        urlHandler.parseUrl(`/name/space/foo/foovalue/bar/2/baz/${date}`),
+        urlHandler.parseUrl(`/name/space/foo/foovalue/bar/2/baz/${date.getTime()}`),
       ).toEqual({ foo: 'foovalue', bar: 2, baz: date });
 
       expect(
-        urlHandler.parseUrl(`/name/space/foo/foovalue/bar/2/baz/${date}/`),
+        urlHandler.parseUrl(`/name/space/foo/foovalue/bar/2/baz/${date.getTime()}/`),
       ).toEqual({ foo: 'foovalue', bar: 2, baz: date });
 
       expect(
@@ -180,8 +203,16 @@ describe('test Urlhandler', () => {
       const urlHandler = new UrlHandler('name/space', { foo: 'date' });
 
       expect(() => {
-        urlHandler.parseUrl('/name/space/foo/345/');
-      }).toThrow(new Error(`The url /name/space/foo/345/ has incorrect parameter foo`));
+        urlHandler.parseUrl('/name/space/foo/mep/');
+      }).toThrow(new Error(`The url /name/space/foo/mep/ has incorrect parameter foo`));
+    });
+
+    it('with invalid boolean', () => {
+      const urlHandler = new UrlHandler('name/space', { foo: 'boolean' });
+
+      expect(() => {
+        urlHandler.parseUrl('/name/space/foo/mep/');
+      }).toThrow(new Error(`The url /name/space/foo/mep/ has incorrect parameter foo`));
     });
 
     it('with to many params', () => {
