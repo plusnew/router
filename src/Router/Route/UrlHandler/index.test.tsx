@@ -148,8 +148,11 @@ describe('test Urlhandler', () => {
     it('with number params', () => {
       const urlHandler = new UrlHandler('name/space', { foo: 'number' });
 
-      expect(urlHandler.parseUrl('/name/space/foo/2')).toEqual({ foo: 2 });
+      expect(urlHandler.parseUrl('/name/space/foo/')).toEqual({ foo: 2 });
       expect(urlHandler.parseUrl('/name/space/foo/2/')).toEqual({ foo: 2 });
+      expect(urlHandler.parseUrl('/name/space/foo/0/')).toEqual({ foo: 0 });
+      expect(urlHandler.parseUrl('/name/space/foo/0.5/')).toEqual({ foo: 0.5 });
+      expect(urlHandler.parseUrl('/name/space/foo/-1/')).toEqual({ foo: -1 });
     });
 
     it('with date params', () => {
@@ -197,6 +200,10 @@ describe('test Urlhandler', () => {
       expect(() => {
         urlHandler.parseUrl('/name/space/foo/4bar/');
       }).toThrow(new Error(`The url /name/space/foo/4bar/ has incorrect parameter foo`));
+
+      // expect(() => {
+      //   urlHandler.parseUrl('/name/space/foo//');
+      // }).toThrow(new Error(`The url /name/space/foo// has incorrect parameter foo`));
     });
 
     it('with invalid date', () => {
@@ -205,6 +212,10 @@ describe('test Urlhandler', () => {
       expect(() => {
         urlHandler.parseUrl('/name/space/foo/mep/');
       }).toThrow(new Error(`The url /name/space/foo/mep/ has incorrect parameter foo`));
+
+      expect(() => {
+        urlHandler.parseUrl('/name/space/foo/Infinity/');
+      }).toThrow(new Error(`The url /name/space/foo/Infinity/ has incorrect parameter foo`));
     });
 
     it('with invalid boolean', () => {

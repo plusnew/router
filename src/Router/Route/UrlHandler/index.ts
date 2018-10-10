@@ -24,6 +24,7 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
     number(value: string) {
       const result = Number(value);
 
+      // @TODO evaluate if a stricter number parser makes sense /(-)?([0-9]+)(.[0-9]+)?/
       if (isNaN(result) === true) {
         throw new Error(`${value} is not a valid number`);
       }
