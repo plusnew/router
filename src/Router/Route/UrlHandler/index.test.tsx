@@ -148,7 +148,7 @@ describe('test Urlhandler', () => {
     it('with number params', () => {
       const urlHandler = new UrlHandler('name/space', { foo: 'number' });
 
-      expect(urlHandler.parseUrl('/name/space/foo/')).toEqual({ foo: 2 });
+      expect(urlHandler.parseUrl('/name/space/foo/-0.5')).toEqual({ foo: -0.5 });
       expect(urlHandler.parseUrl('/name/space/foo/2/')).toEqual({ foo: 2 });
       expect(urlHandler.parseUrl('/name/space/foo/0/')).toEqual({ foo: 0 });
       expect(urlHandler.parseUrl('/name/space/foo/0.5/')).toEqual({ foo: 0.5 });
