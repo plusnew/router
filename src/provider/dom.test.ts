@@ -32,4 +32,11 @@ describe('test dom provider', () => {
     // else it will create unnecessary history entries
     expect(pushStateSpy).not.toHaveBeenCalled();
   });
+
+  it('getPath should return pathname correctly', () => {
+    getPathSpy.and.callThrough();
+
+    const provider = new Dom();
+    expect((provider as any).getPath()).toBe(location.pathname);
+  });
 });
