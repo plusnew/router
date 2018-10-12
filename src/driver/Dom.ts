@@ -1,6 +1,6 @@
 import { store } from 'plusnew';
 
-export default class DomProvider {
+export default class DomDriver {
   public store = store(this.getPath(), (_state, action: string) => action);
 
   constructor() {

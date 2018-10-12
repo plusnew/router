@@ -1,26 +1,23 @@
 import enzymeAdapterPlusnew, { mount } from 'enzyme-adapter-plusnew';
 import { configure } from 'enzyme';
-import plusnew, { component, Props, storeType, store } from 'plusnew';
-import Router from './index';
+import plusnew, { component, Props, storeType } from 'plusnew';
+import Router, { BasicDriver } from './index';
 import { buildComponentPartial } from './test';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
 describe('test router', () => {
-  let testProvider: {
+  let basicDriver: {
     store: storeType<string, string>;
     push: (url: string) => void;
   };
 
   beforeEach(() => {
-    testProvider = {
-      store: store('/', (_state, action: string) => action),
-      push: (url: string) => testProvider.store.dispatch(url),
-    };
+    basicDriver = new BasicDriver('/');
   });
 
   it('link should be found and be clickable', () => {
-    const router = new Router(testProvider);
+    const router = new Router(basicDriver);
 
     const Component = component(
       'Component',
@@ -50,19 +47,19 @@ describe('test router', () => {
 
     wrapper.find('a').simulate('click');
 
-    expect(testProvider.store.getCurrentState()).toBe('/namespace/param1/foo/param2/2/');
+    expect(basicDriver.store.getCurrentState()).toBe('/namespace/param1/foo/param2/2/');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component param1="foo" param2={2} />)).toBe(true);
 
-    testProvider.store.dispatch('/namespace/invalid/parameter');
+    basicDriver.store.dispatch('/namespace/invalid/parameter');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
   });
 
   it('rootpath should work', () => {
-    const router = new Router(testProvider);
+    const router = new Router(basicDriver);
 
     const Component = component(
       'Component',

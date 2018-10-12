@@ -1,13 +1,9 @@
-import Router from '../../';
-import { store } from 'plusnew';
+import Router, { BasicDriver } from '../../..';
 
 describe('routeStore', () => {
   it('invalid routeStore action', () => {
-    const testProvider = {
-      store: store('/', (_state, action: string) => action),
-      push: (url: string) => testProvider.store.dispatch(url),
-    };
-    const router = new Router(testProvider);
+    const testDriver = new BasicDriver('/');
+    const router = new Router(testDriver);
 
     const route = router.createRoute('namespace', {}, () => null);
 
