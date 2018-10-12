@@ -60,4 +60,37 @@ describe('test router', () => {
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
   });
+
+  it('rootpath should work', () => {
+    const router = new Router(testProvider);
+
+    const Component = component(
+      'Component',
+      (_Props: Props<{param1: string, param2: number}>) => <div />,
+    );
+
+    const route = router.createRoute('namespace', {
+      param1: 'string',
+      param2: 'number',
+    }, params => <Component {...params} />);
+
+    const wrapper = mount(
+      <>
+        <route.Component />
+        <router.NotFound><span>404</span></router.NotFound>
+        <router.Invalid><span>error happened</span></router.Invalid>
+      </>,
+    );
+
+    const ComponentPartial = buildComponentPartial(Component);
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
+
+    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+
+    router.rootPathStore.dispatch(route.urlHandler.buildUrl({ param1: 'foo', param2: 2 }));
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.contains(<Component param1="foo" param2={2} />)).toBe(true);
+  });
 });

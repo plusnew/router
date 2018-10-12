@@ -86,11 +86,18 @@ export default function <Spec extends RouteParamsSpec>(router: Router, urlHandle
     throw new Error('Invalid action for routestore');
   });
 
-  router.provider.store.addOnChange(() => {
-    routeStore.dispatch(getAction(router.provider.store.getCurrentState(), urlHandler));
-  });
+  const updateRouteStore = () => {
+    let url = router.provider.store.getCurrentState();
+    if (url === '/') { // If url is root, then use predefined root-path
+      url = router.rootPathStore.getCurrentState();
+    }
+    routeStore.dispatch(getAction(url, urlHandler));
+  };
 
-  routeStore.dispatch(getAction(router.provider.store.getCurrentState(), urlHandler));
+  router.provider.store.addOnChange(updateRouteStore);
+  router.rootPathStore.addOnChange(updateRouteStore);
+
+  updateRouteStore();
 
   return routeStore;
 }

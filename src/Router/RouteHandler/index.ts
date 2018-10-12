@@ -32,6 +32,8 @@ export default class RouteHandler {
     // The updateRouterState should be executed last, thats why it needs removal and adding
     this.router.provider.store.removeOnChange(this.updateRouterState);
     this.router.provider.store.addOnChange(this.updateRouterState);
+    this.router.rootPathStore.removeOnChange(this.updateRouterState);
+    this.router.rootPathStore.addOnChange(this.updateRouterState);
 
     return {
       urlHandler,
