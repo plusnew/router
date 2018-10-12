@@ -1,7 +1,7 @@
 import Router from './Router';
-import domProvider from './provider/dom';
+import DomProvider from './provider/Dom';
 
 export default Router;
 export {
-  domProvider,
+  DomProvider,
 };

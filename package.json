@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/app.js",
   "scripts": {
+    "prepublishOnly": "yarn run test && yarn run build",
     "start": "webpack-dev-server --config config/webpack.dev.js",
     "build": "webpack --config config/webpack.prod.conf.js",
     "test": "karma start config/karma.conf.js",
