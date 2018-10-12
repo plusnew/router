@@ -6,7 +6,11 @@ This library is for typesafe is made for routing with plusnew
 import plusnew, { Component } from 'plusnew';
 import Router, { DomDriver } from '@plusnew/router';
 
-const router = new Router(new DomDriver());
+// This domdriver changes the urls and listens for url changes
+const domDriver = new DomDriver();
+
+// create a new router instance for handling your routes, you can have multiple if needed
+const router = new Router(domDriver);
 
 const route = router.createRoute(
   // With that namespace, the path will begin
