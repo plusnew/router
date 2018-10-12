@@ -22,10 +22,14 @@ describe('test dom provider', () => {
   });
 
   it('when window.popstate got triggered, the store should get triggered with the new url', () => {
+    const pushStateSpy = spyOn(history, 'pushState');
     const provider = new Dom();
     getPathSpy.and.returnValue('bar');
     window.dispatchEvent(new Event('popstate'));
 
     expect(provider.store.getCurrentState()).toBe('bar');
+    // a pushstate is not allowed to happen, when a pop happed
+    // else it will create unnecessary history entries
+    expect(pushStateSpy).not.toHaveBeenCalled();
   });
 });
