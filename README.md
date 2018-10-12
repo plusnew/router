@@ -8,22 +8,39 @@ import Router, { DomDriver } from '@plusnew/router';
 
 const router = new Router(new DomDriver());
 
-const route = router.createRoute('namespace', {
-  oneParameter: 'string',
-  anotherParameter: 'number',
-}, ({ oneParameter, anotherParameter }) => {
-  return <span>{oneParameter} {anotherParameter}</span>;
-});
+const route = router.createRoute(
+  // With that namespace, the path will begin
+  'namespace',
+
+  // This parameter describes what parameters are needed for the route
+  // and what types they have, allowed are: string, number, boolean, date
+  {
+    oneParameter: 'string',
+    anotherParameter: 'number',
+  },
+  // This callback will be called, when the path is matching the namespace and the parameters
+  // the first given argument, is from the path and are correctly typed
+  ({ oneParameter, anotherParameter }) => {
+
+    // the return value will be displayed wherever you put <route.Component />
+    return <span>{oneParameter} {anotherParameter}</span>;
+  },
+);
 
 export default class MainComponent extends Component<{}> {
   render() {
     return (
       <>
+        {/*This will create an a-tag with href /namespace/oneParameter/value/anotherParameter/2/ */}
         <route.Link parameter={{ oneParameter: 'value', anotherParameter: 2 }}>LinkText</route.Link>
 
+        {/* in case the current path is matching, the return-value of the route-callback with the span will be here*/}
         <route.Component />
 
+        {/* in case the current path does not match any existing routes, the children of NotFound will be displayed */}
         <router.NotFound>No matching route found</router.NotFound>
+
+        {/* in case the path matched the namespace of a route, but the parameters were not correct the children of Invalid will be display */}
         <router.Invalid>A matching route was found, but it has invalid parameters</router.Invalid>
       </>
     );
