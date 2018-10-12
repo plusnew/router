@@ -21,7 +21,7 @@ export default class Route {
     return {
       urlHandler,
       store,
-      Component: componentFactory(this.router, namespace, params, callback) as ComponentContainer<componentProps>,
+      Component: componentFactory(this.router, store, callback) as ComponentContainer<componentProps>,
       Link: linkFactory(this.router, store, urlHandler),
 
     };
