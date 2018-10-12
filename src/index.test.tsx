@@ -37,11 +37,13 @@ describe('test router', () => {
         <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
         <route.Component />
         <router.NotFound><span>404</span></router.NotFound>
+        <router.Invalid><span>error happened</span></router.Invalid>
       </>,
     );
 
     const ComponentPartial = buildComponentPartial(Component);
-    // expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
 
     expect(wrapper.containsMatchingElement(<a href="/namespace/param1/foo/param2/2/">link</a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
@@ -52,5 +54,10 @@ describe('test router', () => {
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component param1="foo" param2={2} />)).toBe(true);
+
+    testProvider.store.dispatch('/namespace/invalid/parameter');
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(true);
   });
 });
