@@ -40,7 +40,6 @@ export default class RouteHandler {
       store,
       Component: componentFactory(store, callback) as ComponentContainer<componentProps>,
       Link: linkFactory(this.router, store, urlHandler),
-
     };
   }
 
