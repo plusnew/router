@@ -19,7 +19,7 @@ describe('test router', () => {
     };
   });
 
-  xit('link should be found and be clickable', () => {
+  it('link should be found and be clickable', () => {
     const router = new Router('anothernamespace', testProvider);
 
     const Component = component(

@@ -1,4 +1,3 @@
-import { provider } from '../../types/provider';
 import Router from '../index';
 import { RouteParamsSpec } from '../../types/mapper';
 import UrlHandler from './UrlHandler';
