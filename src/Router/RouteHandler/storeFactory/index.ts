@@ -83,7 +83,7 @@ export default function <Spec extends RouteParamsSpec>(router: Router, urlHandle
       };
       return result;
     }
-    throw new Error('Invalid action for route-store');
+    throw new Error('Invalid action for routestore');
   });
 
   router.provider.store.addOnChange(() => {
