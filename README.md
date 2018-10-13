@@ -24,11 +24,9 @@ const route = router.createRoute(
   },
   // This callback will be called, when the path is matching the namespace and the parameters
   // the first given argument, is from the path and are correctly typed
-  ({ oneParameter, anotherParameter }) => {
-
+  ({ oneParameter, anotherParameter }) =>
     // the return value will be displayed wherever you put <route.Component />
-    return <span>{oneParameter} {anotherParameter}</span>;
-  },
+    return <span>{oneParameter} {anotherParameter}</span>
 );
 
 export default class MainComponent extends Component<{}> {
