@@ -1,6 +1,6 @@
 {
   "name": "@plusnew/router",
-  "version": "0.6.15",
+  "version": "0.6.16",
   "description": "",
   "main": "dist/app.js",
   "scripts": {
@@ -14,9 +14,7 @@
     "plusnew"
   ],
   "author": "",
-  "dependencies": {
-    "plusnew": "^0.6.12"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jasmine": "^2.8.8",
     "awesome-typescript-loader": "^5.2.0",
@@ -33,6 +31,7 @@
     "karma-jasmine": "^1.1.2",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^3.0.0",
+    "plusnew": "^0.6.15",
     "ts-loader": "^4.5.0",
     "tslint": "^5.11.0",
     "tslint-config-airbnb": "^5.10.0",

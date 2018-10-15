@@ -47,7 +47,7 @@ describe('test router', () => {
 
     wrapper.find('a').simulate('click');
 
-    expect(basicDriver.store.getCurrentState()).toBe('/namespace/param1/foo/param2/2/');
+    expect(basicDriver.store.getState()).toBe('/namespace/param1/foo/param2/2/');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component param1="foo" param2={2} />)).toBe(true);

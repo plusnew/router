@@ -8,7 +8,7 @@ describe('test dom driver', () => {
 
   it('dom driver should have the current path in the store', () => {
     const driver = new Dom();
-    expect(driver.store.getCurrentState()).toBe('foo');
+    expect(driver.store.getState()).toBe('foo');
   });
 
   it('when calling push, replacestate should be called and the correct url should be in the store', () => {
@@ -17,7 +17,7 @@ describe('test dom driver', () => {
     const driver = new Dom();
     driver.push('bar');
 
-    expect(driver.store.getCurrentState()).toBe('bar');
+    expect(driver.store.getState()).toBe('bar');
     expect(pushStateSpy).toHaveBeenCalledWith(jasmine.anything(), jasmine.anything(), 'bar');
   });
 
@@ -27,7 +27,7 @@ describe('test dom driver', () => {
     getPathSpy.and.returnValue('bar');
     window.dispatchEvent(new Event('popstate'));
 
-    expect(driver.store.getCurrentState()).toBe('bar');
+    expect(driver.store.getState()).toBe('bar');
     // a pushstate is not allowed to happen, when a pop happed
     // else it will create unnecessary history entries
     expect(pushStateSpy).not.toHaveBeenCalled();

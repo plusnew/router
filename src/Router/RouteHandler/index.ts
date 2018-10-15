@@ -30,10 +30,10 @@ export default class RouteHandler {
     this.updateRouterState();
 
     // The updateRouterState should be executed last, thats why it needs removal and adding
-    this.router.provider.store.removeOnChange(this.updateRouterState);
-    this.router.provider.store.addOnChange(this.updateRouterState);
-    this.router.rootPathStore.removeOnChange(this.updateRouterState);
-    this.router.rootPathStore.addOnChange(this.updateRouterState);
+    this.router.provider.store.unsubscribe(this.updateRouterState);
+    this.router.provider.store.subscribe(this.updateRouterState);
+    this.router.rootPathStore.unsubscribe(this.updateRouterState);
+    this.router.rootPathStore.subscribe(this.updateRouterState);
 
     return {
       urlHandler,
@@ -45,7 +45,7 @@ export default class RouteHandler {
 
   private updateRouterState = () => {
     const routerState = this.routeStores.reduce((current, routeStore) => {
-      const routeState = routeStore.getCurrentState();
+      const routeState = routeStore.getState();
       if (routeState.invalid) {
         return routerStateTypes.invalid;
       }

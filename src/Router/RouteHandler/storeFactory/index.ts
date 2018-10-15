@@ -1,5 +1,5 @@
 import { store, storeType } from 'plusnew';
-import { RouteParamsSpec, SpecToType } from 'types/mapper';
+import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
 import Router from '../../../';
 import UrlHandler from '../UrlHandler';
 
@@ -87,15 +87,15 @@ export default function <Spec extends RouteParamsSpec>(router: Router, urlHandle
   });
 
   const updateRouteStore = () => {
-    let url = router.provider.store.getCurrentState();
+    let url = router.provider.store.getState();
     if (url === '/') { // If url is root, then use predefined root-path
-      url = router.rootPathStore.getCurrentState();
+      url = router.rootPathStore.getState();
     }
     routeStore.dispatch(getAction(url, urlHandler));
   };
 
-  router.provider.store.addOnChange(updateRouteStore);
-  router.rootPathStore.addOnChange(updateRouteStore);
+  router.provider.store.subscribe(updateRouteStore);
+  router.rootPathStore.subscribe(updateRouteStore);
 
   updateRouteStore();
 

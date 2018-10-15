@@ -1,4 +1,4 @@
-import { RouteParamsSpec, SpecToType } from 'types/mapper';
+import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
 
 const PATH_DELIMITER = '/';
 
