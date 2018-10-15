@@ -13,7 +13,7 @@ function hasModifier(evt: MouseEvent) {
   return evt.altKey === true || evt.ctrlKey === true || evt.shiftKey === true;
 }
 
-export default function linkFactory<Spec extends RouteParamsSpec>(router: Router, routeStore: routeStore<Spec>, urlHandler: UrlHandler<Spec>) {
+export default function linkFactory<Spec extends RouteParamsSpec>(router: Router, _routeStore: routeStore<Spec>, urlHandler: UrlHandler<Spec>) {
   return class Link extends Component<props<Spec>> {
     render(Props: Props<props<Spec>>) {
       return <Props render={props =>

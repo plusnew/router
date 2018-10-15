@@ -8,7 +8,9 @@ module.exports = {
   mode: 'development',
   output: {
       path: __dirname + '/../dist',
-      filename: 'app.js'
+      filename: 'app.js',
+      library: 'plusnewRouter',
+      libraryTarget: "umd",
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -24,13 +26,6 @@ module.exports = {
     ]
   },
   plugins: [
-    new CopyWebpackPlugin([
-      { from: 'public' },
-      {
-        from: require.resolve('plusnew'),
-        to: 'plusnew.js',
-      }
-    ]),
     new CleanWebpackPlugin('dist', {
         root: path.join(__dirname, '..'),
       }

@@ -1,5 +1,5 @@
 import RouteHandler from './RouteHandler';
-import { provider } from 'types/provider';
+import { provider } from '../types/provider';
 import notFoundFactory from './notFoundFactory';
 import invalidFactory from './invalidFactory';
 import { store, storeType } from 'plusnew';
