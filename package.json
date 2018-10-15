@@ -13,7 +13,7 @@
   "keywords": [
     "plusnew"
   ],
-  "author": "",
+  "author": "Carlo Jeske",
   "dependencies": {},
   "devDependencies": {
     "@types/jasmine": "^2.8.8",
