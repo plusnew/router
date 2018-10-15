@@ -1,9 +1,9 @@
 import Router from './Router';
-import DomDriver from './driver/Dom';
+import BrowserDriver from './driver/Browser';
 import BasicDriver from './driver/Basic';
 
 export default Router;
 export {
-  DomDriver,
+  BrowserDriver,
   BasicDriver,
 };

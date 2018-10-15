@@ -4,13 +4,13 @@ This library is for typesafe is made for routing with plusnew
 
 ```ts
 import plusnew, { Component } from 'plusnew';
-import Router, { DomDriver } from '@plusnew/router';
+import Router, { BrowserDriver } from '@plusnew/router';
 
-// This domdriver changes the urls and listens for url changes
-const domDriver = new DomDriver();
+// This BrowserDriver changes the urls and listens for url changes
+const BrowserDriver = new BrowserDriver();
 
 // create a new router instance for handling your routes, you can have multiple if needed
-const router = new Router(domDriver);
+const router = new Router(BrowserDriver);
 
 const route = router.createRoute(
   // With that namespace, the path will begin

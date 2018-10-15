@@ -1,4 +1,4 @@
-import Dom from './Dom';
+import Dom from './Browser';
 
 describe('test dom driver', () => {
   let getPathSpy: jasmine.Spy;
