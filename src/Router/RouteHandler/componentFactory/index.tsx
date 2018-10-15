@@ -13,7 +13,7 @@ function componentFactory<Spec extends RouteParamsSpec, componentProps extends P
       return <Props render={props =>
         <routeStore.Observer render={(routeState) => {
           if (routeState.active === true) {
-            return callback(routeState.params, props);
+            return callback(routeState.parameter, props);
           }
           return null;
         }} />

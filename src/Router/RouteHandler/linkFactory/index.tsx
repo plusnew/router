@@ -13,23 +13,33 @@ function hasModifier(evt: MouseEvent) {
   return evt.altKey === true || evt.ctrlKey === true || evt.shiftKey === true;
 }
 
-export default function linkFactory<Spec extends RouteParamsSpec>(router: Router, _routeStore: routeStore<Spec>, urlHandler: UrlHandler<Spec>) {
+export default function linkFactory<Spec extends RouteParamsSpec>(router: Router, routeStore: routeStore<Spec>, urlHandler: UrlHandler<Spec>) {
   return class Link extends Component<props<Spec>> {
     render(Props: Props<props<Spec>>) {
       return <Props render={props =>
-        plusnew.createElement(
-          'a',
-          {
-            href: urlHandler.buildUrl(props.parameter),
-            onclick: (evt: MouseEvent) => {
-              if (hasModifier(evt) === false) {
-                evt.preventDefault();
-                router.provider.push(urlHandler.buildUrl(props.parameter));
-              }
+        <routeStore.Observer render={(routeState) => {
+          const targetUrl = urlHandler.buildUrl(props.parameter);
+          let className = 'router__link';
+
+          if (routeState.active && urlHandler.buildUrl(routeState.parameter) === targetUrl) {
+            className += ' router__link--active';
+          }
+
+          return plusnew.createElement(
+            'a',
+            {
+              className,
+              href: targetUrl,
+              onclick: (evt: MouseEvent) => {
+                if (hasModifier(evt) === false) {
+                  evt.preventDefault();
+                  router.provider.push(targetUrl);
+                }
+              },
             },
-          },
-          ...props.children,
-        )
+            ...props.children,
+          );
+        }} />
       } />;
     }
   };

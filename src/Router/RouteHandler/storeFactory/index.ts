@@ -6,7 +6,7 @@ import UrlHandler from '../UrlHandler';
 type activeRouteState<Spec extends RouteParamsSpec> = {
   active: true;
   invalid: false;
-  params: SpecToType<Spec>;
+  parameter: SpecToType<Spec>;
 };
 
 type inactiveRouteState = {
@@ -65,7 +65,7 @@ export default function <Spec extends RouteParamsSpec>(router: Router, urlHandle
       const result: activeRouteState<Spec> = {
         active: true,
         invalid: false,
-        params: action.data,
+        parameter: action.data,
       };
       return result;
     }
