@@ -32,8 +32,8 @@ export default class RouteHandler {
     // The updateRouterState should be executed last, thats why it needs removal and adding
     this.router.provider.store.unsubscribe(this.updateRouterState);
     this.router.provider.store.subscribe(this.updateRouterState);
-    this.router.rootPathStore.unsubscribe(this.updateRouterState);
-    this.router.rootPathStore.subscribe(this.updateRouterState);
+    this.router.redirectStore.unsubscribe(this.updateRouterState);
+    this.router.redirectStore.subscribe(this.updateRouterState);
 
     return {
       urlHandler,

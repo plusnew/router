@@ -2,6 +2,7 @@ import { store, storeType } from 'plusnew';
 import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
 import Router from '../../../';
 import UrlHandler from '../UrlHandler';
+import formatPath from '../../../util/formatPath';
 
 type activeRouteState<Spec extends RouteParamsSpec> = {
   active: true;
@@ -87,15 +88,18 @@ export default function <Spec extends RouteParamsSpec>(router: Router, urlHandle
   });
 
   const updateRouteStore = () => {
-    let url = router.provider.store.getState();
-    if (url === '/') { // If url is root, then use predefined root-path
-      url = router.rootPathStore.getState();
-    }
+    const url = router.redirectStore.getState().reduce((currentUrl, redirect) => {
+      if (formatPath(currentUrl) === formatPath(redirect.from)) {
+        return redirect.to;
+      }
+      return currentUrl;
+    }, router.provider.store.getState());
+
     routeStore.dispatch(getAction(url, urlHandler));
   };
 
   router.provider.store.subscribe(updateRouteStore);
-  router.rootPathStore.subscribe(updateRouteStore);
+  router.redirectStore.subscribe(updateRouteStore);
 
   updateRouteStore();
 

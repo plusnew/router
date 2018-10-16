@@ -58,7 +58,7 @@ describe('test router', () => {
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
   });
 
-  it('rootpath should work', () => {
+  it('redirects should work', () => {
     const router = new Router(basicDriver);
 
     const Component = component(
@@ -85,9 +85,46 @@ describe('test router', () => {
 
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
-    router.rootPathStore.dispatch(route.urlHandler.buildUrl({ param1: 'foo', param2: 2 }));
+    router.redirectStore.dispatch({ from: '/', to: route.urlHandler.buildUrl({ param1: 'foo', param2: 2 }) });
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component param1="foo" param2={2} />)).toBe(true);
+  });
+
+  it('redirects should work with weird slashes', () => {
+    const router = new Router(basicDriver);
+
+    const Component = component(
+      'Component',
+      (_Props: Props<{}>) => <div />,
+    );
+
+    const route = router.createRoute('foobar', {}, params => <Component {...params} />);
+
+    const wrapper = mount(
+      <>
+        <route.Component />
+        <router.NotFound><span>404</span></router.NotFound>
+        <router.Invalid><span>error happened</span></router.Invalid>
+      </>,
+    );
+
+    const ComponentPartial = buildComponentPartial(Component);
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
+    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+
+    router.redirectStore.dispatch({ from: '/foo', to: 'foobar' });
+    router.redirectStore.dispatch({ from: 'mep', to: 'bar' });
+
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
+    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+
+    basicDriver.store.dispatch('/foo/');
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
+    expect(wrapper.contains(<Component />)).toBe(true);
   });
 });

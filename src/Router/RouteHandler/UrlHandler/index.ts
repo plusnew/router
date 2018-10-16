@@ -1,5 +1,5 @@
 import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
-
+import formatPath from '../../../util/formatPath';
 const PATH_DELIMITER = '/';
 
 export default class UrlHandler<Spec extends RouteParamsSpec> {
@@ -7,7 +7,7 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
   private spec: Spec;
 
   constructor(namespace: string, spec: Spec) {
-    this.namespace = this.formatPath(namespace);
+    this.namespace = formatPath(namespace);
     this.spec = spec;
   }
 
@@ -42,22 +42,8 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
     },
   };
 
-  private formatPath(path: string) {
-    let result = path;
-
-    if (result[0] !== PATH_DELIMITER) {
-      result = PATH_DELIMITER + result;
-    }
-
-    if (result[result.length - 1] !== PATH_DELIMITER) {
-      result = result + PATH_DELIMITER;
-    }
-
-    return result;
-  }
-
   public isCurrentNamespace(url: string) {
-    return this.formatPath(url).indexOf(this.namespace) === 0;
+    return formatPath(url).indexOf(this.namespace) === 0;
   }
 
   public parseUrl(url: string): SpecToType<Spec> {
@@ -65,7 +51,7 @@ export default class UrlHandler<Spec extends RouteParamsSpec> {
       throw new Error('Can not parse Url for wrong namespace');
     }
 
-    const paramUrlParts = this.formatPath(url).slice(this.namespace.length).split(PATH_DELIMITER);
+    const paramUrlParts = formatPath(url).slice(this.namespace.length).split(PATH_DELIMITER);
 
     const result: any = {};
     for (let i = 0; i < paramUrlParts.length; i += 2) {

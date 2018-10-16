@@ -16,6 +16,12 @@ describe('test Urlhandler', () => {
       expect(urlHandler.isCurrentNamespace('/name/space')).toBe(true);
     });
 
+    it('detects subpart', () => {
+      const urlHandler = new UrlHandler('name/space', {});
+
+      expect(urlHandler.isCurrentNamespace('/name/')).toBe(false);
+    });
+
     it('detects wrong namespace with slashes', () => {
       const urlHandler = new UrlHandler('name/space', {});
 
