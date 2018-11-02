@@ -10,14 +10,16 @@ function componentFactory<Spec extends RouteParamsSpec, componentProps extends P
 (routeStore: routeStore<Spec>, callback: routeCallback<Spec, componentProps>) {
   return class RouterComponent extends Component<componentProps>{
     render(Props: Props<componentProps>) {
-      return <Props render={props =>
-        <routeStore.Observer render={(routeState) => {
-          if (routeState.active === true) {
-            return callback(routeState.parameter, props);
-          }
-          return null;
-        }} />
-      } />;
+      return <Props>{props =>
+        <routeStore.Observer>
+          {(routeState) => {
+            if (routeState.active === true) {
+              return callback(routeState.parameter, props);
+            }
+            return null;
+          }}
+        </routeStore.Observer>
+      }</Props>;
     }
   };
 }

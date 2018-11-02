@@ -16,31 +16,37 @@ function hasModifier(evt: MouseEvent) {
 export default function linkFactory<Spec extends RouteParamsSpec>(router: Router, routeStore: routeStore<Spec>, urlHandler: UrlHandler<Spec>) {
   return class Link extends Component<props<Spec>> {
     render(Props: Props<props<Spec>>) {
-      return <Props render={props =>
-        <routeStore.Observer render={(routeState) => {
-          const targetUrl = urlHandler.buildUrl(props.parameter);
-          let className = 'router__link';
+      return (
+        <Props>
+          {props =>
+            <routeStore.Observer>
+              {(routeState) => {
+                const targetUrl = urlHandler.buildUrl(props.parameter);
+                let className = 'router__link';
 
-          if (routeState.active && urlHandler.buildUrl(routeState.parameter) === targetUrl) {
-            className += ' router__link--active';
-          }
-
-          return plusnew.createElement(
-            'a',
-            {
-              className,
-              href: targetUrl,
-              onclick: (evt: MouseEvent) => {
-                if (hasModifier(evt) === false) {
-                  evt.preventDefault();
-                  router.provider.push(targetUrl);
+                if (routeState.active && urlHandler.buildUrl(routeState.parameter) === targetUrl) {
+                  className += ' router__link--active';
                 }
-              },
-            },
-            ...props.children,
-          );
-        }} />
-      } />;
+
+                return plusnew.createElement(
+                  'a',
+                  {
+                    className,
+                    href: targetUrl,
+                    onclick: (evt: MouseEvent) => {
+                      if (hasModifier(evt) === false) {
+                        evt.preventDefault();
+                        router.provider.push(targetUrl);
+                      }
+                    },
+                  },
+                  ...props.children,
+                );
+              }}
+            </routeStore.Observer>
+          }
+        </Props>
+      );
     }
   };
 }

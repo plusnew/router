@@ -6,14 +6,15 @@ export default () => {
   return class NotFound extends Component<props> {
     static store = store(true, (_state, action: boolean) => action);
     render(Props: Props<props>) {
-      return <Props render={props =>
-        <NotFound.store.Observer render={(state) => {
-          if (state === true) {
-            return props.children;
+      return (
+        <Props>
+          {props =>
+            <NotFound.store.Observer>
+              {state => state === true ? props.children : null}
+            </NotFound.store.Observer>
           }
-          return null;
-        }} />
-      } />;
+        </Props>
+      );
     }
   };
 };
