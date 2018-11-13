@@ -65,4 +65,34 @@ describe('test links', () => {
     expect(basicDriver.store.getState()).toBe('foo');
     expect(link.hasClass('router__link--active')).toBe(false);
   });
+
+  it('is link with cmd should not change the store', () => {
+    const basicDriver = new BasicDriver('foo');
+    const router = new Router(basicDriver);
+
+    const route = router.createRoute('namespace', { param: 'string' }, ({ param }) => <span>{param}</span>);
+
+    const wrapper = mount(
+      <>
+        <route.Link parameter={{ param: 'bar' }}>link</route.Link>
+      </>,
+    );
+
+    expect(wrapper.containsMatchingElement(
+      <a className="router__link">link</a>,
+    )).toBe(true);
+
+    const link = wrapper.search(<a className="router__link">link</a>);
+    const clickFn = link.prop('onclick');
+    const event =  new MouseEvent('click', { bubbles: true, cancelable: true, metaKey: true });
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(basicDriver.store.getState()).toBe('foo');
+
+    clickFn(event);
+
+    expect(event.defaultPrevented).toBe(false);
+    expect(basicDriver.store.getState()).toBe('foo');
+    expect(link.hasClass('router__link--active')).toBe(false);
+  });
 });

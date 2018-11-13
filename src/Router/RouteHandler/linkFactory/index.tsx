@@ -10,7 +10,7 @@ type props<Spec extends RouteParamsSpec> = {
 };
 
 function hasModifier(evt: MouseEvent) {
-  return evt.altKey === true || evt.ctrlKey === true || evt.shiftKey === true;
+  return evt.altKey === true || evt.ctrlKey === true || evt.shiftKey === true || evt.metaKey === true;
 }
 
 export default function linkFactory<Spec extends RouteParamsSpec>(router: Router, routeStore: routeStore<Spec>, urlHandler: UrlHandler<Spec>) {
