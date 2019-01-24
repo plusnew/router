@@ -3,7 +3,7 @@
 This library is for typesafe is made for routing with plusnew
 
 ```ts
-import plusnew, { Component, Props } from 'plusnew';
+import plusnew, { Component } from 'plusnew';
 import Router, { BrowserDriver } from '@plusnew/router';
 
 // This BrowserDriver changes the urls and listens for url changes
