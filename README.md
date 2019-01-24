@@ -3,7 +3,7 @@
 This library is for typesafe is made for routing with plusnew
 
 ```ts
-import plusnew, { Component } from 'plusnew';
+import plusnew, { Component, Props } from 'plusnew';
 import Router, { BrowserDriver } from '@plusnew/router';
 
 // This BrowserDriver changes the urls and listens for url changes
@@ -24,9 +24,9 @@ const route = router.createRoute(
   },
   // This callback will be called, when the path is matching the namespace and the parameters
   // the first given argument, is from the path and are correctly typed
-  ({ oneParameter, anotherParameter }) =>
+  (Route) =>
     // the return value will be displayed wherever you put <route.Component />
-    return <span>{oneParameter} {anotherParameter}</span>
+    <Parameter>{({oneParameter, anotherParameter}) => <span>{oneParameter} {anotherParameter}</span></Parameter>
 );
 
 export default class MainComponent extends Component<{}> {
