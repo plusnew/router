@@ -10,7 +10,11 @@ describe('test links', () => {
     const basicDriver = new BasicDriver('foo');
     const router = new Router(basicDriver);
 
-    const route = router.createRoute('namespace', { param: 'string' }, ({ param }) => <span>{param}</span>);
+    const route = router.createRoute(
+      'namespace',
+      { param: 'string' },
+      Params => <Params>{({ param }) => <span>{param}</span>}</Params>,
+    );
 
     const wrapper = mount(
       <>
@@ -40,7 +44,11 @@ describe('test links', () => {
     const basicDriver = new BasicDriver('foo');
     const router = new Router(basicDriver);
 
-    const route = router.createRoute('namespace', { param: 'string' }, ({ param }) => <span>{param}</span>);
+    const route = router.createRoute(
+      'namespace',
+      { param: 'string' },
+      Params => <Params>{({ param }) => <span>{param}</span>}</Params>,
+    );
 
     const wrapper = mount(
       <>
@@ -70,7 +78,11 @@ describe('test links', () => {
     const basicDriver = new BasicDriver('foo');
     const router = new Router(basicDriver);
 
-    const route = router.createRoute('namespace', { param: 'string' }, ({ param }) => <span>{param}</span>);
+    const route = router.createRoute(
+      'namespace',
+      { param: 'string' },
+      Params => <Params>{({ param }) => <span>{param}</span>}</Params>,
+    );
 
     const wrapper = mount(
       <>
