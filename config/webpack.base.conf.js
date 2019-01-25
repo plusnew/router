@@ -30,6 +30,11 @@ module.exports = {
         root: path.join(__dirname, '..'),
       }
     ),
+    new CopyWebpackPlugin([
+      {
+        from: 'src/**/*.d.ts',
+      }
+    ])
   ],
   externals: [
     function (context, request, callback) {
