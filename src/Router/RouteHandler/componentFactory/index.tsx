@@ -14,7 +14,7 @@ function componentFactory<Spec extends RouteParamsSpec, componentProps extends P
     instance: ComponentInstance<componentProps>;
     isActive = false;
 
-    private createParameterObserver() {
+    createParameterObserver() {
       let created = false;
       const routeState = routeStore.getState();
       if (routeState.active === true && this.isActive === false) {
@@ -27,7 +27,7 @@ function componentFactory<Spec extends RouteParamsSpec, componentProps extends P
       return created;
     }
 
-    private createComponentIfNeeded() {
+    createComponentIfNeeded() {
       if (routeStore.getState().active === true) {
         return callback(this.parameter.Observer, this.instance.storeProps.Observer);
       }
