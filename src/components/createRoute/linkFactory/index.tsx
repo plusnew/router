@@ -1,5 +1,5 @@
 import plusnew, { Component, Props } from 'plusnew';
-import link from '../../../contexts/link';
+import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
 import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
 
@@ -18,10 +18,10 @@ export default function <
   return class RouterComponent extends Component<props<spec>>{
     render(Props: Props<props<spec>>) {
       return (
-        <link.Consumer>{linkState =>
+        <urlHandler.Consumer>{linkState =>
           <Props>{propsState =>
             <url.Consumer>{(urlState, dispatch) => {
-              const targetUrl = linkState.createLink(namespace, spec, propsState.parameter);
+              const targetUrl = linkState.createUrl(namespace, spec, propsState.parameter);
 
               let className = 'router__link';
 
@@ -45,7 +45,7 @@ export default function <
               );
             }}</url.Consumer>
           }</Props>
-        }</link.Consumer>
+        }</urlHandler.Consumer>
       );
     }
   };

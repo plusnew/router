@@ -1,9 +1,9 @@
 import plusnew, { Component, Props, ComponentContainer } from 'plusnew';
 import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
 import url from '../../../contexts/url';
-import link from '../../../contexts/link';
+import urlHandler from '../../../contexts/urlHandler';
 
-export type RouteComponet<Spec extends RouteParamsSpec, props> = ComponentContainer<{props: props, parameter: SpecToType<Spec>}>
+export type RouteComponet<Spec extends RouteParamsSpec, props> = ComponentContainer<{props: props, parameter: SpecToType<Spec>}>;
 
 export default function <
   params extends RouteParamsSpec,
@@ -12,19 +12,19 @@ export default function <
   return class RouterComponent extends Component<componentProps>{
     render(Props: Props<componentProps>) {
       return (
-        <link.Consumer>{linkState =>
+        <urlHandler.Consumer>{linkState =>
           <Props>{propsState =>
             <url.Consumer>{urlState =>
               linkState.isNamespaceActive(namespace, urlState) ?
                 <RouteComponent
-                  parameter={linkState.parseLink(namespace, params, urlState)}
+                  parameter={linkState.parseUrl(namespace, params, urlState)}
                   props={propsState}
                 />
                 :
                 null
             }</url.Consumer>
           }</Props>
-        }</link.Consumer>
+        }</urlHandler.Consumer>
       );
     }
   };

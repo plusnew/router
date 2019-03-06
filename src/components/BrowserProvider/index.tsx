@@ -1,11 +1,14 @@
 import plusnew, { store, Component, Props } from 'plusnew';
 import url from '../../contexts/url';
+import urlHandler from '../../contexts/urlHandler';
+import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';
 
 type props = {
   children: any;
 };
 
-export default class Provider extends Component<props> {
+export default class BrowserProvider extends Component<props> {
+  static displayName = 'BrowserProvider';
   render(Props: Props<props>) {
     const local = store(this.getPath(), (_state, action: string) => action);
 
@@ -19,11 +22,20 @@ export default class Provider extends Component<props> {
       return local.dispatch(url);
     }
     return (
-      <local.Observer>{localState =>
-        <url.Provider state={localState} dispatch={changeUrl}>
-          <Props>{props => props.children}</Props>
-        </url.Provider>
-      }</local.Observer>
+      <urlHandler.Provider
+        state={{
+          isNamespaceActive,
+          createUrl,
+          parseUrl,
+        }}
+        dispatch={null as never}
+      >
+        <local.Observer>{localState =>
+          <url.Provider state={localState} dispatch={changeUrl}>
+            <Props>{props => props.children}</Props>
+          </url.Provider>
+        }</local.Observer>
+      </urlHandler.Provider>
     );
   }
 

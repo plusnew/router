@@ -1,4 +1,7 @@
 import plusnew, { component, Props } from 'plusnew';
+import url from '../../contexts/url';
+import urlHandler from '../../contexts/urlHandler';
+import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';
 
 type props = {
   url: string;
@@ -7,9 +10,20 @@ type props = {
 };
 
 export default component(
-  __dirname,
+  'StaticProvider',
   (Props: Props<props>) =>
-    <Props>{props =>
-      props.children
-    }</Props>,
+    <urlHandler.Provider
+      state={{
+        isNamespaceActive,
+        createUrl,
+        parseUrl,
+      }}
+      dispatch={null as never}
+    >
+      <Props>{props =>
+        <url.Provider state={props.url} dispatch={props.onchange}>
+          {props.children}
+        </url.Provider>
+      }</Props>
+    </urlHandler.Provider>,
 );

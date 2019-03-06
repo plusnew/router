@@ -10,5 +10,5 @@ export default function <
     Component: componentFactory(namespace, spec, RouteComponet),
     Link: linkFactory(namespace, spec),
     // Consumer: consumerFactory(namespace, spec),
-  }
+  };
 }

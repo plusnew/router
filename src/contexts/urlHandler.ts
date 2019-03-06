@@ -3,8 +3,8 @@ import { SpecToType, RouteParamsSpec } from '../types/mapper';
 
 type linkHandler = {
   isNamespaceActive: (namespace: string, url: string) => boolean;
-  createLink: <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, params: any) => string;
-  parseLink: <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, link: any) => SpecToType<Spec>
+  createUrl: <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, params: any) => string;
+  parseUrl: <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, url: string) => SpecToType<Spec>
 };
 
 export default context<linkHandler, never>();
