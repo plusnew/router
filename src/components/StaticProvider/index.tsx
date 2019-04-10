@@ -21,7 +21,7 @@ export default component(
       dispatch={null as never}
     >
       <Props>{props =>
-        <url.Provider state={props.url} dispatch={props.onchange}>
+        <url.Provider state={props.url} dispatch={(url) => { props.onchange(url); return true; }}>
           {props.children}
         </url.Provider>
       }</Props>

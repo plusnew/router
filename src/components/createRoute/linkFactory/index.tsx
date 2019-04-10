@@ -18,10 +18,10 @@ export default function <
   return class RouterComponent extends Component<props<spec>>{
     render(Props: Props<props<spec>>) {
       return (
-        <urlHandler.Consumer>{linkState =>
+        <urlHandler.Consumer>{urlHandlerState =>
           <Props>{propsState =>
             <url.Consumer>{(urlState, dispatch) => {
-              const targetUrl = linkState.createUrl(namespace, spec, propsState.parameter);
+              const targetUrl = urlHandlerState.createUrl(namespace, spec, propsState.parameter);
 
               let className = 'router__link';
 

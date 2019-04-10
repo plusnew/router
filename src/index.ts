@@ -3,7 +3,7 @@ import StaticProvider from './components/StaticProvider';
 import createRoute from './components/createRoute';
 import NotFound from './components/NotFound';
 import Invalid from './components/Invalid';
-import Redirect from './components/Redirect';
+import urlHanlderContext from './contexts/urlHandler'
 
 export {
   createRoute,
@@ -11,5 +11,5 @@ export {
   StaticProvider,
   NotFound,
   Invalid,
-  Redirect,
+  urlHanlderContext,
 };

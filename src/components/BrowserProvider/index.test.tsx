@@ -1,6 +1,6 @@
-import BrowserProvider from './index';
+// import BrowserProvider from './index';
 
-describe('test dom driver', () => {
+/* describe('test dom driver', () => {
   let getPathSpy: jasmine.Spy;
   beforeEach(() => {
     getPathSpy = spyOn(BrowserProvider.prototype, 'getPath' as any).and.returnValue('foo');
@@ -39,4 +39,4 @@ describe('test dom driver', () => {
     const driver = new BrowserProvider();
     expect((driver as any).getPath()).toBe(location.pathname);
   });
-});
+}); */
