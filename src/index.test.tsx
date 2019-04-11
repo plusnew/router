@@ -1,19 +1,19 @@
 import enzymeAdapterPlusnew, { mount } from 'enzyme-adapter-plusnew';
 import { configure } from 'enzyme';
-import plusnew, { component, Props, store } from 'plusnew';
-import { createRoute, StaticProvider, NotFound, Invalid } from './index';
+import plusnew, { component, Props, store, Try } from 'plusnew';
+import { createRoute, StaticProvider, NotFound } from './index';
 import { buildComponentPartial } from './test';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
 describe('test router', () => {
-  it('link should be found and be clickable', () => {
+  fit('link should be found and be clickable', () => {
     const Component = component(
       'Component',
       (_Props: Props<{ parameter: { param1: string, param2: number } }>) => <div />,
     );
 
-    const route = createRoute('namespace', {
+    const route = createRoute(['namespace'], {
       param1: 'string',
       param2: 'number',
     }, Component);
@@ -25,9 +25,12 @@ describe('test router', () => {
         <urlStore.Observer>{urlState =>
           <StaticProvider url={urlState} onchange={urlStore.dispatch}>
             <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
-            <route.Component />
+            <Try
+              catch={() => <span>error happened</span>}
+            >{() =>
+              <route.Component />
+            }</Try>
             <NotFound><span>404</span></NotFound>
-            <Invalid><span>error happened</span></Invalid>
           </StaticProvider>
         }</urlStore.Observer>
       </>,
@@ -37,17 +40,17 @@ describe('test router', () => {
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
 
-    expect(wrapper.containsMatchingElement(<a href="/namespace/param1/foo/param2/2/">link</a>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/namespace?param1=foo&param2=2">link</a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
     wrapper.find('a').simulate('click');
 
-    expect(urlStore.getState()).toBe('/namespace/param1/foo/param2/2/');
+    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} />)).toBe(true);
 
-    urlStore.dispatch('/namespace/invalid/parameter');
+    urlStore.dispatch('/namespace?invalid=parameter');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
@@ -59,7 +62,7 @@ describe('test router', () => {
       (_Props: Props<{ parameter: { param1: string, param2: number } }>) => <div />,
     );
 
-    const route = createRoute('namespace', {
+    const route = createRoute(['namespace'], {
       param1: 'string',
       param2: 'number',
     }, Component);
@@ -71,9 +74,12 @@ describe('test router', () => {
         <urlStore.Observer>{urlState =>
           <StaticProvider url={urlState} onchange={urlStore.dispatch}>
             <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
-            <route.Component />
+            <Try
+              catch={() => <span>error happened</span>}
+            >{() =>
+              <route.Component />
+            }</Try>
             <NotFound><span>404</span></NotFound>
-            <Invalid><span>error happened</span></Invalid>
           </StaticProvider>
         }</urlStore.Observer>
       </>,
@@ -83,18 +89,18 @@ describe('test router', () => {
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
 
-    expect(wrapper.containsMatchingElement(<a href="/namespace/param1/foo/param2/2/">link</a>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/namespace?param1=foo&param2=2">link</a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
     wrapper.find('a').simulate('click');
 
-    expect(urlStore.getState()).toBe('/namespace/param1/foo/param2/2/');
+    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
 
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} />)).toBe(true);
 
-    urlStore.dispatch('/namespace/param1/bar/param2/3');
+    urlStore.dispatch('/namespace?param1=bar&param2=3');
 
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
     expect(wrapper.contains(<span>404</span>)).toBe(false);

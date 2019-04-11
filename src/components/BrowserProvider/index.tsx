@@ -2,6 +2,7 @@ import plusnew, { store, Component, Props } from 'plusnew';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
 import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';
+import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from 'contexts/activeRoutes';
 
 type props = {
   children: any;
@@ -10,6 +11,7 @@ type props = {
 export default class BrowserProvider extends Component<props> {
   static displayName = 'BrowserProvider';
   render(Props: Props<props>) {
+    const activeRoutes = activeRouteStoreFactory();
     const local = store(this.getPath(), (_state, action: string) => action);
 
     // @TODO removeEventListener
@@ -32,7 +34,13 @@ export default class BrowserProvider extends Component<props> {
       >
         <local.Observer>{localState =>
           <url.Provider state={localState} dispatch={changeUrl}>
-            <Props>{props => props.children}</Props>
+            <Props>{props =>
+              <activeRoutes.Observer>{activeRouteState =>
+                <activeRoutesContext.Provider state={activeRouteState} dispatch={activeRoutes.dispatch}>
+                  {props.children}
+                </activeRoutesContext.Provider>
+              }</activeRoutes.Observer>
+            }</Props>
           </url.Provider>
         }</local.Observer>
       </urlHandler.Provider>

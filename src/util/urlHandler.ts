@@ -2,6 +2,9 @@ import { SpecToType, RouteParamsSpec } from '../types/mapper';
 import formatPath from './formatPath';
 
 const PATH_DELIMITER = '/';
+const NAMESPACE_PARAMETER_DELIMITER = '?';
+const PARAMETER_DELIMITER = '&';
+const PARAMETER_PARAMETERVALUE_DELIMITER = '=';
 
 const serializer = {
   boolean(value: string) {
@@ -42,13 +45,21 @@ function convert(value: unknown) {
 }
 
 export function isNamespaceActive(namespace: string, url: string) {
-  return formatPath(url).indexOf(namespace) === 0;
+  const [path] = url.split(NAMESPACE_PARAMETER_DELIMITER);
+  return formatPath(path) === formatPath(namespace)
 }
 
 export function createUrl <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, params: any) {
-  return (Object.keys(spec)).reduce((previousValue, specKey) => {
-    return previousValue + specKey + PATH_DELIMITER + convert(params[specKey]) + PATH_DELIMITER;
-  }, namespace);
+  return (Object.keys(spec)).reduce((previousValue, specKey, index) => {
+    let result = previousValue;
+    if (index === 0) {
+      result += NAMESPACE_PARAMETER_DELIMITER;
+    } else {
+      result += PARAMETER_DELIMITER;
+    }
+    result += `${specKey}${PARAMETER_PARAMETERVALUE_DELIMITER}${convert(params[specKey])}`;
+    return result;
+  }, PATH_DELIMITER + namespace);
 }
 
 export function parseUrl <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, url: string) {
@@ -56,15 +67,17 @@ export function parseUrl <Spec extends RouteParamsSpec>(namespace: string, spec:
     throw new Error('Can not parse Url for wrong namespace');
   }
 
-  const paramUrlParts = formatPath(url).slice(namespace.length).split(PATH_DELIMITER);
+  const [, paramUrlPart] = url.split(NAMESPACE_PARAMETER_DELIMITER);
+
+  const paramUrlParts = paramUrlPart.split(PARAMETER_DELIMITER);
 
   const result: any = {};
-  for (let i = 0; i < paramUrlParts.length; i += 2) {
-    const paramKey = paramUrlParts[i];
+  for (let i = 0; i < paramUrlParts.length; i += 1) {
+    const [paramKey, paramValue] = paramUrlParts[i].split(PARAMETER_PARAMETERVALUE_DELIMITER);
     if (paramKey) {
       if (paramKey in spec) {
         try {
-          result[paramKey] = serializer[spec[paramKey]](paramUrlParts[i + 1]);
+          result[paramKey] = serializer[spec[paramKey]](paramValue);
         } catch (err) {
           throw new Error(`The url ${url} has incorrect parameter ${paramKey}`);
         }

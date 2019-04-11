@@ -5,10 +5,11 @@ import linkFactory from './linkFactory';
 export default function <
   spec extends RouteParamsSpec,
   componentProps
->(namespace: string, spec: spec, RouteComponet: RouteComponet<spec, componentProps>) {
+>(namespaces: string[], spec: spec, RouteComponet: RouteComponet<spec, componentProps>) {
+  const [mainNamespace] = namespaces;
   return {
-    Component: componentFactory(namespace, spec, RouteComponet),
-    Link: linkFactory(namespace, spec),
+    Component: componentFactory(namespaces, spec, RouteComponet),
+    Link: linkFactory(mainNamespace, spec),
     // Consumer: consumerFactory(namespace, spec),
   };
 }
