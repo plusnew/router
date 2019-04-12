@@ -39,15 +39,13 @@ export default class MainComponent extends Component<{}> {
         {/*This will create an a-tag with href /namespace/oneParameter/value/anotherParameter/2/ */}
         <route.Link parameter={{ oneParameter: 'value', anotherParameter: 2 }}>LinkText</route.Link>
 
-        <Try
-          {/* This catch will be executed, when the route parameters are invalid */}
-          catch={() => <span>An Error occured</span>}
-        >{() =>
-          {/* in case the current path is matching, the RouteComponent with the span will be displayed here*/}
-          <route.Component />
-        }</Try>
+        {/* in case the current path is matching, the RouteComponent with the span will be displayed here*/}
+        <route.Component />
 
         {/* in case the current path does not match any existing routes, the children of NotFound will be displayed */}
+        <router.NotFound>No matching route found</router.NotFound>
+
+        {/* in case the path matched the namespace of a route, but the parameters were not correct the children of Invalid will be display */}
         <router.NotFound>No matching route found</router.NotFound>
       </>
     );
