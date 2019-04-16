@@ -36,7 +36,7 @@ export default class MainComponent extends Component<{}> {
   render() {
     return (
       <>
-        {/*This will create an a-tag with href /namespace/oneParameter/value/anotherParameter/2/ */}
+        {/*This will create an a-tag with href /namespace?oneParameter=value&anotherParameter=2 */}
         <route.Link parameter={{ oneParameter: 'value', anotherParameter: 2 }}>LinkText</route.Link>
 
         {/* in case the current path is matching, the RouteComponent with the span will be displayed here*/}
