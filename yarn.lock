@@ -3895,10 +3895,10 @@ pkg-dir@^3.0.0:
   dependencies:
     find-up "^3.0.0"
 
-plusnew@^0.6.33:
-  version "0.6.37"
-  resolved "https://registry.yarnpkg.com/plusnew/-/plusnew-0.6.37.tgz#9f7410e5a2d44107fd9bb3670c9c40879be3797f"
-  integrity sha512-ngzVXUB0VlbqZgp1xVvbtXpDxNPAu7ibblA+zBjwjSc5mA2jfiurA5lxGYtd/S2dcY44/CxHpkTbb8hCbdIxVQ==
+plusnew@^0.6.42:
+  version "0.6.42"
+  resolved "https://registry.yarnpkg.com/plusnew/-/plusnew-0.6.42.tgz#efa7a4b109a49a8ded3f4d5a5ce3394ee26341fc"
+  integrity sha512-OR4y3EOHVnb2TEjefllb3UCALjXUWFMV9CiQn+3ggiXfHq63KaUkSHT+FuE+cexXBZLD5EpGcsCcgD0ClVb0sA==
 
 posix-character-classes@^0.1.0:
   version "0.1.1"

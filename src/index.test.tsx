@@ -49,7 +49,6 @@ describe('test router', () => {
 
     urlStore.dispatch('/namespace?invalid=parameter');
 
-    console.log(wrapper.debug())
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
   });
@@ -99,6 +98,6 @@ describe('test router', () => {
 
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
     expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<Component parameter={{ param1: 'bar', param2: 3 }}props={{ children: [] }} />)).toBe(true);
+    expect(wrapper.contains(<Component parameter={{ param1: 'bar', param2: 3 }} props={{ children: [] }} />)).toBe(true);
   });
 });
