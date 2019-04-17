@@ -21,16 +21,14 @@ describe('test router', () => {
     const urlStore = store('/');
 
     const wrapper = mount(
-      <>
-        <urlStore.Observer>{urlState =>
-          <StaticProvider url={urlState} onchange={urlStore.dispatch}>
-            <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
-            <route.Component />
-            <Invalid><span>error happened</span></Invalid>
-            <NotFound><span>404</span></NotFound>
-          </StaticProvider>
-        }</urlStore.Observer>
-      </>,
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
+          <route.Component />
+          <Invalid><span>error happened</span></Invalid>
+          <NotFound><span>404</span></NotFound>
+        </StaticProvider>
+      }</urlStore.Observer>,
     );
 
     const ComponentPartial = buildComponentPartial(Component);
@@ -67,16 +65,14 @@ describe('test router', () => {
     const urlStore = store('/');
 
     const wrapper = mount(
-      <>
-        <urlStore.Observer>{urlState =>
-          <StaticProvider url={urlState} onchange={urlStore.dispatch}>
-            <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
-            <route.Component />
-            <Invalid><span>error happened</span></Invalid>
-            <NotFound><span>404</span></NotFound>
-          </StaticProvider>
-        }</urlStore.Observer>
-      </>,
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
+          <route.Component />
+          <Invalid><span>error happened</span></Invalid>
+          <NotFound><span>404</span></NotFound>
+        </StaticProvider>
+      }</urlStore.Observer>,
     );
 
     const ComponentPartial = buildComponentPartial(Component);
@@ -100,4 +96,30 @@ describe('test router', () => {
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component parameter={{ param1: 'bar', param2: 3 }} props={{ children: [] }} />)).toBe(true);
   });
+
+  it('mounting and unmounting component switches notfound', () => {
+    const Component = component('Component', () => <div />);
+    const route = createRoute(['namespace'], {}, Component);
+    const local = store(false);
+
+    const wrapper = mount(
+      <StaticProvider url="namespace" onchange={() => null}>
+        <local.Observer>{localState => localState && <route.Component />}</local.Observer>
+        <NotFound><span>404</span></NotFound>
+      </StaticProvider>,
+    );
+
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<Component />)).toBe(false);
+
+    local.dispatch(true);
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.containsMatchingElement(<Component />)).toBe(true);
+
+    local.dispatch(false);
+
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<Component />)).toBe(false);
+});
 });

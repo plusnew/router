@@ -46,7 +46,7 @@ function convert(value: unknown) {
 
 export function isNamespaceActive(namespace: string, url: string) {
   const [path] = url.split(NAMESPACE_PARAMETER_DELIMITER);
-  return formatPath(path) === formatPath(namespace)
+  return formatPath(path) === formatPath(namespace);
 }
 
 export function createUrl <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, params: any) {
@@ -69,7 +69,7 @@ export function parseUrl <Spec extends RouteParamsSpec>(namespace: string, spec:
 
   const [, paramUrlPart] = url.split(NAMESPACE_PARAMETER_DELIMITER);
 
-  const paramUrlParts = paramUrlPart.split(PARAMETER_DELIMITER);
+  const paramUrlParts = paramUrlPart ? paramUrlPart.split(PARAMETER_DELIMITER) : [];
 
   const result: any = {};
   for (let i = 0; i < paramUrlParts.length; i += 1) {

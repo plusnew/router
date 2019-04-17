@@ -1,23 +1,11 @@
-import plusnew, { Component, Props, ComponentContainer, Instance } from 'plusnew';
-import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
+import activeRoutes, { route } from 'contexts/activeRoutes';
+import plusnew, { Component, ComponentContainer, Props } from 'plusnew';
+import ComponentInstance from 'plusnew/dist/src/instances/types/Component/Instance';
 import url from '../../../contexts/url';
 import urlHandler from '../../../contexts/urlHandler';
-import activeRoutes, { route } from 'contexts/activeRoutes';
-import ComponentInstance from 'plusnew/dist/src/instances/types/Component/Instance';
+import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
 
 export type RouteComponet<Spec extends RouteParamsSpec, props> = ComponentContainer<{ props: props, parameter: SpecToType<Spec> }>;
-
-function search<props>(target: Instance | Instance, searchInstance: ComponentContainer<props>): Instance {
-  if (target.type === searchInstance) {
-    return target;
-  }
-
-  if (target.parentInstance) {
-    return search(target.parentInstance, searchInstance);
-  }
-
-  throw new Error('Could not find Provider');
-}
 
 export default function <
   params extends RouteParamsSpec,
@@ -27,7 +15,7 @@ export default function <
 
     render(Props: Props<componentProps>, componentInstance: ComponentInstance<any>) {
       componentInstance.registerLifecycleHook('componentDidMount', () => {
-        const activeRouteProvider = search(componentInstance, activeRoutes.Provider);
+        const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
         const props = activeRouteProvider.props as {
           state: route[],
@@ -44,7 +32,7 @@ export default function <
       });
 
       componentInstance.registerLifecycleHook('componentWillUnmount', () => {
-        const activeRouteProvider = search(componentInstance, activeRoutes.Provider);
+        const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
         const props = activeRouteProvider.props as {
           state: route[],
