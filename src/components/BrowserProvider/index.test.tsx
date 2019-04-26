@@ -1,6 +1,6 @@
 import { configure } from 'enzyme';
 import enzymeAdapterPlusnew, { mount } from 'enzyme-adapter-plusnew';
-import plusnew from 'plusnew';
+import plusnew, { store } from 'plusnew';
 import BrowserProvider from './index';
 import url from 'contexts/url';
 
@@ -64,5 +64,19 @@ describe('test dom driver', () => {
     getPathSpy.and.callThrough();
 
     expect((BrowserProvider.prototype as any).getPath()).toBe(location.pathname);
+  });
+
+  it('Browserprovider does not throw exceptions when popstate gets triggered after unmount', () => {
+    const local = store(true);
+
+    mount(
+      <local.Observer>{localState =>
+       localState && <BrowserProvider><div /></BrowserProvider>
+      }</local.Observer>,
+    );
+
+    local.dispatch(false);
+
+    window.dispatchEvent(new Event('popstate'));
   });
 });
