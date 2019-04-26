@@ -15,7 +15,8 @@ function hasModifier(evt: MouseEvent) {
 export default function <
   spec extends RouteParamsSpec,
 >(namespace: string, spec: spec) {
-  return class RouterComponent extends Component<props<spec>>{
+  return class RouterLink extends Component<props<spec>>{
+    static displayName = 'RouteLink';
     render(Props: Props<props<spec>>) {
       return (
         <urlHandler.Consumer>{urlHandlerState =>

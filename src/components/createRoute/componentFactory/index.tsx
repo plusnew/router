@@ -12,7 +12,7 @@ export default function <
   componentProps
 >(namespaces: string[], params: params, RouteComponent: RouteComponet<params, componentProps>) {
   return class RouterComponent extends Component<componentProps>{
-
+    static displayName = 'RouterComponent';
     render(Props: Props<componentProps>, componentInstance: ComponentInstance<any>) {
       componentInstance.registerLifecycleHook('componentDidMount', () => {
         const activeRouteProvider = activeRoutes.findProvider(componentInstance);

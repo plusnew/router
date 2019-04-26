@@ -13,7 +13,8 @@ type props<params extends RouteParamsSpec> = {
 export default function <
   spec extends RouteParamsSpec,
   >(namespaces: string[], spec: spec) {
-  return class RouterComponent extends Component<props<spec>>{
+  return class RouteConsumer extends Component<props<spec>>{
+    static displayName = 'RouteConsumer';
     render(Props: Props<props<spec>>) {
       return (
         <urlHandler.Consumer>{urlHandlerState =>
