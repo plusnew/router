@@ -121,5 +121,5 @@ describe('test router', () => {
 
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.containsMatchingElement(<Component />)).toBe(false);
-});
+  });
 });

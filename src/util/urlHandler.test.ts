@@ -16,7 +16,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl('namespace', spec, '/namespace?foo=bar')
+        parseUrl('namespace', spec, '/namespace?foo=bar'),
       ).toThrow(new Error('The url /namespace?foo=bar is missing the parameter bar'));
     });
 

@@ -1,6 +1,7 @@
 import { RouteParamsSpec } from '../../types/mapper';
 import componentFactory, { RouteComponet } from './componentFactory';
 import linkFactory from './linkFactory';
+import consumerFactory from './consumerFactory';
 
 export default function <
   spec extends RouteParamsSpec,
@@ -10,6 +11,6 @@ export default function <
   return {
     Component: componentFactory(namespaces, spec, RouteComponet),
     Link: linkFactory(mainNamespace, spec),
-    // Consumer: consumerFactory(namespace, spec),
+    Consumer: consumerFactory(namespaces, spec),
   };
 }
