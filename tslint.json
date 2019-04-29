@@ -4,6 +4,7 @@
     "import-name": false,
     "align": false,
     "variable-name": false,
+    "no-boolean-literal-compare": false,
     "max-line-length": [
       true,
       180
