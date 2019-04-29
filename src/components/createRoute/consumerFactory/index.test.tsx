@@ -6,7 +6,7 @@ import { createRoute, StaticProvider } from '../../../index';
 configure({ adapter: new enzymeAdapterPlusnew() });
 
 describe('test consumer', () => {
-  it('invalid', () => {
+  it('valid', () => {
     const Component = component(
       'Component',
       (_Props: Props<{ parameter: { foo: string }, props: {} }>) => <div />,

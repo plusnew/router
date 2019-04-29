@@ -67,6 +67,7 @@ describe('test dom driver', () => {
   });
 
   it('Browserprovider does not throw exceptions when popstate gets triggered after unmount', () => {
+    const removeEventListener = spyOn(window, 'removeEventListener');
     const local = store(true);
 
     mount(
@@ -75,8 +76,14 @@ describe('test dom driver', () => {
       }</local.Observer>,
     );
 
+    expect(removeEventListener.calls.count()).toBe(0);
+
     local.dispatch(false);
 
+    expect(removeEventListener.calls.count()).toBe(1);
+    expect(removeEventListener).toHaveBeenCalledWith('popstate', jasmine.any(Function));
+
     window.dispatchEvent(new Event('popstate'));
+
   });
 });
