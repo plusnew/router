@@ -55,6 +55,6 @@ export default class BrowserProvider extends Component<props> {
   }
 
   private getPath() {
-    return location.pathname;
+    return location.pathname + location.search;
   }
 }
