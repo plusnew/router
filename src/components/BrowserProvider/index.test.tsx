@@ -63,7 +63,7 @@ describe('test dom driver', () => {
   it('getPath should return pathname correctly', () => {
     getPathSpy.and.callThrough();
 
-    expect((BrowserProvider.prototype as any).getPath()).toBe(location.pathname);
+    expect((BrowserProvider.prototype as any).getPath()).toBe(location.pathname + location.search);
   });
 
   it('Browserprovider does not throw exceptions when popstate gets triggered after unmount', () => {
