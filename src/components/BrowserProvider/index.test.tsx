@@ -1,6 +1,6 @@
 import url from 'contexts/url';
 import { configure } from 'enzyme';
-import enzymeAdapterPlusnew, { mount } from 'enzyme-adapter-plusnew';
+import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import plusnew, { store } from 'plusnew';
 import BrowserProvider from './index';
 

@@ -1,5 +1,5 @@
 import { configure } from 'enzyme';
-import enzymeAdapterPlusnew, { mount } from 'enzyme-adapter-plusnew';
+import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import plusnew, { component, Props } from 'plusnew';
 import { createRoute, StaticProvider } from '../../../index';
 

@@ -1,4 +1,4 @@
-import enzymeAdapterPlusnew, { mount } from 'enzyme-adapter-plusnew';
+import enzymeAdapterPlusnew, { mount, getComponentPartial } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
 import plusnew, { component, Props, store } from 'plusnew';
 import { createRoute, StaticProvider, NotFound, Invalid } from './index';
@@ -98,7 +98,9 @@ describe('test router', () => {
   });
 
   it('mounting and unmounting component switches notfound', () => {
-    const Component = component('Component', () => <div />);
+    const Component = component('Component', (_Props: Props<{props: {}, parameter: {}}>) => <div />);
+    const ComponentPartial = getComponentPartial(Component);
+
     const route = createRoute(['namespace'], {}, Component);
     const local = store(false);
 
@@ -110,16 +112,16 @@ describe('test router', () => {
     );
 
     expect(wrapper.contains(<span>404</span>)).toBe(true);
-    expect(wrapper.containsMatchingElement(<Component />)).toBe(false);
+    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
     local.dispatch(true);
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.containsMatchingElement(<Component />)).toBe(true);
+    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(true);
 
     local.dispatch(false);
 
     expect(wrapper.contains(<span>404</span>)).toBe(true);
-    expect(wrapper.containsMatchingElement(<Component />)).toBe(false);
+    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
   });
 });
