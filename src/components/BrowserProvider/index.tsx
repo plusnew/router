@@ -3,7 +3,7 @@ import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
 import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';
 import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from 'contexts/activeRoutes';
-import ComponentInstance from 'plusnew/dist/src/instances/types/Component/Instance';
+import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
 
 type props = {
   children: any;

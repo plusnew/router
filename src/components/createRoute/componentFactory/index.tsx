@@ -1,6 +1,6 @@
 import activeRoutes, { route } from 'contexts/activeRoutes';
 import plusnew, { Component, ComponentContainer, Props } from '@plusnew/core';
-import ComponentInstance from 'plusnew/dist/src/instances/types/Component/Instance';
+import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
 import url from '../../../contexts/url';
 import urlHandler from '../../../contexts/urlHandler';
 import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
