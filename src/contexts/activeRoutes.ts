@@ -1,4 +1,4 @@
-import { context, store } from 'plusnew';
+import { context, store } from '@plusnew/core';
 import { RouteParamsSpec } from 'types/mapper';
 
 export type route = {

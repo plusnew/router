@@ -3,7 +3,7 @@
 This library is for typesafe is made for routing with plusnew
 
 ```ts
-import plusnew, { Component } from 'plusnew';
+import plusnew, { Component } from '@plusnew/core';
 import { createRoute } from '@plusnew/router';
 
 const route = createRoute(

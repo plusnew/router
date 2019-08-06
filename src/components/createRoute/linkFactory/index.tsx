@@ -1,4 +1,4 @@
-import plusnew, { Component, Props } from 'plusnew';
+import plusnew, { Component, Props } from '@plusnew/core';
 import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
 import { RouteParamsSpec, SpecToType } from '../../../types/mapper';

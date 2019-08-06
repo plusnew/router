@@ -1,6 +1,6 @@
 import enzymeAdapterPlusnew, { mount, getComponentPartial } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
-import plusnew, { component, Props, store } from 'plusnew';
+import plusnew, { component, Props, store } from '@plusnew/core';
 import { createRoute, StaticProvider, NotFound, Invalid } from './index';
 import { buildComponentPartial } from './test';
 

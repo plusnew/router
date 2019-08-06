@@ -1,4 +1,4 @@
-import { context } from 'plusnew';
+import { context } from '@plusnew/core';
 import { SpecToType, RouteParamsSpec } from '../types/mapper';
 
 type linkHandler = {

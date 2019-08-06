@@ -1,4 +1,4 @@
-import plusnew, { store, Component, Props } from 'plusnew';
+import plusnew, { store, Component, Props } from '@plusnew/core';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
 import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';

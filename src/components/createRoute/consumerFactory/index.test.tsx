@@ -1,6 +1,6 @@
 import { configure } from 'enzyme';
 import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
-import plusnew, { component, Props } from 'plusnew';
+import plusnew, { component, Props } from '@plusnew/core';
 import { createRoute, StaticProvider } from '../../../index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
