@@ -17,6 +17,7 @@
   "author": "Carlo Jeske",
   "dependencies": {},
   "devDependencies": {
+    "@plusnew/core": "^0.6.50",
     "@plusnew/enzyme-adapter": "^0.6.53",
     "@types/jasmine": "^3.3.16",
     "awesome-typescript-loader": "^5.2.0",
@@ -32,7 +33,6 @@
     "karma-jasmine": "^2.0.1",
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^4.0.2",
-    "plusnew": "^0.6.50",
     "ts-loader": "^6.0.4",
     "tslint": "^5.18.0",
     "tslint-config-airbnb": "^5.10.0",

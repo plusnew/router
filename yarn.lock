@@ -109,6 +109,11 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
+"@plusnew/core@^0.6.50":
+  version "0.6.50"
+  resolved "https://registry.yarnpkg.com/@plusnew/core/-/core-0.6.50.tgz#b2614780826e084ff068236f94da9df6fc584f24"
+  integrity sha512-Ehl4c/w/ruycm2xpnOtWq1PTMKTLIB4R7mEbEyrcYZB/WIlzv1P8ejesDDozS0eMi7cX+vLmcmMeenkmOr+7Mw==
+
 "@plusnew/enzyme-adapter@^0.6.53":
   version "0.6.53"
   resolved "https://registry.yarnpkg.com/@plusnew/enzyme-adapter/-/enzyme-adapter-0.6.53.tgz#a6d088a25c107efa4329a91b46f4e77fb2b7c3b3"
@@ -4075,11 +4080,6 @@ pkg-dir@^3.0.0:
   integrity sha512-/E57AYkoeQ25qkxMj5PBOVgF8Kiu/h7cYS30Z5+R7WaiCCBfLq58ZI/dSeaEKb9WVJV5n/03QwrN3IeWIFllvw==
   dependencies:
     find-up "^3.0.0"
-
-plusnew@^0.6.50:
-  version "0.6.50"
-  resolved "https://registry.yarnpkg.com/plusnew/-/plusnew-0.6.50.tgz#61e83aa089878f66099214ffbc200f8e26e1890e"
-  integrity sha512-ITT2Y4/XcMxLrFvAZVUJhYCnb7QQ6XW7/bAv4Q0wESTpVY4ySNLWflxJLkfW9Baj4HwF98heh/5jFP1uyQmhfw==
 
 posix-character-classes@^0.1.0:
   version "0.1.1"
