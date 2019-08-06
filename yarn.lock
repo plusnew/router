@@ -114,10 +114,10 @@
   resolved "https://registry.yarnpkg.com/@plusnew/core/-/core-0.6.50.tgz#b2614780826e084ff068236f94da9df6fc584f24"
   integrity sha512-Ehl4c/w/ruycm2xpnOtWq1PTMKTLIB4R7mEbEyrcYZB/WIlzv1P8ejesDDozS0eMi7cX+vLmcmMeenkmOr+7Mw==
 
-"@plusnew/enzyme-adapter@^0.6.53":
-  version "0.6.53"
-  resolved "https://registry.yarnpkg.com/@plusnew/enzyme-adapter/-/enzyme-adapter-0.6.53.tgz#a6d088a25c107efa4329a91b46f4e77fb2b7c3b3"
-  integrity sha512-Tze1YCZkUBay/KtRugyl+tw0ZVlJWswvuER7+iM4VBPHcj5Zs0a/CnZb6nRRkdvnNFYp+qEfwX57bILjWYSoMg==
+"@plusnew/enzyme-adapter@^0.6.54":
+  version "0.6.54"
+  resolved "https://registry.yarnpkg.com/@plusnew/enzyme-adapter/-/enzyme-adapter-0.6.54.tgz#3a76f5ee79e5bd6db7ce0b4a72cf1c264ccbc2b7"
+  integrity sha512-J6SFRp7HvOLMgGqXJtV5DBL0IVf5Tpw7AlDQMNByVGizo212N4Ox7IqMSZf597a6mUmWIKZZfwjjCDopd+1NQQ==
 
 "@types/anymatch@*":
   version "1.3.1"
