@@ -2,7 +2,6 @@ import enzymeAdapterPlusnew, { mount, getComponentPartial } from '@plusnew/enzym
 import { configure } from 'enzyme';
 import plusnew, { component, Props, store } from '@plusnew/core';
 import { createRoute, StaticProvider, NotFound, Invalid } from './index';
-import { buildComponentPartial } from './test';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
@@ -31,7 +30,7 @@ describe('test router', () => {
       }</urlStore.Observer>,
     );
 
-    const ComponentPartial = buildComponentPartial(Component);
+    const ComponentPartial = getComponentPartial(Component);
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
 
@@ -75,7 +74,7 @@ describe('test router', () => {
       }</urlStore.Observer>,
     );
 
-    const ComponentPartial = buildComponentPartial(Component);
+    const ComponentPartial = getComponentPartial(Component);
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
 
