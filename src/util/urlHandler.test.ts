@@ -1,5 +1,6 @@
 import { parseUrl, createUrl } from './urlHandler';
-import { RouteParamsSpec } from 'types/mapper';
+import { RouteParamsSpec } from '../types/mapper';
+import { parameters } from '../index';
 
 describe('urlHandler', () => {
   it('namespace missmatch', () => {
@@ -11,8 +12,8 @@ describe('urlHandler', () => {
   describe('missing parameter', () => {
     it('parseUrl', () => {
       const spec: RouteParamsSpec = {
-        foo: 'string',
-        bar: 'string',
+        foo: [parameters.string],
+        bar: [parameters.string],
       };
 
       expect(() =>
@@ -22,8 +23,8 @@ describe('urlHandler', () => {
 
     it('createUrl', () => {
       const spec: RouteParamsSpec = {
-        foo: 'string',
-        bar: 'string',
+        foo: [parameters.string],
+        bar: [parameters.string],
       };
 
       expect(() =>
@@ -35,7 +36,7 @@ describe('urlHandler', () => {
   describe('string', () => {
     it('basic', () => {
       const spec: RouteParamsSpec = {
-        foo: 'string',
+        foo: [parameters.string],
       };
 
       const parameter = {
@@ -49,7 +50,7 @@ describe('urlHandler', () => {
 
     it('empty String', () => {
       const spec: RouteParamsSpec = {
-        foo: 'string',
+        foo: [parameters.string],
       };
 
       const parameter = {
@@ -63,7 +64,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: 'string',
+        foo: [parameters.string],
       };
 
       expect(() =>
@@ -73,8 +74,8 @@ describe('urlHandler', () => {
 
     it('basic with multiple', () => {
       const spec: RouteParamsSpec = {
-        foo: 'string',
-        bar: 'string',
+        foo: [parameters.string],
+        bar: [parameters.string],
       };
 
       const parameter = {
@@ -89,8 +90,8 @@ describe('urlHandler', () => {
 
     it('weird characters', () => {
       const spec: RouteParamsSpec = {
-        foo: 'string',
-        bar: 'string',
+        foo: [parameters.string],
+        bar: [parameters.string],
       };
 
       const parameter = {
@@ -107,7 +108,7 @@ describe('urlHandler', () => {
   describe('number', () => {
     it('basic', () => {
       const spec: RouteParamsSpec = {
-        foo: 'number',
+        foo: [parameters.number],
       };
 
       const parameter = {
@@ -121,7 +122,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: 'number',
+        foo: [parameters.number],
       };
 
       expect(() =>
@@ -131,7 +132,7 @@ describe('urlHandler', () => {
 
     it('parseUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: 'number',
+        foo: [parameters.number],
       };
 
       expect(() =>
@@ -143,7 +144,7 @@ describe('urlHandler', () => {
   describe('date', () => {
     it('basic', () => {
       const spec: RouteParamsSpec = {
-        foo: 'date',
+        foo: [parameters.date],
       };
 
       const parameter = {
@@ -157,7 +158,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: 'date',
+        foo: [parameters.date],
       };
 
       expect(() =>
@@ -167,7 +168,7 @@ describe('urlHandler', () => {
 
     it('parseUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: 'date',
+        foo: [parameters.date],
       };
 
       expect(() =>
@@ -179,7 +180,7 @@ describe('urlHandler', () => {
   describe('boolean', () => {
     it('true', () => {
       const spec: RouteParamsSpec = {
-        foo: 'boolean',
+        foo: [parameters.boolean],
       };
 
       const parameter = {
@@ -193,7 +194,7 @@ describe('urlHandler', () => {
 
     it('false', () => {
       const spec: RouteParamsSpec = {
-        foo: 'boolean',
+        foo: [parameters.boolean],
       };
 
       const parameter = {
@@ -207,7 +208,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: 'boolean',
+        foo: [parameters.boolean],
       };
 
       expect(() =>
@@ -217,7 +218,7 @@ describe('urlHandler', () => {
 
     it('parseUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: 'boolean',
+        foo: [parameters.boolean],
       };
 
       expect(() =>
