@@ -17,9 +17,9 @@
   "author": "Carlo Jeske",
   "dependencies": {},
   "devDependencies": {
-    "@plusnew/core": "^0.6.50",
+    "@plusnew/core": "^0.6.53",
     "@plusnew/enzyme-adapter": "^0.6.54",
-    "@types/jasmine": "^3.3.16",
+    "@types/jasmine": "^3.4.0",
     "awesome-typescript-loader": "^5.2.0",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^5.0.4",

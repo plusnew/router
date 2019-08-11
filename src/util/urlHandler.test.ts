@@ -1,6 +1,5 @@
-import { parseUrl, createUrl } from './urlHandler';
-import { RouteParamsSpec } from '../types/mapper';
 import { serializer } from '../index';
+import { createUrl, parseUrl } from './urlHandler';
 
 describe('urlHandler', () => {
   it('namespace missmatch', () => {
@@ -11,7 +10,7 @@ describe('urlHandler', () => {
 
   describe('missing parameter', () => {
     it('parseUrl', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.string()],
         bar: [serializer.string()],
       };
@@ -22,20 +21,20 @@ describe('urlHandler', () => {
     });
 
     it('createUrl', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.string()],
         bar: [serializer.string()],
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' }),
+        createUrl('namespace', spec, { foo: 'fooValue' } as any),
       ).toThrow(new Error('Could not create url for namespace, the property bar was missing'));
     });
   });
 
   describe('string', () => {
     it('basic', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.string()],
       };
 
@@ -49,7 +48,7 @@ describe('urlHandler', () => {
     });
 
     it('empty String', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.string()],
       };
 
@@ -63,17 +62,17 @@ describe('urlHandler', () => {
     });
 
     it('createUrl with invalid type', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.string()],
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 42 }),
+        createUrl('namespace', spec, { foo: 42 as any }),
       ).toThrow(new Error('Could not create url for property foo with value 42, it is not of the correct type string'));
     });
 
     it('basic with multiple', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.string()],
         bar: [serializer.string()],
       };
@@ -89,7 +88,7 @@ describe('urlHandler', () => {
     });
 
     it('weird characters', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.string()],
         bar: [serializer.string()],
       };
@@ -107,7 +106,7 @@ describe('urlHandler', () => {
 
   describe('number', () => {
     it('basic', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.number()],
       };
 
@@ -121,17 +120,17 @@ describe('urlHandler', () => {
     });
 
     it('createUrl with invalid type', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.number()],
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' }),
+        createUrl('namespace', spec, { foo: 'fooValue' as any }),
       ).toThrow(new Error('Could not create url for property foo with value fooValue, it is not of the correct type number'));
     });
 
     it('parseUrl with invalid type', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.number()],
       };
 
@@ -143,7 +142,7 @@ describe('urlHandler', () => {
 
   describe('date', () => {
     it('basic', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.date()],
       };
 
@@ -157,17 +156,17 @@ describe('urlHandler', () => {
     });
 
     it('createUrl with invalid type', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.date()],
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' }),
+        createUrl('namespace', spec, { foo: 'fooValue' as any }),
       ).toThrow(new Error('Could not create url for property foo with value fooValue, it is not of the correct type date'));
     });
 
     it('parseUrl with invalid type', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.date()],
       };
 
@@ -179,7 +178,7 @@ describe('urlHandler', () => {
 
   describe('boolean', () => {
     it('true', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.boolean()],
       };
 
@@ -193,7 +192,7 @@ describe('urlHandler', () => {
     });
 
     it('false', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.boolean()],
       };
 
@@ -207,17 +206,17 @@ describe('urlHandler', () => {
     });
 
     it('createUrl with invalid type', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.boolean()],
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' }),
+        createUrl('namespace', spec, { foo: 'fooValue' as any }),
       ).toThrow(new Error('Could not create url for property foo with value fooValue, it is not of the correct type boolean'));
     });
 
     it('parseUrl with invalid type', () => {
-      const spec: RouteParamsSpec = {
+      const spec = {
         foo: [serializer.boolean()],
       };
 

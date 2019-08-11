@@ -109,10 +109,10 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@plusnew/core@^0.6.50":
-  version "0.6.50"
-  resolved "https://registry.yarnpkg.com/@plusnew/core/-/core-0.6.50.tgz#b2614780826e084ff068236f94da9df6fc584f24"
-  integrity sha512-Ehl4c/w/ruycm2xpnOtWq1PTMKTLIB4R7mEbEyrcYZB/WIlzv1P8ejesDDozS0eMi7cX+vLmcmMeenkmOr+7Mw==
+"@plusnew/core@^0.6.53":
+  version "0.6.53"
+  resolved "https://registry.yarnpkg.com/@plusnew/core/-/core-0.6.53.tgz#7efa2ce918e809f057532cabcff6c44e98711d53"
+  integrity sha512-vcqcY5tSwblsGNyj6KQhzZzcJOolbQF0bI70lugApgzVcXlf4GPHsM8zahUcqtwQXp+/SZPhGJznxCW8Kz6A9A==
 
 "@plusnew/enzyme-adapter@^0.6.54":
   version "0.6.54"
@@ -138,10 +138,10 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/jasmine@^3.3.16":
-  version "3.3.16"
-  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.3.16.tgz#7c84074f5d7f84da9a14f816ccfb9aeb4da13f27"
-  integrity sha512-Nveep4zKGby8uIvG2AEUyYOwZS8uVeHK9TgbuWYSawUDDdIgfhCKz28QzamTo//Jk7Ztt9PO3f+vzlB6a4GV1Q==
+"@types/jasmine@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.4.0.tgz#018c56db42400c092aae47de21f710b7f04e4b06"
+  integrity sha512-6pUnBg6DuSB55xnxJ5+gW9JOkFrPsXkYAuqqEE8oyrpgDiPQ+TZ+1Zt4S+CHcRJcxyNYXeIXG4vHSzdF6y9Uvw==
 
 "@types/minimatch@*":
   version "3.0.3"
