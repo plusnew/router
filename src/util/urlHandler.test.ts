@@ -99,8 +99,6 @@ describe('urlHandler', () => {
         bar: 'barValue',
       };
 
-      debugger;
-
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
       ).toEqual(parameter);
