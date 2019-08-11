@@ -1,6 +1,6 @@
 import { parseUrl, createUrl } from './urlHandler';
 import { RouteParamsSpec } from '../types/mapper';
-import { parameters } from '../index';
+import { serializer } from '../index';
 
 describe('urlHandler', () => {
   it('namespace missmatch', () => {
@@ -12,8 +12,8 @@ describe('urlHandler', () => {
   describe('missing parameter', () => {
     it('parseUrl', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.string],
-        bar: [parameters.string],
+        foo: [serializer.string()],
+        bar: [serializer.string()],
       };
 
       expect(() =>
@@ -23,8 +23,8 @@ describe('urlHandler', () => {
 
     it('createUrl', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.string],
-        bar: [parameters.string],
+        foo: [serializer.string()],
+        bar: [serializer.string()],
       };
 
       expect(() =>
@@ -36,7 +36,7 @@ describe('urlHandler', () => {
   describe('string', () => {
     it('basic', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.string],
+        foo: [serializer.string()],
       };
 
       const parameter = {
@@ -50,7 +50,7 @@ describe('urlHandler', () => {
 
     it('empty String', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.string],
+        foo: [serializer.string()],
       };
 
       const parameter = {
@@ -64,7 +64,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.string],
+        foo: [serializer.string()],
       };
 
       expect(() =>
@@ -74,8 +74,8 @@ describe('urlHandler', () => {
 
     it('basic with multiple', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.string],
-        bar: [parameters.string],
+        foo: [serializer.string()],
+        bar: [serializer.string()],
       };
 
       const parameter = {
@@ -90,14 +90,16 @@ describe('urlHandler', () => {
 
     it('weird characters', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.string],
-        bar: [parameters.string],
+        foo: [serializer.string()],
+        bar: [serializer.string()],
       };
 
       const parameter = {
         foo: 'foo&Value',
         bar: 'barValue',
       };
+
+      debugger;
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
@@ -108,7 +110,7 @@ describe('urlHandler', () => {
   describe('number', () => {
     it('basic', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.number],
+        foo: [serializer.number()],
       };
 
       const parameter = {
@@ -122,7 +124,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.number],
+        foo: [serializer.number()],
       };
 
       expect(() =>
@@ -132,7 +134,7 @@ describe('urlHandler', () => {
 
     it('parseUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.number],
+        foo: [serializer.number()],
       };
 
       expect(() =>
@@ -144,7 +146,7 @@ describe('urlHandler', () => {
   describe('date', () => {
     it('basic', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.date],
+        foo: [serializer.date()],
       };
 
       const parameter = {
@@ -158,7 +160,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.date],
+        foo: [serializer.date()],
       };
 
       expect(() =>
@@ -168,7 +170,7 @@ describe('urlHandler', () => {
 
     it('parseUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.date],
+        foo: [serializer.date()],
       };
 
       expect(() =>
@@ -180,7 +182,7 @@ describe('urlHandler', () => {
   describe('boolean', () => {
     it('true', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.boolean],
+        foo: [serializer.boolean()],
       };
 
       const parameter = {
@@ -194,7 +196,7 @@ describe('urlHandler', () => {
 
     it('false', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.boolean],
+        foo: [serializer.boolean()],
       };
 
       const parameter = {
@@ -208,7 +210,7 @@ describe('urlHandler', () => {
 
     it('createUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.boolean],
+        foo: [serializer.boolean()],
       };
 
       expect(() =>
@@ -218,7 +220,7 @@ describe('urlHandler', () => {
 
     it('parseUrl with invalid type', () => {
       const spec: RouteParamsSpec = {
-        foo: [parameters.boolean],
+        foo: [serializer.boolean()],
       };
 
       expect(() =>

@@ -4,7 +4,7 @@ This library is for typesafe is made for routing with plusnew
 
 ```ts
 import plusnew, { Component } from '@plusnew/core';
-import { createRoute } from '@plusnew/router';
+import { createRoute, serializer } from '@plusnew/router';
 
 const route = createRoute(
   // With the paths the route will be responsible for
@@ -13,8 +13,8 @@ const route = createRoute(
   // This parameter describes what parameters are needed for the route
   // and what types they have, allowed are: string, number, boolean, date
   {
-    oneParameter: 'string',
-    anotherParameter: 'number',
+    oneParameter: serializer.string(),
+    anotherParameter: serializer.string(),
   },
   // This Component will be shown, when the path is matching the namespace and the parameters
   RouteComponent

@@ -1,7 +1,7 @@
 import { configure } from 'enzyme';
 import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import plusnew, { component, Props } from '@plusnew/core';
-import { createRoute, StaticProvider, parameters } from '../../../index';
+import { createRoute, StaticProvider, serializer } from '../../../index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
@@ -13,7 +13,7 @@ describe('test consumer', () => {
     );
 
     const route = createRoute(['namespace'], {
-      foo: [parameters.string],
+      foo: [serializer.string()],
     }, Component);
 
     const wrapper = mount(
@@ -35,7 +35,7 @@ describe('test consumer', () => {
     );
 
     const route = createRoute(['namespace'], {
-      foo: [parameters.string],
+      foo: [serializer.string()],
     }, Component);
 
     const wrapper = mount(
@@ -57,7 +57,7 @@ describe('test consumer', () => {
     );
 
     const route = createRoute(['namespace'], {
-      foo: [parameters.string],
+      foo: [serializer.string()],
     }, Component);
 
     const wrapper = mount(

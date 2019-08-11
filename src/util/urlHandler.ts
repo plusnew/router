@@ -1,4 +1,4 @@
-import { SpecToType, RouteParamsSpec } from '../types/mapper';
+import { RouteParamsSpec, SpecToType } from '../types/mapper';
 import formatPath from './formatPath';
 
 const PATH_DELIMITER = '/';
@@ -6,71 +6,13 @@ const NAMESPACE_PARAMETER_DELIMITER = '?';
 const PARAMETER_DELIMITER = '&';
 const PARAMETER_PARAMETERVALUE_DELIMITER = '=';
 
-const serializer = {
-  boolean(value: unknown) {
-    if (typeof value === 'boolean') {
-      return value.toString();
-    }
-    throw new Error('Invalid type');
-  },
-  number(value: unknown) {
-    if (typeof value === 'number') {
-      return value.toString();
-    }
-    throw new Error('Invalid type');
-  },
-  date(value: unknown) {
-    if (value instanceof Date) {
-      return this.string(value.toISOString());
-    }
-    throw new Error('Invalid type');
-  },
-  string(value: unknown) {
-    if (typeof value === 'string') {
-      return encodeURIComponent(value);
-    }
-    throw new Error('Invalid type');
-  },
-};
-
-const deserializer = {
-  boolean(value: string) {
-    if (value === 'true') {
-      return true;
-    }
-    if (value === 'false') {
-      return false;
-    }
-    throw new Error(`${value} is not a valid boolean`);
-  },
-  number(value: string) {
-    const result = Number(value);
-
-    // @TODO evaluate if a stricter number parser makes sense /(-)?([0-9]+)(.[0-9]+)?/
-    if (isNaN(result) === true) {
-      throw new Error(`${value} is not a valid number`);
-    }
-    return result;
-  },
-  date(value: string) {
-    const date = new Date(this.string(value));
-    if (isNaN(date.getTime()) === true) {
-      throw new Error(`${value} is not a valid date`);
-    }
-    return date;
-  },
-  string(value: string) {
-    return decodeURIComponent(value);
-  },
-};
-
 export function isNamespaceActive(namespace: string, url: string) {
   const [path] = url.split(NAMESPACE_PARAMETER_DELIMITER);
   return formatPath(path) === formatPath(namespace);
 }
 
 export function createUrl <Spec extends RouteParamsSpec>(namespace: string, spec: Spec, params: SpecToType<Spec>) {
-  return (Object.entries(spec)).reduce((previousValue, [propertyName, specType], index) => {
+  return (Object.entries(spec)).reduce((previousValue, [paramKey, specType], index) => {
     let result = previousValue;
     if (index === 0) {
       result += NAMESPACE_PARAMETER_DELIMITER;
@@ -78,17 +20,18 @@ export function createUrl <Spec extends RouteParamsSpec>(namespace: string, spec
       result += PARAMETER_DELIMITER;
     }
 
-    if (propertyName in params) {
-      try {
-        result += `${propertyName}${PARAMETER_PARAMETERVALUE_DELIMITER}${serializer[specType](params[propertyName])}`;
+    if (paramKey in params) {
+      const [serializer] = spec[paramKey];
+      const serializerResult = serializer.toUrl(params[paramKey]);
+      if (serializerResult.valid === true) {
+        result += `${paramKey}${PARAMETER_PARAMETERVALUE_DELIMITER}${serializerResult.value}`;
         return result;
-      } catch (error) {
-        throw new Error(
-          `Could not create url for property ${propertyName} with value ${params[propertyName]}, it is not of the correct type ${specType}`,
-        );
       }
+      throw new Error(
+        `Could not create url for property ${paramKey} with value ${params[paramKey]}, it is not of the correct type ${serializer.displayName}`,
+      );
     }
-    throw new Error(`Could not create url for ${namespace}, the property ${propertyName} was missing`);
+    throw new Error(`Could not create url for ${namespace}, the property ${paramKey} was missing`);
   }, PATH_DELIMITER + namespace);
 }
 
@@ -106,10 +49,12 @@ export function parseUrl <Spec extends RouteParamsSpec>(namespace: string, spec:
     const [paramKey, paramValue] = paramUrlParts[i].split(PARAMETER_PARAMETERVALUE_DELIMITER);
     if (paramKey) {
       if (paramKey in spec) {
-        try {
-          result[paramKey] = deserializer[spec[paramKey]](paramValue);
-        } catch (err) {
-          throw new Error(`The url ${url} has incorrect parameter ${paramKey}, it is not parsable as ${spec[paramKey]}`);
+        const [serializer] = spec[paramKey];
+        const serializerResult = serializer.fromUrl(paramValue);
+        if (serializerResult.valid === true) {
+          result[paramKey] = serializerResult.value;
+        } else {
+          throw new Error(`The url ${url} has incorrect parameter ${paramKey}, it is not parsable as ${serializer.displayName}`);
         }
       } else {
         throw new Error(`The url ${url} has unknown parameter ${paramKey}`);

@@ -4,4 +4,4 @@ export { default as createRoute } from './components/createRoute';
 export { default as NotFound } from './components/NotFound';
 export { default as Invalid } from './components/Invalid';
 export { default as urlHanlderContext } from './contexts/urlHandler';
-export { default as parameters } from './converter';
+export { default as serializer } from './serializer';
