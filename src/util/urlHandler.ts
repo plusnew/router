@@ -47,18 +47,16 @@ export function parseUrl <Spec extends RouteParamsSpec>(namespace: string, spec:
   const result: any = {};
   for (let i = 0; i < paramUrlParts.length; i += 1) {
     const [paramKey, paramValue] = paramUrlParts[i].split(PARAMETER_PARAMETERVALUE_DELIMITER);
-    if (paramKey) {
-      if (paramKey in spec) {
-        const [serializer] = spec[paramKey];
-        const serializerResult = serializer.fromUrl(paramValue);
-        if (serializerResult.valid === true) {
-          result[paramKey] = serializerResult.value;
-        } else {
-          throw new Error(`The url ${url} has incorrect parameter ${paramKey}, it is not parsable as ${serializer.displayName}`);
-        }
+    if (paramKey in spec) {
+      const [serializer] = spec[paramKey];
+      const serializerResult = serializer.fromUrl(paramValue);
+      if (serializerResult.valid === true) {
+        result[paramKey] = serializerResult.value;
       } else {
-        throw new Error(`The url ${url} has unknown parameter ${paramKey}`);
+        throw new Error(`The url ${url} has incorrect parameter ${paramKey}, it is not parsable as ${serializer.displayName}`);
       }
+    } else {
+      throw new Error(`The url ${url} has unknown parameter ${paramKey}`);
     }
   }
 
