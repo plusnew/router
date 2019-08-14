@@ -114,6 +114,20 @@ describe('urlHandler', () => {
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
       ).toEqual(parameter);
     });
+
+    it('with optional serializer, and value given', () => {
+      const spec = {
+        foo: [serializer.undefined(), serializer.string()],
+      };
+
+      const parameter = {
+        foo: 'string',
+      };
+
+      expect(
+        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+      ).toEqual(parameter);
+    });
   });
 
   describe('number', () => {
@@ -137,6 +151,20 @@ describe('urlHandler', () => {
       };
 
       const parameter = {};
+
+      expect(
+        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+      ).toEqual(parameter);
+    });
+
+    it('with optional serializer, and value given', () => {
+      const spec = {
+        foo: [serializer.undefined(), serializer.number()],
+      };
+
+      const parameter = {
+        foo: 34,
+      };
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
@@ -185,6 +213,20 @@ describe('urlHandler', () => {
       };
 
       const parameter = {};
+
+      expect(
+        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+      ).toEqual(parameter);
+    });
+
+    it('with optional serializer, and value given', () => {
+      const spec = {
+        foo: [serializer.undefined(), serializer.date()],
+      };
+
+      const parameter = {
+        foo: new Date(),
+      };
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
@@ -247,6 +289,20 @@ describe('urlHandler', () => {
       };
 
       const parameter = {};
+
+      expect(
+        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+      ).toEqual(parameter);
+    });
+
+    it('with optional serializer, and value given', () => {
+      const spec = {
+        foo: [serializer.undefined(), serializer.boolean()],
+      };
+
+      const parameter = {
+        foo: true,
+      };
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
