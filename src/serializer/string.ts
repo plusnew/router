@@ -1,13 +1,17 @@
 import { serializer } from '../types/mapper';
 
-export default (): serializer<string> => ({
-  displayName: 'string',
+export default <literal extends string = string>(literal?: literal): serializer<literal> => ({
+  displayName: literal === undefined ? 'string' : `\'${literal}\'`,
   fromUrl: (value) => {
     if (value !== undefined) {
-      return {
-        valid: true,
-        value: decodeURIComponent(value),
-      };
+      const result = decodeURIComponent(value);
+
+      if (literal === undefined || literal === result) {
+        return {
+          valid: true,
+          value: result as literal,
+        };
+      }
     }
     return {
       valid: false,
@@ -15,10 +19,13 @@ export default (): serializer<string> => ({
   },
   toUrl: (value: string) => {
     if (typeof value === 'string') {
-      return {
-        valid: true,
-        value: encodeURIComponent(value),
-      };
+
+      if (literal === undefined || literal === value) {
+        return {
+          valid: true,
+          value: encodeURIComponent(value),
+        };
+      }
     }
     return {
       valid: false,

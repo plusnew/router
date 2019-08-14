@@ -2,20 +2,23 @@ import plusnew, { component, Props, store } from '@plusnew/core';
 import enzymeAdapterPlusnew, { getComponentPartial, mount } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
 import { createRoute, Invalid, NotFound, serializer, StaticProvider } from './index';
+import { SpecToType } from 'types/mapper';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
 describe('test router', () => {
   it('link should be found and be clickable', () => {
-    const Component = component(
-      'Component',
-      (_Props: Props<{ parameter: { param1: string, param2: number }, props: {} }>) => <div />,
-    );
-
-    const route = createRoute('namespace', {
+    const spec = {
       param1: [serializer.string()],
       param2: [serializer.number()],
-    }, Component);
+    };
+
+    const Component = component(
+      'Component',
+      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
+    );
+
+    const route = createRoute('namespace', spec, Component);
 
     const urlStore = store('/');
 
@@ -51,15 +54,17 @@ describe('test router', () => {
   });
 
   it('components should be updatable', () => {
-    const Component = component(
-      'Component',
-      (_Props: Props<{ parameter: { param1: string, param2: number }, props: {} }>) => <div />,
-    );
-
-    const route = createRoute('namespace', {
+    const spec = {
       param1: [serializer.string()],
       param2: [serializer.number()],
-    }, Component);
+    };
+
+    const Component = component(
+      'Component',
+      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
+    );
+
+    const route = createRoute('namespace', spec, Component);
 
     const urlStore = store('/');
 

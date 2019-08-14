@@ -25,7 +25,7 @@ type getRequiredKeys<T> = Pick<T, {
 }[keyof T]>;
 
 type getOptionalKeys<T> = Pick<T, {
-  [K in keyof T]:undefined extends T[K] ? K : never;
+  [K in keyof T]: undefined extends T[K] ? K : never;
 }[keyof T]>;
 
 export type SpecToType<Spec extends RouteParameterSpec> =

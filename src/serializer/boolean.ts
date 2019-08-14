@@ -1,20 +1,24 @@
 import { serializer } from '../types/mapper';
 
-export default (): serializer<boolean> => ({
-  displayName: 'boolean',
+export default <literal extends boolean = boolean>(literal?: literal): serializer<literal> => ({
+  displayName: literal === undefined ? 'boolean' : `${literal}`,
   fromUrl: (value) => {
     if (value !== undefined) {
       if (value === 'true') {
-        return {
-          valid: true,
-          value: true,
-        };
+        if (literal === undefined || literal === true) {
+          return {
+            valid: true,
+            value: true as literal,
+          };
+        }
       }
       if (value === 'false') {
-        return {
-          valid: true,
-          value: false,
-        };
+        if (literal === undefined || literal === false) {
+          return {
+            valid: true,
+            value: false as literal,
+          };
+        }
       }
     }
 
@@ -24,11 +28,14 @@ export default (): serializer<boolean> => ({
   },
   toUrl: (value) => {
     if (typeof value === 'boolean') {
-      return {
-        valid: true,
-        value: value.toString(),
-      };
+      if (literal === undefined || literal === value) {
+        return {
+          valid: true,
+          value: value.toString(),
+        };
+      }
     }
+
     return {
       valid: false,
     };

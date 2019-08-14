@@ -128,6 +128,60 @@ describe('urlHandler', () => {
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
       ).toEqual(parameter);
     });
+
+    describe('literal', () => {
+      it('with correct value', () => {
+        const spec = {
+          param: [serializer.string('foo'), serializer.string('bar')],
+        };
+
+        const parameter = {
+          param: 'foo' as const,
+        };
+
+        expect(
+          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        ).toEqual(parameter);
+      });
+
+      it('with correct weird value', () => {
+        const spec = {
+          param: [serializer.string('foo&'), serializer.string('bar')],
+        };
+
+        const parameter = {
+          param: 'foo&' as const,
+        };
+
+        expect(
+          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        ).toEqual(parameter);
+      });
+
+      it('with incorrect value for createUrl', () => {
+        const spec = {
+          param: [serializer.string('foo'), serializer.string('bar')],
+        };
+
+        const parameter = {
+          param: 'baz' as any,
+        };
+
+        expect(() =>
+          createUrl('namespace', spec, parameter),
+        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as \'foo\' | \'bar\' with the value baz'));
+      });
+
+      it('with incorrect value for parseUrl', () => {
+        const spec = {
+          param: [serializer.string('foo'), serializer.string('bar')],
+        };
+
+        expect(() =>
+          parseUrl('namespace', spec, '/namespace?param=baz'),
+        ).toThrow(new Error('The url /namespace?param=baz has incorrect parameter param, it is not parsable as \'foo\' | \'bar\''));
+      });
+    });
   });
 
   describe('number', () => {
@@ -190,6 +244,48 @@ describe('urlHandler', () => {
         parseUrl('namespace', spec, '/namespace?foo=invalid'),
       ).toThrow(new Error('The url /namespace?foo=invalid has incorrect parameter foo, it is not parsable as number'));
     });
+
+    describe('literal', () => {
+      it('with correct value', () => {
+        const spec = {
+          param: [serializer.number(2), serializer.number(3)],
+        };
+
+        const parameter = {
+          param: 2 as const,
+        };
+
+        expect(
+          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        ).toEqual(parameter);
+      });
+
+      it('with incorrect value for createUrl', () => {
+        const spec = {
+          param: [serializer.number(2), serializer.number(3)],
+        };
+
+        const parameter = {
+          param: 5 as any,
+        };
+
+        expect(() =>
+          createUrl('namespace', spec, parameter),
+        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as 2 | 3 with the value 5'));
+      });
+
+      it('with incorrect value for parseUrl', () => {
+        const spec = {
+          param: [serializer.number(2), serializer.number(3)],
+        };
+
+        expect(() =>
+          parseUrl('namespace', spec, '/namespace?param=5'),
+        ).toThrow(new Error('The url /namespace?param=5 has incorrect parameter param, it is not parsable as 2 | 3'));
+      });
+
+    });
+
   });
 
   describe('date', () => {
@@ -327,6 +423,61 @@ describe('urlHandler', () => {
       expect(() =>
         parseUrl('namespace', spec, '/namespace?foo=invalid'),
       ).toThrow(new Error('The url /namespace?foo=invalid has incorrect parameter foo, it is not parsable as boolean'));
+    });
+
+    describe('literal', () => {
+      it('with correct value', () => {
+        const spec = {
+          param: [serializer.boolean(true)],
+        };
+
+        const parameter = {
+          param: true as const,
+        };
+
+        expect(
+          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        ).toEqual(parameter);
+      });
+
+      it('with incorrect value for createUrl', () => {
+        const spec = {
+          param: [serializer.boolean(true)],
+        };
+
+        const parameter = {
+          param: false as any,
+        };
+
+        expect(() =>
+          createUrl('namespace', spec, parameter),
+        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as true with the value false'));
+      });
+
+      it('with incorrect value for createUrl', () => {
+        const spec = {
+          param: [serializer.boolean(false)],
+        };
+
+        const parameter = {
+          param: true as any,
+        };
+
+        expect(() =>
+          createUrl('namespace', spec, parameter),
+        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as false with the value true'));
+      });
+
+      it('with incorrect value for parseUrl', () => {
+        const spec = {
+          param: [serializer.boolean(true)],
+        };
+
+        expect(() =>
+          parseUrl('namespace', spec, '/namespace?param=false'),
+        ).toThrow(new Error('The url /namespace?param=false has incorrect parameter param, it is not parsable as true'));
+      });
+
     });
   });
 });

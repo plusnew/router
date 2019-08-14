@@ -14,7 +14,7 @@ describe('test consumer', () => {
 
     const route = createRoute('namespace', {
       foo: [serializer.string()],
-    }, Component);
+    } as const, Component);
 
     const wrapper = mount(
       <StaticProvider url="/namespace?foo=fooValue" onchange={() => null}>
@@ -36,7 +36,7 @@ describe('test consumer', () => {
 
     const route = createRoute('namespace', {
       foo: [serializer.string()],
-    }, Component);
+    } as const, Component);
 
     const wrapper = mount(
       <StaticProvider url="/namespace?bar=barValue" onchange={() => null}>
@@ -58,7 +58,7 @@ describe('test consumer', () => {
 
     const route = createRoute('namespace', {
       foo: [serializer.string()],
-    }, Component);
+    } as const, Component);
 
     const wrapper = mount(
       <StaticProvider url="/anotherNamespace?foo=fooValue" onchange={() => null}>
