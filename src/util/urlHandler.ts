@@ -15,7 +15,7 @@ export function createUrl<Spec extends RouteParameterSpec>(namespace: string, sp
   return (Object.entries(spec)).reduce((previousValue, [specKey, serializers], index) => {
 
     for (const serializer of serializers) {
-      const serializerResult = serializer.toUrl(params[specKey]);
+      const serializerResult = serializer.toUrl(specKey in params ? params[specKey] : undefined);
 
       if (serializerResult.valid === true) {
         let result = previousValue;

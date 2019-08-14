@@ -104,18 +104,12 @@ describe('urlHandler', () => {
       ).toEqual(parameter);
     });
 
-    xit('with optional serializer, and no value given', () => {
+    it('with optional serializer, and no value given', () => {
       const spec = {
-        optional: [serializer.string(), serializer.undefined()],
-        undefined: [serializer.undefined()],
-        else: [serializer.number()],
+        foo: [serializer.string(), serializer.undefined()],
       };
 
-      type foo = SpecToType<typeof spec>
-
-      const parameter: SpecToType<typeof spec> = {
-        optional: '',
-      };
+      const parameter = {};
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
@@ -141,19 +135,9 @@ describe('urlHandler', () => {
     it('with optional serializer, and no value given', () => {
       const spec = {
         foo: [serializer.number(), serializer.undefined()],
-        foo2: [serializer.undefined()],
-        foo3: [serializer.undefined(), serializer.number()],
-        bar: [serializer.number()],
-        baz: [serializer.string()],
       };
 
-      type foo = SpecToType<typeof spec>;
-
-      const parameter: SpecToType<typeof spec> = {
-        // foo: undefined,
-        bar: 1,
-        baz: '',
-      };
+      const parameter = {};
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
@@ -201,9 +185,7 @@ describe('urlHandler', () => {
         foo: [serializer.date(), serializer.undefined()],
       };
 
-      const parameter = {
-        // foo: undefined,
-      };
+      const parameter = {};
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
@@ -265,9 +247,7 @@ describe('urlHandler', () => {
         foo: [serializer.boolean(), serializer.undefined()],
       };
 
-      const parameter = {
-        // foo: undefined,
-      };
+      const parameter = {};
 
       expect(
         parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),

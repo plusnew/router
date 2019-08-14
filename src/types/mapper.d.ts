@@ -28,5 +28,9 @@ type getOptionalKeys<T> = Pick<T, {
   [Key in keyof T]: undefined extends T[Key] ? Key : never
 }[keyof T]>;
 
+type merge<T, U> = T & U;
 export type SpecToType<Spec extends RouteParameterSpec> =
-  Partial<getOptionalKeys<getMappedObject<Spec>>>
+  merge<
+    Partial<getOptionalKeys<getMappedObject<Spec>>>,
+    getRequiredKeys<getMappedObject<Spec>>
+  >
