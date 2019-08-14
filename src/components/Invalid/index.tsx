@@ -13,18 +13,16 @@ export default component(
     <activeRoutes.Consumer>{activeRoutesState =>
       <url.Consumer>{urlState =>
         <urlHandler.Consumer>{(urlHandlerState) => {
-          const activeBrokenRoute = activeRoutesState.find(route =>
-            route.namespaces.find((namespace) => {
-              if (urlHandlerState.isNamespaceActive(namespace, urlState)) {
-                try {
-                  urlHandlerState.parseUrl(namespace, route.spec, urlState);
-                } catch (error) {
-                  return true;
-                }
+          const activeBrokenRoute = activeRoutesState.find((route) => {
+            if (urlHandlerState.isNamespaceActive(route.namespace, urlState)) {
+              try {
+                urlHandlerState.parseUrl(route.namespace, route.spec, urlState);
+              } catch (error) {
+                return true;
               }
-              return false;
-            }) !== undefined,
-          );
+            }
+            return false;
+          });
 
           if (activeBrokenRoute === undefined) {
             return false;

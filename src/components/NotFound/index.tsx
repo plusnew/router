@@ -14,9 +14,7 @@ export default component(
       <url.Consumer>{urlState =>
         <urlHandler.Consumer>{(urlHandlerState) => {
           const activeRoute = activeRoutesState.find(route =>
-            route.namespaces.find(namespace =>
-              urlHandlerState.isNamespaceActive(namespace, urlState),
-            ) !== undefined,
+            urlHandlerState.isNamespaceActive(route.namespace, urlState),
           );
 
           if (activeRoute === undefined) {

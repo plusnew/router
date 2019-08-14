@@ -1,21 +1,24 @@
-import enzymeAdapterPlusnew, { mount, getComponentPartial } from '@plusnew/enzyme-adapter';
-import { configure } from 'enzyme';
 import plusnew, { component, Props, store } from '@plusnew/core';
-import { createRoute, StaticProvider, NotFound, Invalid } from './index';
+import enzymeAdapterPlusnew, { getComponentPartial, mount } from '@plusnew/enzyme-adapter';
+import { configure } from 'enzyme';
+import { createRoute, Invalid, NotFound, serializer, StaticProvider } from './index';
+import { SpecToType } from 'types/mapper';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
 describe('test router', () => {
   it('link should be found and be clickable', () => {
+    const spec = {
+      param1: [serializer.string()],
+      param2: [serializer.number()],
+    };
+
     const Component = component(
       'Component',
-      (_Props: Props<{ parameter: { param1: string, param2: number }, props: {} }>) => <div />,
+      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
-      param1: 'string',
-      param2: 'number',
-    }, Component);
+    const route = createRoute('namespace', spec, Component);
 
     const urlStore = store('/');
 
@@ -51,15 +54,17 @@ describe('test router', () => {
   });
 
   it('components should be updatable', () => {
+    const spec = {
+      param1: [serializer.string()],
+      param2: [serializer.number()],
+    };
+
     const Component = component(
       'Component',
-      (_Props: Props<{ parameter: { param1: string, param2: number }, props: {} }>) => <div />,
+      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
-      param1: 'string',
-      param2: 'number',
-    }, Component);
+    const route = createRoute('namespace', spec, Component);
 
     const urlStore = store('/');
 
@@ -100,7 +105,7 @@ describe('test router', () => {
     const Component = component('Component', (_Props: Props<{props: {}, parameter: {}}>) => <div />);
     const ComponentPartial = getComponentPartial(Component);
 
-    const route = createRoute(['namespace'], {}, Component);
+    const route = createRoute('namespace', {}, Component);
     const local = store(false);
 
     const wrapper = mount(

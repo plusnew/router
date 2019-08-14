@@ -1,7 +1,7 @@
 import { configure } from 'enzyme';
 import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import plusnew, { component, Props } from '@plusnew/core';
-import { createRoute, StaticProvider } from '../../../index';
+import { createRoute, StaticProvider, serializer } from '../../../index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
@@ -12,9 +12,9 @@ describe('test consumer', () => {
       (_Props: Props<{ parameter: { foo: string }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
-      foo: 'string',
-    }, Component);
+    const route = createRoute('namespace', {
+      foo: [serializer.string()],
+    } as const, Component);
 
     const wrapper = mount(
       <StaticProvider url="/namespace?foo=fooValue" onchange={() => null}>
@@ -34,9 +34,9 @@ describe('test consumer', () => {
       (_Props: Props<{ parameter: { foo: string }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
-      foo: 'string',
-    }, Component);
+    const route = createRoute('namespace', {
+      foo: [serializer.string()],
+    } as const, Component);
 
     const wrapper = mount(
       <StaticProvider url="/namespace?bar=barValue" onchange={() => null}>
@@ -56,9 +56,9 @@ describe('test consumer', () => {
       (_Props: Props<{ parameter: { foo: string }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
-      foo: 'string',
-    }, Component);
+    const route = createRoute('namespace', {
+      foo: [serializer.string()],
+    } as const, Component);
 
     const wrapper = mount(
       <StaticProvider url="/anotherNamespace?foo=fooValue" onchange={() => null}>

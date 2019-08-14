@@ -1,9 +1,9 @@
 import plusnew, { Component, Props } from '@plusnew/core';
 import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
-import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
+import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
 
-type props<params extends RouteParamsSpec> = {
+type props<params extends RouteParameterSpec> = {
   parameter: SpecToType<params>;
   children: any;
 };
@@ -13,7 +13,7 @@ function hasModifier(evt: MouseEvent) {
 }
 
 export default function <
-  spec extends RouteParamsSpec,
+  spec extends RouteParameterSpec,
 >(namespace: string, spec: spec) {
   return class RouterLink extends Component<props<spec>>{
     static displayName = 'RouteLink';

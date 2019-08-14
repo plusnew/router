@@ -109,10 +109,10 @@
     reflect-metadata "^0.1.12"
     tslib "^1.8.1"
 
-"@plusnew/core@^0.6.50":
-  version "0.6.50"
-  resolved "https://registry.yarnpkg.com/@plusnew/core/-/core-0.6.50.tgz#b2614780826e084ff068236f94da9df6fc584f24"
-  integrity sha512-Ehl4c/w/ruycm2xpnOtWq1PTMKTLIB4R7mEbEyrcYZB/WIlzv1P8ejesDDozS0eMi7cX+vLmcmMeenkmOr+7Mw==
+"@plusnew/core@^0.6.58":
+  version "0.6.58"
+  resolved "https://registry.yarnpkg.com/@plusnew/core/-/core-0.6.58.tgz#121696d3cb03e31223391a191f5385e8eca29bf8"
+  integrity sha512-G3u68AXJLtLzL9qd7lGNtXCTGUT0bjiDVPe8U34xMsV1kO6v2lH0968LXUMh0QuzTAvvD85iQO0AZgNH8gAMzg==
 
 "@plusnew/enzyme-adapter@^0.6.54":
   version "0.6.54"
@@ -138,10 +138,10 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/jasmine@^3.3.16":
-  version "3.3.16"
-  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.3.16.tgz#7c84074f5d7f84da9a14f816ccfb9aeb4da13f27"
-  integrity sha512-Nveep4zKGby8uIvG2AEUyYOwZS8uVeHK9TgbuWYSawUDDdIgfhCKz28QzamTo//Jk7Ztt9PO3f+vzlB6a4GV1Q==
+"@types/jasmine@^3.4.0":
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/@types/jasmine/-/jasmine-3.4.0.tgz#018c56db42400c092aae47de21f710b7f04e4b06"
+  integrity sha512-6pUnBg6DuSB55xnxJ5+gW9JOkFrPsXkYAuqqEE8oyrpgDiPQ+TZ+1Zt4S+CHcRJcxyNYXeIXG4vHSzdF6y9Uvw==
 
 "@types/minimatch@*":
   version "3.0.3"
@@ -3051,10 +3051,10 @@ jsonfile@^4.0.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-karma-chrome-launcher@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/karma-chrome-launcher/-/karma-chrome-launcher-3.0.0.tgz#5c3a7f877a304e90781c28fcd9a49e334a890f42"
-  integrity sha512-u/PnVgDOP97AUe/gJeABlC6Wa6aQ83MZsm0JgsJQ5bGQ9XcXON/7b2aRhl59A62Zom+q3PFveBkczc7E1RT7TA==
+karma-chrome-launcher@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/karma-chrome-launcher/-/karma-chrome-launcher-3.1.0.tgz#805a586799a4d05f4e54f72a204979f3f3066738"
+  integrity sha512-3dPs/n7vgz1rxxtynpzZTvb9y/GIaW8xjAwcIGttLbycqoFtI7yo1NGnQi6oFTherRE+GIhCAHZC4vEqWGhNvg==
   dependencies:
     which "^1.2.1"
 
@@ -5392,10 +5392,10 @@ webpack-sources@^1.4.0, webpack-sources@^1.4.1:
     source-list-map "^2.0.0"
     source-map "~0.6.1"
 
-webpack@^4.39.1:
-  version "4.39.1"
-  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.39.1.tgz#60ed9fb2b72cd60f26ea526c404d2a4cc97a1bd8"
-  integrity sha512-/LAb2TJ2z+eVwisldp3dqTEoNhzp/TLCZlmZm3GGGAlnfIWDgOEE758j/9atklNLfRyhKbZTCOIoPqLJXeBLbQ==
+webpack@^4.39.2:
+  version "4.39.2"
+  resolved "https://registry.yarnpkg.com/webpack/-/webpack-4.39.2.tgz#c9aa5c1776d7c309d1b3911764f0288c8c2816aa"
+  integrity sha512-AKgTfz3xPSsEibH00JfZ9sHXGUwIQ6eZ9tLN8+VLzachk1Cw2LVmy+4R7ZiwTa9cZZ15tzySjeMui/UnSCAZhA==
   dependencies:
     "@webassemblyjs/ast" "1.8.5"
     "@webassemblyjs/helper-module-context" "1.8.5"

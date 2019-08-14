@@ -1,18 +1,18 @@
 import plusnew, { Component, Props, ApplicationElement } from '@plusnew/core';
 import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
-import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
+import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
 
-type renderProps<params extends RouteParamsSpec> =
+type renderProps<params extends RouteParameterSpec> =
   (state: { active: false } | { active: true, parameter: SpecToType<params> }) => ApplicationElement;
 
-type props<params extends RouteParamsSpec> = {
+type props<params extends RouteParameterSpec> = {
   children: renderProps<params>;
 };
 
 export default function <
-  spec extends RouteParamsSpec,
-  >(namespaces: string[], spec: spec) {
+  spec extends RouteParameterSpec,
+  >(namespace: string, spec: spec) {
   return class RouteConsumer extends Component<props<spec>>{
     static displayName = 'RouteConsumer';
     render(Props: Props<props<spec>>) {
@@ -22,13 +22,11 @@ export default function <
             <url.Consumer>{(urlState) => {
               const [renderProps]: [renderProps<spec>] = propsState.children as any;
 
-              const activeNamespace = namespaces.find(namespace =>
-                urlHandlerState.isNamespaceActive(namespace, urlState),
-              );
+              const activeNamespace = urlHandlerState.isNamespaceActive(namespace, urlState);
 
-              if (activeNamespace !== undefined) {
+              if (activeNamespace) {
                 try {
-                  const parameter = urlHandlerState.parseUrl(activeNamespace, spec, urlState);
+                  const parameter = urlHandlerState.parseUrl(namespace, spec, urlState);
 
                   return renderProps({
                     parameter,
