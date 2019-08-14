@@ -12,7 +12,7 @@ type props<params extends RouteParameterSpec> = {
 
 export default function <
   spec extends RouteParameterSpec,
-  >(namespaces: string[], spec: spec) {
+  >(namespace: string, spec: spec) {
   return class RouteConsumer extends Component<props<spec>>{
     static displayName = 'RouteConsumer';
     render(Props: Props<props<spec>>) {
@@ -22,13 +22,11 @@ export default function <
             <url.Consumer>{(urlState) => {
               const [renderProps]: [renderProps<spec>] = propsState.children as any;
 
-              const activeNamespace = namespaces.find(namespace =>
-                urlHandlerState.isNamespaceActive(namespace, urlState),
-              );
+              const activeNamespace = urlHandlerState.isNamespaceActive(namespace, urlState);
 
-              if (activeNamespace !== undefined) {
+              if (activeNamespace) {
                 try {
-                  const parameter = urlHandlerState.parseUrl(activeNamespace, spec, urlState);
+                  const parameter = urlHandlerState.parseUrl(namespace, spec, urlState);
 
                   return renderProps({
                     parameter,

@@ -12,7 +12,7 @@ describe('test router', () => {
       (_Props: Props<{ parameter: { param1: string, param2: number }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
+    const route = createRoute('namespace', {
       param1: [serializer.string()],
       param2: [serializer.number()],
     }, Component);
@@ -56,7 +56,7 @@ describe('test router', () => {
       (_Props: Props<{ parameter: { param1: string, param2: number }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
+    const route = createRoute('namespace', {
       param1: [serializer.string()],
       param2: [serializer.number()],
     }, Component);
@@ -100,7 +100,7 @@ describe('test router', () => {
     const Component = component('Component', (_Props: Props<{props: {}, parameter: {}}>) => <div />);
     const ComponentPartial = getComponentPartial(Component);
 
-    const route = createRoute(['namespace'], {}, Component);
+    const route = createRoute('namespace', {}, Component);
     const local = store(false);
 
     const wrapper = mount(

@@ -2,7 +2,7 @@ import { context, store } from '@plusnew/core';
 import { RouteParameterSpec } from 'types/mapper';
 
 export type route = {
-  namespaces: string[],
+  namespace: string,
   spec: RouteParameterSpec,
 };
 

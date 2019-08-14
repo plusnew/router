@@ -12,7 +12,7 @@ describe('test consumer', () => {
       (_Props: Props<{ parameter: { foo: string }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
+    const route = createRoute('namespace', {
       foo: [serializer.string()],
     }, Component);
 
@@ -34,7 +34,7 @@ describe('test consumer', () => {
       (_Props: Props<{ parameter: { foo: string }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
+    const route = createRoute('namespace', {
       foo: [serializer.string()],
     }, Component);
 
@@ -56,7 +56,7 @@ describe('test consumer', () => {
       (_Props: Props<{ parameter: { foo: string }, props: {} }>) => <div />,
     );
 
-    const route = createRoute(['namespace'], {
+    const route = createRoute('namespace', {
       foo: [serializer.string()],
     }, Component);
 

@@ -10,7 +10,7 @@ export type RouteComponent<Spec extends RouteParameterSpec, props> = ComponentCo
 export default function <
   params extends RouteParameterSpec,
   componentProps
->(namespaces: string[], params: params, RouteComponent: RouteComponent<params, componentProps>) {
+>(namespace: string, params: params, RouteComponent: RouteComponent<params, componentProps>) {
   return class RouterComponent extends Component<componentProps>{
     static displayName = 'RouterComponent';
     render(Props: Props<componentProps>, componentInstance: ComponentInstance<any>) {
@@ -25,7 +25,7 @@ export default function <
         props.dispatch([
           ...props.state,
           {
-            namespaces,
+            namespace,
             spec: params,
           },
         ]);
@@ -39,21 +39,21 @@ export default function <
           dispatch: (routes: route[]) => void;
         };
 
-        props.dispatch(props.state.filter(route => route.namespaces !== namespaces));
+        props.dispatch(props.state.filter(route => route.namespace !== namespace));
       });
 
       return (
         <urlHandler.Consumer>{linkState =>
           <url.Consumer>{(urlState) => {
-            const activeNamespace = namespaces.find(namespace => linkState.isNamespaceActive(namespace, urlState));
+            const activeNamespace = linkState.isNamespaceActive(namespace, urlState);
 
-            if (activeNamespace === undefined) {
+            if (activeNamespace === false) {
               return false;
             }
 
             let parameter: SpecToType<params>;
             try {
-              parameter = linkState.parseUrl(activeNamespace, params, urlState);
+              parameter = linkState.parseUrl(namespace, params, urlState);
             } catch (error) {
               return false;
             }
