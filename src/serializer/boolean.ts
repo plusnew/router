@@ -2,19 +2,22 @@ import { converter } from '../types/mapper';
 
 export default (): converter<boolean> => ({
   displayName: 'boolean',
-  fromUrl: (value: string) => {
-    if (value === 'true') {
-      return {
-        valid: true,
-        value: true,
-      };
+  fromUrl: (value) => {
+    if (value !== undefined) {
+      if (value === 'true') {
+        return {
+          valid: true,
+          value: true,
+        };
+      }
+      if (value === 'false') {
+        return {
+          valid: true,
+          value: false,
+        };
+      }
     }
-    if (value === 'false') {
-      return {
-        valid: true,
-        value: false,
-      };
-    }
+
     return {
       valid: false,
     };

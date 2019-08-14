@@ -2,16 +2,22 @@ import { converter } from '../types/mapper';
 
 export default (): converter<Date> => ({
   displayName: 'date',
-  fromUrl: (value: string) => {
-    const date = new Date(decodeURIComponent(value));
-    if (isNaN(date.getTime()) === true) {
+  fromUrl: (value) => {
+    if (value !== undefined) {
+      const date = new Date(decodeURIComponent(value));
+      if (isNaN(date.getTime()) === true) {
+        return {
+          valid: false,
+        };
+      }
+
       return {
-        valid: false,
+        valid: true,
+        value: date,
       };
     }
     return {
-      valid: true,
-      value: date,
+      valid: false,
     };
   },
   toUrl: (value: Date) => {

@@ -3,12 +3,12 @@ import plusnew, { Component, ComponentContainer, Props } from '@plusnew/core';
 import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
 import url from '../../../contexts/url';
 import urlHandler from '../../../contexts/urlHandler';
-import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
+import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
 
-export type RouteComponent<Spec extends RouteParamsSpec, props> = ComponentContainer<{ props: props, parameter: SpecToType<Spec> }>;
+export type RouteComponent<Spec extends RouteParameterSpec, props> = ComponentContainer<{ props: props, parameter: SpecToType<Spec> }>;
 
 export default function <
-  params extends RouteParamsSpec,
+  params extends RouteParameterSpec,
   componentProps
 >(namespaces: string[], params: params, RouteComponent: RouteComponent<params, componentProps>) {
   return class RouterComponent extends Component<componentProps>{

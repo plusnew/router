@@ -2,18 +2,23 @@ import { converter } from '../types/mapper';
 
 export default (): converter<number> => ({
   displayName: 'number',
-  fromUrl: (value: string) => {
-    const result = Number(value);
+  fromUrl: (value) => {
+    if (value !== undefined) {
+      const result = Number(value);
 
-    // @TODO evaluate if a stricter number parser makes sense /(-)?([0-9]+)(.[0-9]+)?/
-    if (isNaN(result) === true) {
+      // @TODO evaluate if a stricter number parser makes sense /(-)?([0-9]+)(.[0-9]+)?/
+      if (isNaN(result) === true) {
+        return {
+          valid: false,
+        };
+      }
       return {
-        valid: false,
+        value: result,
+        valid: true,
       };
     }
     return {
-      value: result,
-      valid: true,
+      valid: false,
     };
   },
   toUrl: (value: number) => {

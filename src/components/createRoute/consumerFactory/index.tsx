@@ -1,17 +1,17 @@
 import plusnew, { Component, Props, ApplicationElement } from '@plusnew/core';
 import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
-import { RouteParamsSpec, SpecToType } from '../../../types/mapper';
+import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
 
-type renderProps<params extends RouteParamsSpec> =
+type renderProps<params extends RouteParameterSpec> =
   (state: { active: false } | { active: true, parameter: SpecToType<params> }) => ApplicationElement;
 
-type props<params extends RouteParamsSpec> = {
+type props<params extends RouteParameterSpec> = {
   children: renderProps<params>;
 };
 
 export default function <
-  spec extends RouteParamsSpec,
+  spec extends RouteParameterSpec,
   >(namespaces: string[], spec: spec) {
   return class RouteConsumer extends Component<props<spec>>{
     static displayName = 'RouteConsumer';

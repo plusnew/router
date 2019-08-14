@@ -2,10 +2,15 @@ import { converter } from '../types/mapper';
 
 export default (): converter<string> => ({
   displayName: 'string',
-  fromUrl: (value: string) => {
+  fromUrl: (value) => {
+    if (value !== undefined) {
+      return {
+        valid: true,
+        value: decodeURIComponent(value),
+      };
+    }
     return {
-      valid: true,
-      value: decodeURIComponent(value),
+      valid: false,
     };
   },
   toUrl: (value: string) => {
