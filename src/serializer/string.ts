@@ -1,6 +1,6 @@
-import { converter } from '../types/mapper';
+import { serializer } from '../types/mapper';
 
-export default (): converter<string> => ({
+export default (): serializer<string> => ({
   displayName: 'string',
   fromUrl: (value) => {
     if (value !== undefined) {

@@ -1,6 +1,6 @@
-import { converter } from '../types/mapper';
+import { serializer } from '../types/mapper';
 
-export default (): converter<Date> => ({
+export default (): serializer<Date> => ({
   displayName: 'date',
   fromUrl: (value) => {
     if (value !== undefined) {

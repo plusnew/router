@@ -14,10 +14,15 @@ export function isNamespaceActive(namespace: string, url: string) {
 export function createUrl<Spec extends RouteParameterSpec>(namespace: string, spec: Spec, params: SpecToType<Spec>) {
   return (Object.entries(spec)).reduce((previousValue, [specKey, serializers], index) => {
 
+    const paramValue = (params as { [key: string]: string | undefined})[specKey];
+
     for (const serializer of serializers) {
-      const serializerResult = serializer.toUrl(specKey in params ? params[specKey] : undefined);
+      const serializerResult = serializer.toUrl(paramValue);
 
       if (serializerResult.valid === true) {
+        if (serializerResult.value === undefined) {
+          return previousValue;
+        }
         let result = previousValue;
         if (index === 0) {
           result += NAMESPACE_PARAMETER_DELIMITER;
@@ -30,9 +35,9 @@ export function createUrl<Spec extends RouteParameterSpec>(namespace: string, sp
       }
     }
 
-    const type = serializers.map(serializer => serializer.displayName).join(', ');
+    const type = serializers.map(serializer => serializer.displayName).join(' | ');
     throw new Error(
-      `Could not create url for property ${specKey} with value ${params[specKey]}, it is not of the correct type ${type}`,
+      `Could not create url for ${namespace}, the property ${specKey} was not serializable as ${type} with the value ${paramValue}`,
     );
   }, PATH_DELIMITER + namespace);
 }
@@ -58,16 +63,23 @@ export function parseUrl<Spec extends RouteParameterSpec>(namespace: string, spe
   }
 
   for (const specKey in spec) {
-    if (specKey in parameters === false) {
-      throw new Error(`The url ${url} is missing the parameter ${specKey}`);
+    let valid = false;
+
+    const serializers = spec[specKey];
+    for (const serializer of serializers) {
+      const serializerResult = serializer.fromUrl(parameters[specKey]);
+      if (serializerResult.valid === true) {
+        if (serializerResult.value !== undefined) {
+          result[specKey] = serializerResult.value;
+        }
+        valid = true;
+        break;
+      }
     }
 
-    const [serializer] = spec[specKey];
-    const serializerResult = serializer.fromUrl(parameters[specKey]);
-    if (serializerResult.valid === true) {
-      result[specKey] = serializerResult.value;
-    } else {
-      throw new Error(`The url ${url} has incorrect parameter ${specKey}, it is not parsable as ${serializer.displayName}`);
+    const types = serializers.map(serializer => serializer.displayName).join(' | ');
+    if (valid === false) {
+      throw new Error(`The url ${url} has incorrect parameter ${specKey}, it is not parsable as ${types}`);
     }
   }
 

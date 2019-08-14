@@ -1,6 +1,5 @@
 import { serializer } from '../index';
 import { createUrl, parseUrl } from './urlHandler';
-import { SpecToType } from 'types/mapper';
 
 describe('urlHandler', () => {
   it('namespace missmatch', () => {
@@ -18,7 +17,7 @@ describe('urlHandler', () => {
 
       expect(() =>
         parseUrl('namespace', spec, '/namespace?foo=bar'),
-      ).toThrow(new Error('The url /namespace?foo=bar is missing the parameter bar'));
+      ).toThrow(new Error('The url /namespace?foo=bar has incorrect parameter bar, it is not parsable as string'));
     });
 
     it('createUrl', () => {
@@ -29,7 +28,7 @@ describe('urlHandler', () => {
 
       expect(() =>
         createUrl('namespace', spec, { foo: 'fooValue' } as any),
-      ).toThrow(new Error('Could not create url for namespace, the property bar was missing'));
+      ).toThrow(new Error('Could not create url for namespace, the property bar was not serializable as string with the value undefined'));
     });
   });
 
@@ -69,7 +68,7 @@ describe('urlHandler', () => {
 
       expect(() =>
         createUrl('namespace', spec, { foo: 42 as any }),
-      ).toThrow(new Error('Could not create url for property foo with value 42, it is not of the correct type string'));
+      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as string with the value 42'));
     });
 
     it('basic with multiple', () => {
@@ -151,7 +150,7 @@ describe('urlHandler', () => {
 
       expect(() =>
         createUrl('namespace', spec, { foo: 'fooValue' as any }),
-      ).toThrow(new Error('Could not create url for property foo with value fooValue, it is not of the correct type number'));
+      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as number with the value fooValue'));
     });
 
     it('parseUrl with invalid type', () => {
@@ -199,7 +198,7 @@ describe('urlHandler', () => {
 
       expect(() =>
         createUrl('namespace', spec, { foo: 'fooValue' as any }),
-      ).toThrow(new Error('Could not create url for property foo with value fooValue, it is not of the correct type date'));
+      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as date with the value fooValue'));
     });
 
     it('parseUrl with invalid type', () => {
@@ -261,7 +260,7 @@ describe('urlHandler', () => {
 
       expect(() =>
         createUrl('namespace', spec, { foo: 'fooValue' as any }),
-      ).toThrow(new Error('Could not create url for property foo with value fooValue, it is not of the correct type boolean'));
+      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as boolean with the value fooValue'));
     });
 
     it('parseUrl with invalid type', () => {
