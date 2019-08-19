@@ -5,3 +5,4 @@ export { default as NotFound } from './components/NotFound';
 export { default as Invalid } from './components/Invalid';
 export { default as urlHanlderContext } from './contexts/urlHandler';
 export { default as serializer } from './serializer';
+export { SpecToType } from './types/mapper';

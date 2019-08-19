@@ -1,8 +1,7 @@
 import plusnew, { component, Props, store } from '@plusnew/core';
 import enzymeAdapterPlusnew, { getComponentPartial, mount } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
-import { createRoute, Invalid, NotFound, serializer, StaticProvider } from './index';
-import { SpecToType } from 'types/mapper';
+import { createRoute, Invalid, NotFound, serializer, StaticProvider, SpecToType } from './index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
