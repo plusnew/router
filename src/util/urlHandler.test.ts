@@ -32,6 +32,21 @@ describe('urlHandler', () => {
     });
   });
 
+  it('optional parameter', () => {
+    const spec = {
+      foo: [serializer.undefined(), serializer.string()],
+      bar: [serializer.undefined(), serializer.string()],
+    };
+
+    const parameter = {
+      bar: 'baz',
+    };
+
+    expect(
+      parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+    ).toEqual(parameter);
+  });
+
   describe('string', () => {
     it('basic', () => {
       const spec = {

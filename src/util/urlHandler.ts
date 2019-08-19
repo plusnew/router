@@ -12,6 +12,8 @@ export function isNamespaceActive(namespace: string, url: string) {
 }
 
 export function createUrl<Spec extends RouteParameterSpec>(namespace: string, spec: Spec, params: SpecToType<Spec>) {
+  const path = PATH_DELIMITER + namespace;
+
   return (Object.entries(spec)).reduce((previousValue, [specKey, serializers], index) => {
 
     const paramValue = (params as { [key: string]: string | undefined})[specKey];
@@ -24,7 +26,8 @@ export function createUrl<Spec extends RouteParameterSpec>(namespace: string, sp
           return previousValue;
         }
         let result = previousValue;
-        if (index === 0) {
+
+        if (previousValue === path) { // When currentvalue is still the path value, then this is the first parameter added
           result += NAMESPACE_PARAMETER_DELIMITER;
         } else {
           result += PARAMETER_DELIMITER;
@@ -39,7 +42,7 @@ export function createUrl<Spec extends RouteParameterSpec>(namespace: string, sp
     throw new Error(
       `Could not create url for ${namespace}, the property ${specKey} was not serializable as ${type} with the value ${paramValue}`,
     );
-  }, PATH_DELIMITER + namespace);
+  }, path);
 }
 
 export function parseUrl<Spec extends RouteParameterSpec>(namespace: string, spec: Spec, url: string) {
