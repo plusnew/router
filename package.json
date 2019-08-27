@@ -1,6 +1,6 @@
 {
   "name": "@plusnew/router",
-  "version": "0.6.60",
+  "version": "0.6.61",
   "description": "typesafe router for plusnew",
   "main": "dist/app.js",
   "types": "dist/index.d.ts",

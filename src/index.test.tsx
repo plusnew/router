@@ -52,6 +52,53 @@ describe('test router', () => {
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
   });
 
+  it('routes should be programmaticly dispatchable', () => {
+    const spec = {
+      param1: [serializer.string()],
+      param2: [serializer.number()],
+    };
+
+    const Component = component(
+      'Component',
+      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
+    );
+
+    const route = createRoute('namespace', spec, Component);
+
+    const urlStore = store('/');
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <route.Consumer>{(_routeState, redirect) =>
+            <div onclick={() => redirect({ param2: 2, param1: 'foo' })}>link</div>
+          }</route.Consumer>
+          <route.Component />
+          <Invalid><span>error happened</span></Invalid>
+          <NotFound><span>404</span></NotFound>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    const ComponentPartial = getComponentPartial(Component);
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
+
+    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+
+    wrapper.find('div').simulate('click');
+
+    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} props={{ children: [] }} />)).toBe(true);
+
+    urlStore.dispatch('/namespace?invalid=parameter');
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(true);
+  });
+
   it('components should be updatable', () => {
     const spec = {
       param1: [serializer.string()],

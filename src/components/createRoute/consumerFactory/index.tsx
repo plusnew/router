@@ -2,9 +2,10 @@ import plusnew, { Component, Props, ApplicationElement } from '@plusnew/core';
 import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
 import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
+import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
 
 type renderProps<params extends RouteParameterSpec> =
-  (state: { active: false } | { active: true, parameter: SpecToType<params> }) => ApplicationElement;
+  (state: { active: false } | { active: true, parameter: SpecToType<params> }, redirect: (parameter: SpecToType<params>) => void) => ApplicationElement;
 
 type props<params extends RouteParameterSpec> = {
   children: renderProps<params>;
@@ -15,7 +16,15 @@ export default function <
   >(namespace: string, spec: spec) {
   return class RouteConsumer extends Component<props<spec>>{
     static displayName = 'RouteConsumer';
-    render(Props: Props<props<spec>>) {
+    render(Props: Props<props<spec>>, componentInstance: ComponentInstance<any>) {
+      const redirect = (parameter: SpecToType<spec>) => {
+        const urlHandlerState = urlHandler.findProvider(componentInstance).props.state;
+        const urlDispatch = url.findProvider(componentInstance).props.dispatch;
+
+        const targetUrl = urlHandlerState.createUrl(namespace, spec, parameter);
+        urlDispatch(targetUrl);
+      };
+
       return (
         <urlHandler.Consumer>{urlHandlerState =>
           <Props>{propsState =>
@@ -31,7 +40,7 @@ export default function <
                   return renderProps({
                     parameter,
                     active: true,
-                  });
+                  }, redirect);
                 } catch (error) {
 
                 }
@@ -39,7 +48,7 @@ export default function <
 
               return renderProps({
                 active: false,
-              });
+              }, redirect);
             }}</url.Consumer>
           }</Props>
         }</urlHandler.Consumer>
