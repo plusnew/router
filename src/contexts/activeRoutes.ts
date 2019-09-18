@@ -1,5 +1,5 @@
 import { context, store } from '@plusnew/core';
-import { RouteParameterSpec } from 'types/mapper';
+import { RouteParameterSpec } from '../types/mapper';
 
 export type route = {
   namespace: string,

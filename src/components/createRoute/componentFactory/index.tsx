@@ -1,4 +1,4 @@
-import activeRoutes, { route } from 'contexts/activeRoutes';
+import activeRoutes, { route } from '../../../contexts/activeRoutes';
 import plusnew, { Component, ComponentContainer, Props } from '@plusnew/core';
 import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
 import url from '../../../contexts/url';

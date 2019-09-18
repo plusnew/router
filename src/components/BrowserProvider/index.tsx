@@ -2,7 +2,7 @@ import plusnew, { store, Component, Props } from '@plusnew/core';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
 import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';
-import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from 'contexts/activeRoutes';
+import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
 import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
 
 type props = {
