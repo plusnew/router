@@ -36,17 +36,17 @@ describe('test router', () => {
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
 
-    expect(wrapper.containsMatchingElement(<a href="/namespace?param1=foo&param2=2">link</a>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/namespace;param1=foo;param2=2">link</a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
     wrapper.find('a').simulate('click');
 
-    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
+    expect(urlStore.getState()).toBe('/namespace;param1=foo;param2=2');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} props={{ children: [] }} />)).toBe(true);
 
-    urlStore.dispatch('/namespace?invalid=parameter');
+    urlStore.dispatch('/namespace;invalid=parameter');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
@@ -88,12 +88,12 @@ describe('test router', () => {
 
     wrapper.find('div').simulate('click');
 
-    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
+    expect(urlStore.getState()).toBe('/namespace;param1=foo;param2=2');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} props={{ children: [] }} />)).toBe(true);
 
-    urlStore.dispatch('/namespace?invalid=parameter');
+    urlStore.dispatch('/namespace;invalid=parameter');
 
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<span>error happened</span>)).toBe(true);
@@ -129,18 +129,18 @@ describe('test router', () => {
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
 
-    expect(wrapper.containsMatchingElement(<a href="/namespace?param1=foo&param2=2">link</a>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/namespace;param1=foo;param2=2">link</a>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
 
     wrapper.find('a').simulate('click');
 
-    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
+    expect(urlStore.getState()).toBe('/namespace;param1=foo;param2=2');
 
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
     expect(wrapper.contains(<span>404</span>)).toBe(false);
     expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} props={{ children: [] }} />)).toBe(true);
 
-    urlStore.dispatch('/namespace?param1=bar&param2=3');
+    urlStore.dispatch('/namespace;param1=bar;param2=3');
 
     expect(wrapper.contains(<span>error happened</span>)).toBe(false);
     expect(wrapper.contains(<span>404</span>)).toBe(false);
@@ -148,7 +148,7 @@ describe('test router', () => {
   });
 
   it('mounting and unmounting component switches notfound', () => {
-    const Component = component('Component', (_Props: Props<{props: {}, parameter: {}}>) => <div />);
+    const Component = component('Component', (_Props: Props<{ props: {}, parameter: {} }>) => <div />);
     const ComponentPartial = getComponentPartial(Component);
 
     const route = createRoute('namespace', {}, Component);
@@ -173,5 +173,83 @@ describe('test router', () => {
 
     expect(wrapper.contains(<span>404</span>)).toBe(true);
     expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+  });
+
+  it('routes should be able to have children', () => {
+    const parentSpec = {
+      param1: [serializer.string()],
+    };
+
+    const childSpec = {
+      param2: [serializer.number()],
+    };
+
+    const ParentComponent = component(
+      'Component',
+      (_Props: Props<{ parameter: { parent: SpecToType<typeof parentSpec> }, props: {} }>) => <div />,
+    );
+
+    const ChildComponent = component(
+      'Component',
+      (_Props: Props<{ parameter: { child: SpecToType<typeof childSpec>, parent: SpecToType<typeof parentSpec> }, props: {} }>) => <div />,
+    );
+
+    const parentRoute = createRoute('parent', parentSpec, ParentComponent as any);
+    const childRoute = parentRoute.createChildRoute('child', childSpec, ChildComponent);
+
+    const urlStore = store('/');
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <parentRoute.Component />
+          <childRoute.Component />
+          <childRoute.Link
+            parameter={{
+              parent: {
+                param1: 'foo',
+              },
+              child: {
+                param2: 'mep',
+              },
+            }}
+          >linktext</childRoute.Link>
+          <Invalid><span>error happened</span></Invalid>
+          <NotFound><span>404</span></NotFound>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    const ParentComponentPartial = getComponentPartial(ParentComponent);
+    const ChildComponentPartial = getComponentPartial(ChildComponent);
+    expect(wrapper.contains(<span>404</span>)).toBe(true);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
+
+    expect(wrapper.containsMatchingElement(<ParentComponentPartial />)).toBe(false);
+    expect(wrapper.containsMatchingElement(<ChildComponentPartial />)).toBe(false);
+
+    wrapper.find('a').simulate('click');
+
+    expect(urlStore.getState()).toBe('/parent;param1=foo/child;param2=2');
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.contains(
+      <ChildComponentPartial
+        parameter={{
+          parent: {
+            param1: 'foo',
+          },
+          child: {
+            param2: 2,
+          },
+        }}
+        props={{ children: [] }}
+      />),
+    ).toBe(true);
+
+    urlStore.dispatch('/parent;invalid=parameter');
+
+    expect(wrapper.contains(<span>404</span>)).toBe(false);
+    expect(wrapper.contains(<span>error happened</span>)).toBe(true);
   });
 });
