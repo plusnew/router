@@ -53,7 +53,7 @@ const MainComponent = component(
       <router.NotFound>No matching route found</router.NotFound>
 
       {/* in case the path matched the namespace of a route, but the parameters were not correct the children of Invalid will be display */}
-      <router.NotFound>No matching route found</router.NotFound>
+      <router.Invalid>Route found, but with invalid parameter</router.Invalid>
     </>,
 );
 ```
