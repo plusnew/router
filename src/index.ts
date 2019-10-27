@@ -7,4 +7,3 @@ export { default as urlHandlerContext } from './contexts/urlHandler';
 export { default as urlContext } from './contexts/url';
 export { default as activeRoutesContext } from './contexts/activeRoutes';
 export { default as serializer } from './serializer';
-export { SpecToType } from './types/mapper';

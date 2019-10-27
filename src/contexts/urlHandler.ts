@@ -1,10 +1,10 @@
 import { context } from '@plusnew/core';
-import { SpecToType, RouteParameterSpec } from '../types/mapper';
+import { parameterSpecToType, parameterSpecTemplate } from '../types/mapper';
 
 type linkHandler = {
   isNamespaceActive: (namespaces: string, url: string) => boolean;
-  createUrl: <Spec extends RouteParameterSpec>(namespace: string, spec: Spec, params: any) => string;
-  parseUrl: <Spec extends RouteParameterSpec>(namespace: string, spec: Spec, url: string) => SpecToType<Spec>
+  createUrl: <Spec extends parameterSpecTemplate>(namespace: string, spec: Spec, params: any) => string;
+  parseUrl: <Spec extends parameterSpecTemplate>(namespace: string, spec: Spec, url: string) => parameterSpecToType<Spec>
 };
 
 export default context<linkHandler, never>();
