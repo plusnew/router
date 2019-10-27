@@ -45,7 +45,7 @@ describe('api', () => {
         <Props>{props =>
           <>
             <span>{props.parameter.rootPath.parentParam}</span>
-            <span>{props.parameter.childPath.parentParam}</span>
+            <span>{props.parameter.childPath.childParam}</span>
           </>
         }</Props>,
     ));
