@@ -19,7 +19,7 @@ function abstractCreateRoute<
   parentParameter,
   >(routeChain: any[]) {
   const Component: ComponentContainer<{}> = undefined as any;
-  const Link = undefined;
+  const Link: ComponentContainer<{children: any, parameter: parentParameter }> = undefined as any;
   const Consumer = undefined;
 
   function createChildRoute<
@@ -29,7 +29,7 @@ function abstractCreateRoute<
       routeName: routeName,
       parameterSpec: parameterSpec,
       component: ComponentContainer<{ parameter: parentParameter & routeContainerToType<routeName, parameterSpec> }>) {
-    return abstractCreateRoute<routeContainerToType<routeName, parameterSpec>>([{
+    return abstractCreateRoute<parentParameter & routeContainerToType<routeName, parameterSpec>>([...routeChain, {
       routeName,
       parameterSpec,
       component,
