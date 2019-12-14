@@ -1,9 +1,9 @@
 import { context, store } from '@plusnew/core';
-import { RouteParameterSpec } from '../types/mapper';
+import { parameterSpecTemplate } from '../types/mapper';
 
 export type route = {
   namespace: string,
-  spec: RouteParameterSpec,
+  parameterSpec: parameterSpecTemplate,
 };
 
 export const storeFactory = () => store([] as route[]);

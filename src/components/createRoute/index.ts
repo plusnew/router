@@ -1,15 +1,19 @@
 import { ComponentContainer } from '@plusnew/core';
 import { parameterSpecTemplate, routeContainerToType } from '../../types/mapper';
+import { routeContainer } from 'types/route';
+import componentFactory from './componentFactory';
+import linkFactory from './linkFactory';
+import consumerFactory from './consumerFactory';
 
 export default function createRoute<
-  routeName extends string,
+  namespace extends string,
   parameterSpec extends parameterSpecTemplate,
   >(
-    routeName: routeName,
+    namespace: namespace,
     parameterSpec: parameterSpec,
-    component: ComponentContainer<{ parameter: routeContainerToType<routeName, parameterSpec> }>) {
-  return abstractCreateRoute<routeContainerToType<routeName, parameterSpec>>([{
-    routeName,
+    component: ComponentContainer<{ parameter: routeContainerToType<namespace, parameterSpec> }>) {
+  return abstractCreateRoute<routeContainerToType<namespace, parameterSpec>>([{
+    namespace,
     parameterSpec,
     component,
   }]);
@@ -17,29 +21,25 @@ export default function createRoute<
 
 function abstractCreateRoute<
   parentParameter,
-  >(routeChain: any[]) {
-  const Component: ComponentContainer<{}> = undefined as any;
-  const Link: ComponentContainer<{children: any, parameter: parentParameter }> = undefined as any;
-  const Consumer = undefined;
-
+>(routeChain: routeContainer<any, any, parentParameter>[]) {
   function createChildRoute<
-    routeName extends string,
+    namespace extends string,
     parameterSpec extends parameterSpecTemplate,
     >(
-      routeName: routeName,
+      namespace: namespace,
       parameterSpec: parameterSpec,
-      component: ComponentContainer<{ parameter: parentParameter & routeContainerToType<routeName, parameterSpec> }>) {
-    return abstractCreateRoute<parentParameter & routeContainerToType<routeName, parameterSpec>>([...routeChain, {
-      routeName,
+      component: ComponentContainer<{ parameter: parentParameter & routeContainerToType<namespace, parameterSpec> }>) {
+    return abstractCreateRoute<parentParameter & routeContainerToType<namespace, parameterSpec>>([...routeChain, {
+      namespace,
       parameterSpec,
       component,
     }]);
   }
 
   return {
-    Component,
-    Link,
-    Consumer,
     createChildRoute,
+    Component: componentFactory(routeChain),
+    Link: linkFactory(routeChain),
+    Consumer: consumerFactory(routeChain),
   };
 }
