@@ -5,8 +5,9 @@ export const createUrl: linkHandler['createUrl'] = () => {
 };
 
 export const parseUrl: linkHandler['parseUrl'] = (routeChain, url) => {
-  const result = {};
+  const result = {} as any;
   const urlParts = url.split('/');
+  urlParts;
 
   return result;
 };

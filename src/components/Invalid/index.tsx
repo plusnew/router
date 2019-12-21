@@ -13,10 +13,10 @@ export default component(
     <activeRoutes.Consumer>{activeRoutesState =>
       <url.Consumer>{urlState =>
         <urlHandler.Consumer>{(urlHandlerState) => {
-          const activeBrokenRoute = activeRoutesState.find((route) => {
-            if (urlHandlerState.isNamespaceActive(route.namespace, urlState)) {
+          const activeBrokenRoute = activeRoutesState.find((routeChain) => {
+            if (urlHandlerState.isNamespaceActive(routeChain, urlState)) {
               try {
-                urlHandlerState.parseUrl(route.namespace, route.spec, urlState);
+                urlHandlerState.parseUrl(routeChain, urlState);
               } catch (error) {
                 return true;
               }

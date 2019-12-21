@@ -43,10 +43,10 @@ describe('api', () => {
       'RootComponent',
       Props =>
         <Props>{props =>
-          <>
+          <div>
             <span>{props.parameter.rootPath.parentParam}</span>
             <span>{props.parameter.childPath.childParam}</span>
-          </>
+          </div>
         }</Props>,
     ));
 
@@ -61,10 +61,10 @@ describe('api', () => {
 
     expect(wrapper.contains(<div>foo</div>)).toBe(false);
     expect(wrapper.contains(
-      <>
+      <div>
         <span>foo</span>
         <span>bar</span>
-      </>,
+      </div>,
     )).toBe(true);
   });
 });

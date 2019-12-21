@@ -25,7 +25,7 @@ export default component(
           dispatch={null as never}
         >
           <Props>{props =>
-            <url.Provider state={props.url} dispatch={(url) => { props.onchange(url); return true; }}>
+            <url.Provider state={props.url} dispatch={props.onchange}>
               <activeRoutes.Observer>{activeRouteState =>
                 <activeRoutesContext.Provider state={activeRouteState} dispatch={activeRoutes.dispatch}>
                   {props.children}
