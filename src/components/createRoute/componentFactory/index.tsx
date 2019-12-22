@@ -1,14 +1,33 @@
 import plusnew, { Component, Props } from '@plusnew/core';
+import url from 'contexts/url';
+import urlHandler from 'contexts/urlHandler';
+import { parameterSpecTemplate } from 'types/mapper';
 import { routeContainer } from 'types/route';
 
-export default function <parameter>(routeChain: routeContainer<any, any, parameter>[]) {
+export default function <
+  parameterSpec extends parameterSpecTemplate,
+  parentParameter
+>(routeChain: routeContainer<any, parameterSpec, parentParameter>[]) {
   return class Link extends Component<{}> {
     static displayName = 'RouteComponent';
-    render(Props: Props<{}>) {
+    render(_Props: Props<{}>) {
       return (
-        <Props>{props =>
-          null
-        }</Props>
+        <url.Consumer>{urlState =>
+          <urlHandler.Consumer>{(urlHandlerState) => {
+            if (urlHandlerState.isNamespaceActive(routeChain, urlState)) {
+              try {
+                const parameter = urlHandlerState.parseUrl(routeChain, urlState);
+                const route = routeChain[routeChain.length - 1];
+
+                return <route.component parameter={parameter} />;
+              } catch (error) {
+
+              }
+            }
+
+            return null;
+          }}</urlHandler.Consumer>
+        }</url.Consumer>
       );
     }
   };

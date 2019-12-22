@@ -25,10 +25,12 @@ describe('api', () => {
     );
 
     expect(wrapper.contains(<div>foo</div>)).toBe(true);
+
+    wrapper.unmount();
   });
 
   it('does createChildRoute work as expected', () => {
-    const urlStore = store('/rootPath;parentParam=foo/childpath;childParam=bar');
+    const urlStore = store('/rootPath;parentParam=foo/childPath;childParam=bar');
 
     const rootRoute = createRoute('rootPath', {
       parentParam: [serializer.string()],
@@ -66,5 +68,7 @@ describe('api', () => {
         <span>bar</span>
       </div>,
     )).toBe(true);
+
+    wrapper.unmount();
   });
 });
