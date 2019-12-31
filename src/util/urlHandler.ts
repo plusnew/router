@@ -7,9 +7,27 @@ const PARAMETER_PARAMETERVALUE_DELIMITER = '=';
 
 export const createUrl: linkHandler['createUrl'] = (routeChain, parameter) => {
   return routeChain.reduce((path, routeContainer) => {
-    return Object.entries(routeContainer.parameterSpec).reduce((path, singleSpec) => {
-      return `${path}`;
-    }, `${path}${PATH_DELIMITER}${routeContainer.namespace}`);
+    return (Object.entries(routeContainer.parameterSpec))
+      .reduce((path, [specKey, serializers]) => {
+        const paramValue = (parameter as any)[routeContainer.namespace][specKey];
+        for (const serializer of serializers) {
+          const serializerResult = serializer.toUrl(paramValue);
+
+          if (serializerResult.valid === true) {
+            if (serializerResult.value === undefined) {
+              return path;
+            }
+
+            return `${path}${PARAMETER_DELIMITER}${specKey}${PARAMETER_PARAMETERVALUE_DELIMITER}${serializerResult.value}`;
+          }
+        }
+
+        const type = serializers.map(serializer => serializer.displayName).join(' | ');
+
+        throw new Error(
+          `Could not create url for ${routeContainer.namespace}, the property ${specKey} was not serializable as ${type} with the value ${paramValue}`,
+        );
+      }, `${path}${PATH_DELIMITER}${routeContainer.namespace}`);
   }, PATH_DELIMITER);
 };
 
@@ -63,21 +81,21 @@ function getUrlParts(url: string): ([string, string])[] {
 
 export const parseUrl: linkHandler['parseUrl'] = (routeChain, url) => {
   return getUrlParts(url).reduce(
-      (acc, [urlNamespace, parameterString], urlIndex) => {
-        const parameter = parameterString.split(PARAMETER_DELIMITER);
-        if (acc && // route can only be same, if the previous ones were the same
-          routeChain.length > urlIndex && // Cant be the same if routechain is shorter
-          routeChain[urlIndex].namespace === urlNamespace
-        ) { // route is same when route namespace and urlpart are same
-          return {
-            ...acc,
-            [urlNamespace]: getParameter(parameter, routeChain[urlIndex].parameterSpec),
-          };
-        }
-        throw new Error('That url is not parseble for this route');
-      },
-      {} as any,
-    );
+    (acc, [urlNamespace, parameterString], urlIndex) => {
+      const parameter = parameterString.split(PARAMETER_DELIMITER);
+      if (acc && // route can only be same, if the previous ones were the same
+        routeChain.length > urlIndex && // Cant be the same if routechain is shorter
+        routeChain[urlIndex].namespace === urlNamespace
+      ) { // route is same when route namespace and urlpart are same
+        return {
+          ...acc,
+          [urlNamespace]: getParameter(parameter, routeChain[urlIndex].parameterSpec),
+        };
+      }
+      throw new Error('That url is not parseble for this route');
+    },
+    {} as any,
+  );
 };
 
 export const isNamespaceActive: linkHandler['isNamespaceActive'] = (routeChain, url) => {
