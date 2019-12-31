@@ -28,7 +28,7 @@ export const createUrl: linkHandler['createUrl'] = (routeChain, parameter) => {
           `Could not create url for ${routeContainer.namespace}, the property ${specKey} was not serializable as ${type} with the value ${paramValue}`,
         );
       }, `${path}${PATH_DELIMITER}${routeContainer.namespace}`);
-  }, PATH_DELIMITER);
+  }, '');
 };
 
 function getParameter<spec extends parameterSpecTemplate>(parameter: string[], spec: spec, url: string) {
@@ -39,6 +39,7 @@ function getParameter<spec extends parameterSpecTemplate>(parameter: string[], s
     if (paramKey in spec) {
       parameterObject[paramKey] = paramValue;
     } else {
+      debugger;
       throw new Error(`The url ${url} has unknown parameter ${paramKey}`);
     }
   }
@@ -82,7 +83,7 @@ function getUrlParts(url: string): ([string, string])[] {
 export const parseUrl: linkHandler['parseUrl'] = (routeChain, url) => {
   return getUrlParts(url).reduce(
     (acc, [urlNamespace, parameterString], urlIndex) => {
-      const parameter = parameterString.split(PARAMETER_DELIMITER);
+      const parameter = parameterString === '' ? [] : parameterString.split(PARAMETER_DELIMITER);
       if (urlIndex >= routeChain.length) { // Cant be the same if routechain is shorter
         throw new Error('That url is not parseble for this route');
       }

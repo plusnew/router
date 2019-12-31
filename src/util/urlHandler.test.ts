@@ -38,7 +38,11 @@ describe('urlHandler', () => {
       expect(() =>
         createUrl<'namespace', typeof spec>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          { foo: 'fooValue' } as any,
+          {
+            namespace: {
+              foo: 'fooValue',
+            } as any,
+          },
         ),
       ).toThrow(new Error('Could not create url for namespace, the property bar was not serializable as string with the value undefined'));
     });
