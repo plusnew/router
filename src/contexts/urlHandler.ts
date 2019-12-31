@@ -1,14 +1,25 @@
 import { context } from '@plusnew/core';
-import { parameterSpecToType, parameterSpecTemplate } from 'types/mapper';
-import { routeContainer } from 'types/route';
+import { parameterSpecTemplate, routeContainerToType } from 'types/mapper';
+
+type routeContainer<
+  namespace extends string,
+  parameterSpec extends parameterSpecTemplate,
+> = {
+  namespace: string,
+  parameterSpec: parameterSpec,
+};
 
 export type linkHandler = {
-  isNamespaceActive: (routeChain: routeContainer<any, any, any>[], url: string) => boolean;
-  createUrl: (routeChain: routeContainer<any, any, any>[], parameter: any) => string;
+  isNamespaceActive: (routeChain: routeContainer<any, any>[], url: string) => boolean;
+  createUrl: <
+    namespace extends string,
+    parameterSpec extends parameterSpecTemplate
+  >(routeChain: routeContainer<namespace, parameterSpec>[], parameter: routeContainerToType<namespace, parameterSpec>) => string;
   parseUrl:<
-  parameterSpec extends parameterSpecTemplate,
-  parentParameter
->(routeChain: routeContainer<any, parameterSpec, parentParameter>[], url: string) => parameterSpecToType<parameterSpec> & parentParameter,
+    namespace extends string,
+    parameterSpec extends parameterSpecTemplate,
+    parentParameter
+  >(routeChain: routeContainer<namespace, parameterSpec>[], url: string) => routeContainerToType<namespace, parameterSpec> & parentParameter,
 };
 
 export default context<linkHandler, never>();

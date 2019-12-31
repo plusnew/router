@@ -5,9 +5,10 @@ import { parameterSpecTemplate } from 'types/mapper';
 import { routeContainer } from 'types/route';
 
 export default function <
+  namespace extends string,
   parameterSpec extends parameterSpecTemplate,
   parentParameter
->(routeChain: routeContainer<any, parameterSpec, parentParameter>[]) {
+>(routeChain: routeContainer<namespace, parameterSpec, parentParameter>[]) {
   return class Link extends Component<{}> {
     static displayName = 'RouteComponent';
     render(_Props: Props<{}>) {
@@ -16,7 +17,10 @@ export default function <
           <urlHandler.Consumer>{(urlHandlerState) => {
             if (urlHandlerState.isNamespaceActive(routeChain, urlState)) {
               try {
-                const parameter = urlHandlerState.parseUrl(routeChain, urlState);
+                const parameter = urlHandlerState.parseUrl<
+                  namespace,
+                  parameterSpec,
+                  parentParameter>(routeChain, urlState);
                 const route = routeChain[routeChain.length - 1];
 
                 return <route.component parameter={parameter} />;
