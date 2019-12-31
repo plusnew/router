@@ -31,15 +31,15 @@ export const createUrl: linkHandler['createUrl'] = (routeChain, parameter) => {
   }, PATH_DELIMITER);
 };
 
-function getParameter<spec extends parameterSpecTemplate>(parameter: string[], spec: spec) {
+function getParameter<spec extends parameterSpecTemplate>(parameter: string[], spec: spec, url: string) {
   const result: any = {};
-  const parameters: { [key: string]: string } = {};
+  const parameterObject: { [key: string]: string } = {};
   for (let i = 0; i < parameter.length; i += 1) {
     const [paramKey, paramValue] = parameter[i].split(PARAMETER_PARAMETERVALUE_DELIMITER);
     if (paramKey in spec) {
-      parameters[paramKey] = paramValue;
+      parameterObject[paramKey] = paramValue;
     } else {
-      throw new Error(`The url ${parameter.join(PARAMETER_DELIMITER)} has unknown parameter ${paramKey}`);
+      throw new Error(`The url ${url} has unknown parameter ${paramKey}`);
     }
   }
 
@@ -48,7 +48,7 @@ function getParameter<spec extends parameterSpecTemplate>(parameter: string[], s
 
     const serializers = spec[specKey];
     for (const serializer of serializers) {
-      const serializerResult = serializer.fromUrl(parameters[specKey]);
+      const serializerResult = serializer.fromUrl(parameterObject[specKey]);
       if (serializerResult.valid === true) {
         if (serializerResult.value !== undefined) {
           result[specKey] = serializerResult.value;
@@ -60,7 +60,7 @@ function getParameter<spec extends parameterSpecTemplate>(parameter: string[], s
 
     const types = serializers.map(serializer => serializer.displayName).join(' | ');
     if (valid === false) {
-      throw new Error(`The url ${parameter.join(PARAMETER_DELIMITER)} has incorrect parameter ${specKey}, it is not parsable as ${types}`);
+      throw new Error(`The url ${url} has incorrect parameter ${specKey}, it is not parsable as ${types}`);
     }
   }
 
@@ -83,16 +83,16 @@ export const parseUrl: linkHandler['parseUrl'] = (routeChain, url) => {
   return getUrlParts(url).reduce(
     (acc, [urlNamespace, parameterString], urlIndex) => {
       const parameter = parameterString.split(PARAMETER_DELIMITER);
-      if (acc && // route can only be same, if the previous ones were the same
-        routeChain.length > urlIndex && // Cant be the same if routechain is shorter
-        routeChain[urlIndex].namespace === urlNamespace
-      ) { // route is same when route namespace and urlpart are same
-        return {
-          ...acc,
-          [urlNamespace]: getParameter(parameter, routeChain[urlIndex].parameterSpec),
-        };
+      if (urlIndex >= routeChain.length) { // Cant be the same if routechain is shorter
+        throw new Error('That url is not parseble for this route');
       }
-      throw new Error('That url is not parseble for this route');
+      if (routeChain[urlIndex].namespace !== urlNamespace) { // route is same when route namespace and urlpart are same
+        throw new Error(`Can not parse url ${url} for wrong namespace ${routeChain[urlIndex].namespace}`);
+      }
+      return {
+        ...acc,
+        [urlNamespace]: getParameter(parameter, routeChain[urlIndex].parameterSpec, url),
+      };
     },
     {} as any,
   );
@@ -100,5 +100,5 @@ export const parseUrl: linkHandler['parseUrl'] = (routeChain, url) => {
 
 export const isNamespaceActive: linkHandler['isNamespaceActive'] = (routeChain, url) => {
   return getUrlParts(url)
-    .every(([namespace], index) => routeChain[index].namespace === namespace);
+    .every(([namespace], index) => index < routeChain.length && routeChain[index].namespace === namespace);
 };
