@@ -1,5 +1,5 @@
 import { context, store } from '@plusnew/core';
-import { routeContainer } from 'types/route';
+import { routeContainer } from '../types/route';
 
 type mountRouteAction = {
   type: 'mount',

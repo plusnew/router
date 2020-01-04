@@ -1,9 +1,9 @@
-import plusnew, { store, Component, Props } from '@plusnew/core';
+import plusnew, { Component, Props, store } from '@plusnew/core';
+import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
+import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
-import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';
-import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
-import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
+import { createUrl, isNamespaceActive, isNamespaceActiveAsParent, parseUrl } from '../../util/urlHandler';
 
 type props = {
   children: any;
@@ -30,12 +30,13 @@ export default class BrowserProvider extends Component<props> {
       return local.dispatch(url);
     }
 
-    const propsRender = (props: { children: any}) => props.children;
+    const propsRender = (props: { children: any }) => props.children;
 
     return (
       <urlHandler.Provider
         state={{
           isNamespaceActive,
+          isNamespaceActiveAsParent,
           createUrl,
           parseUrl,
         }}
@@ -43,11 +44,11 @@ export default class BrowserProvider extends Component<props> {
       >
         <local.Observer>{localState =>
           <url.Provider state={localState} dispatch={changeUrl}>
-              <activeRoutes.Observer>{activeRouteState =>
-                <activeRoutesContext.Provider state={activeRouteState} dispatch={activeRoutes.dispatch}>
-                  <Props>{propsRender}</Props>
-                </activeRoutesContext.Provider>
-              }</activeRoutes.Observer>
+            <activeRoutes.Observer>{activeRouteState =>
+              <activeRoutesContext.Provider state={activeRouteState} dispatch={activeRoutes.dispatch}>
+                <Props>{propsRender}</Props>
+              </activeRoutesContext.Provider>
+            }</activeRoutes.Observer>
           </url.Provider>
         }</local.Observer>
       </urlHandler.Provider>

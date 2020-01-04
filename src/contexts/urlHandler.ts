@@ -1,5 +1,5 @@
 import { context } from '@plusnew/core';
-import { parameterSpecTemplate, routeContainerToType } from 'types/mapper';
+import { parameterSpecTemplate, routeContainerToType } from '../types/mapper';
 
 type routeContainer<
   namespace extends string,
@@ -11,6 +11,7 @@ type routeContainer<
 
 export type linkHandler = {
   isNamespaceActive: (routeChain: routeContainer<any, any>[], url: string) => boolean;
+  isNamespaceActiveAsParent: (routeChain: routeContainer<any, any>[], url: string) => boolean;
   createUrl: <
     namespace extends string,
     parameterSpec extends parameterSpecTemplate

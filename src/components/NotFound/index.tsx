@@ -1,7 +1,7 @@
 import plusnew, { component, Props } from '@plusnew/core';
-import urlHandler from '../../contexts/urlHandler';
-import url from '../../contexts/url';
 import activeRoutes from '../../contexts/activeRoutes';
+import url from '../../contexts/url';
+import urlHandler from '../../contexts/urlHandler';
 
 type props = {
   children: any;

@@ -1,5 +1,5 @@
 import plusnew, { ApplicationElement, Component, Props } from '@plusnew/core';
-import { routeContainer } from 'types/route';
+import { routeContainer } from '../../../types/route';
 
 type props<parameter> = {
   children: ApplicationElement,

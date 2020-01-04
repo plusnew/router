@@ -99,6 +99,11 @@ export const parseUrl: linkHandler['parseUrl'] = (routeChain, url) => {
   );
 };
 
+export const isNamespaceActiveAsParent: linkHandler['isNamespaceActiveAsParent'] = (routeChain, url) => {
+  return getUrlParts(url)
+    .every(([namespace], index) => index < routeChain.length && routeChain[index].namespace === namespace);
+};
+
 export const isNamespaceActive: linkHandler['isNamespaceActive'] = (routeChain, url) => {
   return getUrlParts(url)
     .every(([namespace], index) => index < routeChain.length && routeChain[index].namespace === namespace);

@@ -1,9 +1,9 @@
 import { ComponentContainer } from '@plusnew/core';
 import { parameterSpecTemplate, routeContainerToType } from '../../types/mapper';
-import { routeContainer } from 'types/route';
+import { routeContainer } from '../../types/route';
 import componentFactory from './componentFactory';
-import linkFactory from './linkFactory';
 import consumerFactory from './consumerFactory';
+import linkFactory from './linkFactory';
 
 export default function createRoute<
   namespace extends string,

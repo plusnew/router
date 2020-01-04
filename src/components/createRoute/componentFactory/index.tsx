@@ -1,8 +1,8 @@
 import plusnew, { Component, Props } from '@plusnew/core';
-import url from 'contexts/url';
-import urlHandler from 'contexts/urlHandler';
-import { parameterSpecTemplate } from 'types/mapper';
-import { routeContainer } from 'types/route';
+import url from '../../../contexts/url';
+import urlHandler from '../../../contexts/urlHandler';
+import { parameterSpecTemplate } from '../../../types/mapper';
+import { routeContainer } from '../../../types/route';
 
 export default function <
   namespace extends string,
