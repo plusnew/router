@@ -1,5 +1,5 @@
-import { linkHandler } from 'contexts/urlHandler';
-import { parameterSpecToType, parameterSpecTemplate } from 'types/mapper';
+import { linkHandler, routeState } from 'contexts/urlHandler';
+import { parameterSpecTemplate, parameterSpecToType } from 'types/mapper';
 
 const PATH_DELIMITER = '/';
 const PARAMETER_DELIMITER = ';';
@@ -31,7 +31,7 @@ export const createUrl: linkHandler['createUrl'] = (routeChain, parameter) => {
   }, '');
 };
 
-function getParameter<spec extends parameterSpecTemplate>(parameter: string[], spec: spec, url: string) {
+function getParameterOfRoutePart<spec extends parameterSpecTemplate>(parameter: string[], spec: spec, url: string) {
   const result: any = {};
   const parameterObject: { [key: string]: string } = {};
   for (let i = 0; i < parameter.length; i += 1) {
@@ -39,7 +39,6 @@ function getParameter<spec extends parameterSpecTemplate>(parameter: string[], s
     if (paramKey in spec) {
       parameterObject[paramKey] = paramValue;
     } else {
-      debugger;
       throw new Error(`The url ${url} has unknown parameter ${paramKey}`);
     }
   }
@@ -80,31 +79,58 @@ function getUrlParts(url: string): ([string, string])[] {
     });
 }
 
-export const parseUrl: linkHandler['parseUrl'] = (routeChain, url) => {
-  return getUrlParts(url).reduce(
-    (acc, [urlNamespace, parameterString], urlIndex) => {
-      const parameter = parameterString === '' ? [] : parameterString.split(PARAMETER_DELIMITER);
-      if (urlIndex >= routeChain.length) { // Cant be the same if routechain is shorter
-        throw new Error('That url is not parseble for this route');
+export const getParameter: linkHandler['getParameter'] = (routeChain, url) => {
+  const result: any = {};
+  const urlParts = getUrlParts(url);
+
+  let routeIndex = 0;
+  let urlPartIndex = 0;
+
+  while (routeIndex < routeChain.length) {
+    const routeParts = routeChain[routeIndex].namespace.split(PATH_DELIMITER);
+    for (let routePartIndex = 0; routePartIndex < routeParts.length; routePartIndex += 1) {
+      const [urlPartNamespace] = urlParts[urlPartIndex];
+      debugger;
+      if (urlPartNamespace !== routeParts[routePartIndex]) {
+        throw new Error(`Can not parse url ${url} for wrong namespace ${routeChain[routeIndex].namespace}`);
       }
-      if (routeChain[urlIndex].namespace !== urlNamespace) { // route is same when route namespace and urlpart are same
-        throw new Error(`Can not parse url ${url} for wrong namespace ${routeChain[urlIndex].namespace}`);
-      }
-      return {
-        ...acc,
-        [urlNamespace]: getParameter(parameter, routeChain[urlIndex].parameterSpec, url),
-      };
-    },
-    {} as any,
-  );
+      urlPartIndex += 1;
+    }
+    const [, parameterString] = urlParts[urlPartIndex - 1];
+    const parameter = parameterString === '' ? [] : parameterString.split(PARAMETER_DELIMITER);
+    result[routeChain[routeIndex].namespace] = getParameterOfRoutePart(parameter, routeChain[routeIndex].parameterSpec, url),
+    routeIndex += 1;
+  }
+
+  return result;
 };
 
-export const isNamespaceActiveAsParent: linkHandler['isNamespaceActiveAsParent'] = (routeChain, url) => {
-  return getUrlParts(url)
-    .every(([namespace], index) => index < routeChain.length && routeChain[index].namespace === namespace);
-};
+export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => {
+  let result = true;
+  const urlParts = getUrlParts(url);
 
-export const isNamespaceActive: linkHandler['isNamespaceActive'] = (routeChain, url) => {
-  return getUrlParts(url)
-    .every(([namespace], index) => index < routeChain.length && routeChain[index].namespace === namespace);
+  let routeIndex = 0;
+  let urlPartIndex = 0;
+
+  while (result && routeIndex < routeChain.length) {
+    const routeParts = routeChain[routeIndex].namespace.split(PATH_DELIMITER);
+    for (let routePartIndex = 0; result && routePartIndex < routeParts.length && urlPartIndex < urlParts.length; routePartIndex += 1) {
+      const [urlPartNamespace] = urlParts[urlPartIndex];
+      if (routeParts[routePartIndex] !== urlPartNamespace) {
+        result = false;
+      }
+      urlPartIndex += 1;
+    }
+    routeIndex += 1;
+  }
+
+  if (result) {
+    if (urlParts.length === urlPartIndex) {
+      return routeState.active;
+    }
+    if (urlParts.length > urlPartIndex) {
+      return routeState.activeAsParent;
+    }
+  }
+  return routeState.inactive;
 };

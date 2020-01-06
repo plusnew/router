@@ -1,6 +1,6 @@
 import plusnew, { Component, Props } from '@plusnew/core';
 import url from '../../../contexts/url';
-import urlHandler from '../../../contexts/urlHandler';
+import urlHandler, { routeState } from '../../../contexts/urlHandler';
 import { parameterSpecTemplate } from '../../../types/mapper';
 import { routeContainer } from '../../../types/route';
 
@@ -15,9 +15,9 @@ export default function <
       return (
         <url.Consumer>{urlState =>
           <urlHandler.Consumer>{(urlHandlerState) => {
-            if (urlHandlerState.isNamespaceActive(routeChain, urlState)) {
+            if (urlHandlerState.getRouteState(routeChain, urlState) === routeState.active) {
               try {
-                const parameter = urlHandlerState.parseUrl<
+                const parameter = urlHandlerState.getParameter<
                   namespace,
                   parameterSpec,
                   parentParameter>(routeChain, urlState);

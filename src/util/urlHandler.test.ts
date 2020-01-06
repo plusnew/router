@@ -1,10 +1,11 @@
 import { serializer } from '../index';
-import { createUrl, parseUrl } from './urlHandler';
+import { createUrl, getParameter } from './urlHandler';
+import { parameterSpecToType } from 'types/mapper';
 
 describe('urlHandler', () => {
   it('namespace missmatch', () => {
     expect(() =>
-      parseUrl(
+      getParameter(
         [{ namespace: 'bar', parameterSpec: {} }],
         createUrl(
           [{ namespace: 'foo', parameterSpec: {} }],
@@ -22,7 +23,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           '/namespace;foo=bar',
         ),
@@ -36,7 +37,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl<'namespace', typeof spec>(
+        createUrl<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           {
             namespace: {
@@ -61,9 +62,9 @@ describe('urlHandler', () => {
     };
 
     expect(
-      parseUrl<'namespace', typeof spec, {}>(
+      getParameter<'namespace', typeof spec, {}>(
         [{ namespace: 'namespace', parameterSpec: spec }],
-        createUrl<'namespace', typeof spec>(
+        createUrl<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           parameter,
         ),
@@ -84,9 +85,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -106,9 +107,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -122,7 +123,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl<'namespace', typeof spec>(
+        createUrl<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           {
             namespace: {
@@ -147,9 +148,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -171,9 +172,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -191,9 +192,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -213,9 +214,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -236,9 +237,9 @@ describe('urlHandler', () => {
         };
 
         expect(
-          parseUrl<'namespace', typeof spec, {}>(
+          getParameter<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
-            createUrl<'namespace', typeof spec>(
+            createUrl<'namespace', typeof spec, {}>(
               [{ namespace: 'namespace', parameterSpec: spec }],
               parameter,
             ),
@@ -258,9 +259,9 @@ describe('urlHandler', () => {
         };
 
         expect(
-          parseUrl<'namespace', typeof spec, {}>(
+          getParameter<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
-            createUrl<'namespace', typeof spec>(
+            createUrl<'namespace', typeof spec, {}>(
               [{ namespace: 'namespace', parameterSpec: spec }],
               parameter,
             ),
@@ -280,7 +281,7 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          createUrl<'namespace', typeof spec>([{ namespace: 'namespace', parameterSpec: spec }], parameter),
+          createUrl<'namespace', typeof spec, {}>([{ namespace: 'namespace', parameterSpec: spec }], parameter),
         ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as \'foo\' | \'bar\' with the value baz'));
       });
 
@@ -290,7 +291,7 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          parseUrl<'namespace', typeof spec, {}>(
+          getParameter<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             '/namespace;param=baz',
           ),
@@ -312,9 +313,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -332,9 +333,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -354,9 +355,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -370,7 +371,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl<'namespace', typeof spec>(
+        createUrl<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           {
             namespace: {
@@ -387,7 +388,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           '/namespace;foo=invalid',
         ),
@@ -407,9 +408,9 @@ describe('urlHandler', () => {
         };
 
         expect(
-          parseUrl<'namespace', typeof spec, {}>(
+          getParameter<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
-            createUrl<'namespace', typeof spec>(
+            createUrl<'namespace', typeof spec, {}>(
               [{ namespace: 'namespace', parameterSpec: spec }],
               parameter,
             ),
@@ -429,7 +430,7 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -442,7 +443,7 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          parseUrl<'namespace', typeof spec, {}>(
+          getParameter<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             '/namespace;param=5',
           ),
@@ -466,9 +467,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -486,9 +487,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -508,9 +509,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -524,7 +525,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl<'namespace', typeof spec>(
+        createUrl<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           {
             namespace: {
@@ -541,7 +542,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           '/namespace;foo=invalid',
         ),
@@ -562,9 +563,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -584,9 +585,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -604,9 +605,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -626,9 +627,9 @@ describe('urlHandler', () => {
       };
 
       expect(
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -642,7 +643,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl<'namespace', typeof spec>(
+        createUrl<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           {
             namespace: {
@@ -659,7 +660,7 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl<'namespace', typeof spec, {}>(
+        getParameter<'namespace', typeof spec, {}>(
           [{ namespace: 'namespace', parameterSpec: spec }],
           '/namespace;foo=invalid',
         ),
@@ -679,9 +680,9 @@ describe('urlHandler', () => {
         };
 
         expect(
-          parseUrl<'namespace', typeof spec, {}>(
+          getParameter<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
-            createUrl<'namespace', typeof spec>(
+            createUrl<'namespace', typeof spec, {}>(
               [{ namespace: 'namespace', parameterSpec: spec }],
               parameter,
             ),
@@ -701,7 +702,7 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -720,7 +721,7 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          createUrl<'namespace', typeof spec>(
+          createUrl<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             parameter,
           ),
@@ -733,12 +734,120 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          parseUrl<'namespace', typeof spec, {}>(
+          getParameter<'namespace', typeof spec, {}>(
             [{ namespace: 'namespace', parameterSpec: spec }],
             '/namespace;param=false',
           ),
         ).toThrow(new Error('The url /namespace;param=false has incorrect parameter param, it is not parsable as true'));
       });
+    });
+  });
+
+  describe('nested routes', () => {
+    it('when a routechain with parent and child is given, then these should be parseable', () => {
+      const rootSpec = {
+        rootParam: [serializer.string()],
+      };
+
+      const childSpec = {
+        childParam: [serializer.string()],
+      };
+
+      const parameter = {
+        root: {
+          rootParam: 'foo',
+        },
+        child: {
+          childParam: 'bar',
+        },
+      };
+
+      expect(
+        getParameter<'root', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+          [
+            { namespace: 'root', parameterSpec: rootSpec },
+            { namespace: 'child', parameterSpec: childSpec },
+          ],
+          createUrl<'root', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+            [
+              { namespace: 'root', parameterSpec: rootSpec },
+              { namespace: 'child', parameterSpec: childSpec },
+            ],
+            parameter,
+          ),
+        ),
+      ).toEqual(parameter);
+    });
+
+    it('when a routename with slash comes, that should work', () => {
+      const rootSpec = {
+        rootParam: [serializer.string()],
+      };
+
+      const childSpec = {
+        childParam: [serializer.string()],
+      };
+
+      const parameter = {
+        'root/name': {
+          rootParam: 'foo',
+        },
+        child: {
+          childParam: 'bar',
+        },
+      };
+
+      expect(
+        getParameter<'root/name', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+          [
+            { namespace: 'root/name', parameterSpec: rootSpec },
+            { namespace: 'child', parameterSpec: childSpec },
+          ],
+          createUrl<'root/name', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+            [
+              { namespace: 'root/name', parameterSpec: rootSpec },
+              { namespace: 'child', parameterSpec: childSpec },
+            ],
+            parameter,
+          ),
+        ),
+      ).toEqual(parameter);
+    });
+
+    it('when a nested route is given, and asked for the parent parameter, that should give the parents parameter', () => {
+      const rootSpec = {
+        rootParam: [serializer.string()],
+      };
+
+      const childSpec = {
+        childParam: [serializer.string()],
+      };
+
+      const parameter = {
+        root: {
+          rootParam: 'foo',
+        },
+      };
+
+      expect(
+        getParameter<'root', typeof rootSpec, {}>(
+          [
+            { namespace: 'root', parameterSpec: rootSpec },
+          ],
+          createUrl<'root', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+            [
+              { namespace: 'root', parameterSpec: rootSpec },
+              { namespace: 'child', parameterSpec: childSpec },
+            ],
+            {
+              ...parameter,
+              child: {
+                childParam: 'bar',
+              },
+            },
+          ),
+        ),
+      ).toEqual(parameter);
     });
   });
 });

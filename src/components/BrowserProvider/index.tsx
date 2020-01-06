@@ -3,7 +3,7 @@ import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/
 import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
-import { createUrl, isNamespaceActive, isNamespaceActiveAsParent, parseUrl } from '../../util/urlHandler';
+import { createUrl, getParameter, getRouteState } from '../../util/urlHandler';
 
 type props = {
   children: any;
@@ -35,10 +35,9 @@ export default class BrowserProvider extends Component<props> {
     return (
       <urlHandler.Provider
         state={{
-          isNamespaceActive,
-          isNamespaceActiveAsParent,
+          getRouteState,
           createUrl,
-          parseUrl,
+          getParameter,
         }}
         dispatch={null as never}
       >
