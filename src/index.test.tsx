@@ -1,7 +1,7 @@
 import plusnew, { component, store } from '@plusnew/core';
 import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
-import { createRoute, serializer, StaticProvider } from './index';
+import { createRoute, serializer, StaticProvider, NotFound } from './index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
@@ -196,6 +196,43 @@ describe('api', () => {
         <span>foo</span>
       </div>,
     )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does link work as expected, for root component', () => {
+    const urlStore = store('/');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <NotFound>
+            <span>not found</span>
+          </NotFound>
+          <rootRoute.Component />
+          <rootRoute.Link
+            parameter={{
+              rootPath: {
+                parentParam: 'foo',
+              },
+            }}
+          >link</rootRoute.Link>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
+
+    wrapper.find('a').simulate('click');
+
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
 
     wrapper.unmount();
   });

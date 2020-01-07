@@ -6,14 +6,14 @@ import consumerFactory from './consumerFactory';
 import linkFactory from './linkFactory';
 
 export default function createRoute<
-  namespace extends string,
+  routeName extends string,
   parameterSpec extends parameterSpecTemplate,
   >(
-    namespace: namespace,
+    routeName: routeName,
     parameterSpec: parameterSpec,
-    component: ComponentContainer<{ parameter: routeContainerToType<namespace, parameterSpec> }>) {
-  return abstractCreateRoute<routeContainerToType<namespace, parameterSpec>>([{
-    namespace,
+    component: ComponentContainer<{ parameter: routeContainerToType<routeName, parameterSpec> }>) {
+  return abstractCreateRoute<routeContainerToType<routeName, parameterSpec>>([{
+    routeName,
     parameterSpec,
     component,
   }]);
@@ -23,14 +23,14 @@ function abstractCreateRoute<
   parentParameter,
 >(routeChain: routeContainer<any, any, parentParameter>[]) {
   function createChildRoute<
-    namespace extends string,
+    routeName extends string,
     parameterSpec extends parameterSpecTemplate,
     >(
-      namespace: namespace,
+      routeName: routeName,
       parameterSpec: parameterSpec,
-      component: ComponentContainer<{ parameter: parentParameter & routeContainerToType<namespace, parameterSpec> }>) {
-    return abstractCreateRoute<parentParameter & routeContainerToType<namespace, parameterSpec>>([...routeChain, {
-      namespace,
+      component: ComponentContainer<{ parameter: parentParameter & routeContainerToType<routeName, parameterSpec> }>) {
+    return abstractCreateRoute<parentParameter & routeContainerToType<routeName, parameterSpec>>([...routeChain, {
+      routeName,
       parameterSpec,
       component,
     }]);

@@ -28,12 +28,12 @@ const RouteComponent = component(
 
 const route = createRoute(
   // With the paths the route will be responsible for
-  'namespace',
+  'routeName',
 
   // Defines what parameter the route can have
   parameterSpecification,
 
-  // This Component will be shown, when the path is matching the namespace and the parameters
+  // This Component will be shown, when the path is matching the routeName and the parameters
   RouteComponent,
 );
 
@@ -41,7 +41,7 @@ const MainComponent = component(
   'MainComponent',
   () =>
     <>
-      {/*This will create an a-tag with href /namespace?oneParameter=1&sortOrder=asc
+      {/*This will create an a-tag with href /routeName?oneParameter=1&sortOrder=asc
       the typescript compiler will complain, in case the types defined as parameterSpecification are not matched
       */}
       <route.Link parameter={{ oneParameter: 1, sortOrder: 'asc' }}>LinkText</route.Link>
@@ -52,7 +52,7 @@ const MainComponent = component(
       {/* in case the current path does not match any existing routes, the children of NotFound will be displayed */}
       <router.NotFound>No matching route found</router.NotFound>
 
-      {/* in case the path matched the namespace of a route, but the parameters were not correct the children of Invalid will be display */}
+      {/* in case the path matched the routeName of a route, but the parameters were not correct the children of Invalid will be display */}
       <router.NotFound>No matching route found</router.NotFound>
     </>,
 );

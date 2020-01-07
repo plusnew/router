@@ -5,10 +5,10 @@ import { parameterSpecTemplate } from '../../../types/mapper';
 import { routeContainer } from '../../../types/route';
 
 export default function <
-  namespace extends string,
+  routeName extends string,
   parameterSpec extends parameterSpecTemplate,
   parentParameter
->(routeChain: routeContainer<namespace, parameterSpec, parentParameter>[]) {
+>(routeChain: routeContainer<routeName, parameterSpec, parentParameter>[]) {
   return class Link extends Component<{}> {
     static displayName = 'RouteComponent';
     render(_Props: Props<{}>) {
@@ -18,7 +18,7 @@ export default function <
             if (urlHandlerState.getRouteState(routeChain, urlState) === routeState.active) {
               try {
                 const parameter = urlHandlerState.getParameter<
-                  namespace,
+                  routeName,
                   parameterSpec,
                   parentParameter>(routeChain, urlState);
                 const route = routeChain[routeChain.length - 1];

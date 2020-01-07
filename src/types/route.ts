@@ -2,11 +2,11 @@ import { ComponentContainer } from '@plusnew/core';
 import { parameterSpecTemplate, routeContainerToType } from './mapper';
 
 export type routeContainer<
-  namespace extends string,
+  routeName extends string,
   parameterSpec extends parameterSpecTemplate,
   parentParameter extends {},
 > = {
-  namespace: string,
+  routeName: string,
   parameterSpec: parameterSpec,
-  component: ComponentContainer<{ parameter: routeContainerToType<namespace, parameterSpec> & parentParameter }>;
+  component: ComponentContainer<{ parameter: routeContainerToType<routeName, parameterSpec> & parentParameter }>;
 };

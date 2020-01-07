@@ -14,10 +14,10 @@ type props<parameter> = {
 };
 
 export default function <
-  namespace extends string,
+  routeName extends string,
   parameterSpec extends parameterSpecTemplate,
   parentParameter
->(routeChain: routeContainer<namespace, parameterSpec, parentParameter>[]) {
+>(routeChain: routeContainer<routeName, parameterSpec, parentParameter>[]) {
   type parameter = parentParameter & parameterSpecToType<parameterSpec>;
   return class Link extends Component<props<parameter>> {
     static displayName = 'RouteConsumer';
@@ -41,7 +41,7 @@ export default function <
             // Active
             try {
               const parameter = urlHandlerState.getParameter<
-                namespace,
+                routeName,
                 parameterSpec,
                 parentParameter>(routeChain, urlState);
 

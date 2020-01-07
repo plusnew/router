@@ -1,5 +1,5 @@
-import { linkHandler, routeState } from 'contexts/urlHandler';
-import { parameterSpecTemplate, parameterSpecToType } from 'types/mapper';
+import { linkHandler, routeState } from '../contexts/urlHandler';
+import { parameterSpecTemplate, parameterSpecToType } from '../types/mapper';
 
 const PATH_DELIMITER = '/';
 const PARAMETER_DELIMITER = ';';
@@ -9,7 +9,7 @@ export const createUrl: linkHandler['createUrl'] = (routeChain, parameter) => {
   return routeChain.reduce((path, routeContainer) => {
     return (Object.entries(routeContainer.parameterSpec))
       .reduce((path, [specKey, serializers]) => {
-        const paramValue = (parameter as any)[routeContainer.namespace][specKey];
+        const paramValue = (parameter as any)[routeContainer.routeName][specKey];
         for (const serializer of serializers) {
           const serializerResult = serializer.toUrl(paramValue);
 
@@ -25,9 +25,9 @@ export const createUrl: linkHandler['createUrl'] = (routeChain, parameter) => {
         const type = serializers.map(serializer => serializer.displayName).join(' | ');
 
         throw new Error(
-          `Could not create url for ${routeContainer.namespace}, the property ${specKey} was not serializable as ${type} with the value ${paramValue}`,
+          `Could not create url for ${routeContainer.routeName}, the property ${specKey} was not serializable as ${type} with the value ${paramValue}`,
         );
-      }, `${path}${PATH_DELIMITER}${routeContainer.namespace}`);
+      }, `${path}${PATH_DELIMITER}${routeContainer.routeName}`);
   }, '');
 };
 
@@ -87,18 +87,18 @@ export const getParameter: linkHandler['getParameter'] = (routeChain, url) => {
   let urlPartIndex = 0;
 
   while (routeIndex < routeChain.length) {
-    const routeParts = routeChain[routeIndex].namespace.split(PATH_DELIMITER);
+    const routeParts = routeChain[routeIndex].routeName.split(PATH_DELIMITER);
     for (let routePartIndex = 0; routePartIndex < routeParts.length; routePartIndex += 1) {
-      const [urlPartNamespace] = urlParts[urlPartIndex];
+      const [urlPartrouteName] = urlParts[urlPartIndex];
       debugger;
-      if (urlPartNamespace !== routeParts[routePartIndex]) {
-        throw new Error(`Can not parse url ${url} for wrong namespace ${routeChain[routeIndex].namespace}`);
+      if (urlPartrouteName !== routeParts[routePartIndex]) {
+        throw new Error(`Can not parse url ${url} for wrong routeName ${routeChain[routeIndex].routeName}`);
       }
       urlPartIndex += 1;
     }
     const [, parameterString] = urlParts[urlPartIndex - 1];
     const parameter = parameterString === '' ? [] : parameterString.split(PARAMETER_DELIMITER);
-    result[routeChain[routeIndex].namespace] = getParameterOfRoutePart(parameter, routeChain[routeIndex].parameterSpec, url),
+    result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(parameter, routeChain[routeIndex].parameterSpec, url),
     routeIndex += 1;
   }
 
@@ -113,10 +113,10 @@ export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => 
   let urlPartIndex = 0;
 
   while (result && routeIndex < routeChain.length) {
-    const routeParts = routeChain[routeIndex].namespace.split(PATH_DELIMITER);
+    const routeParts = routeChain[routeIndex].routeName.split(PATH_DELIMITER);
     for (let routePartIndex = 0; result && routePartIndex < routeParts.length && urlPartIndex < urlParts.length; routePartIndex += 1) {
-      const [urlPartNamespace] = urlParts[urlPartIndex];
-      if (routeParts[routePartIndex] !== urlPartNamespace) {
+      const [urlPartrouteName] = urlParts[urlPartIndex];
+      if (routeParts[routePartIndex] !== urlPartrouteName) {
         result = false;
       }
       urlPartIndex += 1;
