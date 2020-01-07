@@ -5,7 +5,7 @@ import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
 
 type props<parameter> = {
-  children: ApplicationElement[],
+  children: ApplicationElement,
   parameter: parameter,
 };
 
@@ -30,7 +30,7 @@ export default function <
                 onclick: () => {
                   dispatch(targetUrl);
                 },
-              }, ...props.children);
+              }, ...props.children as any);
             }
             }</Props>
           }</url.Consumer>
