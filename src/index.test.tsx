@@ -1,7 +1,7 @@
 import plusnew, { component, store } from '@plusnew/core';
 import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
-import { createRoute, serializer, StaticProvider, NotFound } from './index';
+import { createRoute, serializer, StaticProvider, NotFound, Invalid } from './index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
@@ -25,6 +25,68 @@ describe('api', () => {
     );
 
     expect(wrapper.contains(<div>foo</div>)).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does invalid work as expected', () => {
+    const urlStore = store('/rootPath;wrongParam=foo');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+          <Invalid><span>invalid</span></Invalid>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>invalid</span>)).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does not work as expected, when route gets mounted and unmounted', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+    const show = store(false);
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <show.Observer>{showState =>
+            showState && <rootRoute.Component />
+          }</show.Observer>
+          <NotFound>
+            <span>not found</span>
+          </NotFound>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
+
+    show.dispatch(true);
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(false);
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
+
+    show.dispatch(false);
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
 
     wrapper.unmount();
   });
@@ -233,6 +295,7 @@ describe('api', () => {
     wrapper.find('a').simulate('click');
 
     expect(wrapper.contains(<div>foo</div>)).toBe(true);
+    expect(wrapper.contains(<span>not found</span>)).toBe(false);
 
     wrapper.unmount();
   });

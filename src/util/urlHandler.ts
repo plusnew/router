@@ -90,7 +90,7 @@ export const getParameter: linkHandler['getParameter'] = (routeChain, url) => {
     const routeParts = routeChain[routeIndex].routeName.split(PATH_DELIMITER);
     for (let routePartIndex = 0; routePartIndex < routeParts.length; routePartIndex += 1) {
       const [urlPartrouteName] = urlParts[urlPartIndex];
-      debugger;
+
       if (urlPartrouteName !== routeParts[routePartIndex]) {
         throw new Error(`Can not parse url ${url} for wrong routeName ${routeChain[routeIndex].routeName}`);
       }
@@ -99,7 +99,7 @@ export const getParameter: linkHandler['getParameter'] = (routeChain, url) => {
     const [, parameterString] = urlParts[urlPartIndex - 1];
     const parameter = parameterString === '' ? [] : parameterString.split(PARAMETER_DELIMITER);
     result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(parameter, routeChain[routeIndex].parameterSpec, url),
-    routeIndex += 1;
+      routeIndex += 1;
   }
 
   return result;
@@ -114,12 +114,16 @@ export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => 
 
   while (result && routeIndex < routeChain.length) {
     const routeParts = routeChain[routeIndex].routeName.split(PATH_DELIMITER);
-    for (let routePartIndex = 0; result && routePartIndex < routeParts.length && urlPartIndex < urlParts.length; routePartIndex += 1) {
-      const [urlPartrouteName] = urlParts[urlPartIndex];
-      if (routeParts[routePartIndex] !== urlPartrouteName) {
+    for (let routePartIndex = 0; result && routePartIndex < routeParts.length; routePartIndex += 1) {
+      if (urlPartIndex >= urlParts.length) {
         result = false;
+      } else {
+        const [urlPartrouteName] = urlParts[urlPartIndex];
+        if (routeParts[routePartIndex] !== urlPartrouteName) {
+          result = false;
+        }
+        urlPartIndex += 1;
       }
-      urlPartIndex += 1;
     }
     routeIndex += 1;
   }

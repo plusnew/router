@@ -17,6 +17,8 @@ export default component(
             urlHandlerState.getRouteState(routeChain, urlState) === routeState.active,
           );
 
+          debugger;
+
           if (activeRoute === undefined) {
             return (
               <Props>{props =>

@@ -13,6 +13,7 @@ export default component(
     <activeRoutes.Consumer>{activeRoutesState =>
       <url.Consumer>{urlState =>
         <urlHandler.Consumer>{(urlHandlerState) => {
+          debugger;
           const activeBrokenRoute = activeRoutesState.find((routeChain) => {
             if (urlHandlerState.getRouteState(routeChain, urlState) !== routeState.inactive) {
               try {
