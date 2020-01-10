@@ -98,8 +98,8 @@ export const getParameter: linkHandler['getParameter'] = (routeChain, url) => {
     }
     const [, parameterString] = urlParts[urlPartIndex - 1];
     const parameter = parameterString === '' ? [] : parameterString.split(PARAMETER_DELIMITER);
-    result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(parameter, routeChain[routeIndex].parameterSpec, url),
-      routeIndex += 1;
+    result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(parameter, routeChain[routeIndex].parameterSpec, url);
+    routeIndex += 1;
   }
 
   return result;

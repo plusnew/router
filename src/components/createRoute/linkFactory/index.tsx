@@ -9,6 +9,10 @@ type props<parameter> = {
   parameter: parameter,
 };
 
+function hasModifier(evt: MouseEvent) {
+  return evt.altKey === true || evt.ctrlKey === true || evt.shiftKey === true || evt.metaKey === true;
+}
+
 export default function <
   routeName extends string,
   parameterSpec extends parameterSpecTemplate,
@@ -25,10 +29,16 @@ export default function <
             <Props>{(props) => {
               const targetUrl = urlHandlerState.createUrl(routeChain, props.parameter);
 
+              const className = 'router__link';
+
               return plusnew.createElement('a', {
+                className,
                 href: targetUrl,
-                onclick: () => {
-                  dispatch(targetUrl);
+                onclick: (evt) => {
+                  if (hasModifier(evt) === false) {
+                    dispatch(targetUrl);
+                    evt.preventDefault();
+                  }
                 },
               }, ...props.children as any);
             }
