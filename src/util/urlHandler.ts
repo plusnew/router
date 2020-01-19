@@ -106,21 +106,21 @@ export const getParameter: linkHandler['getParameter'] = (routeChain, url) => {
 };
 
 export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => {
-  let result = true;
+  let active = true;
   const urlParts = getUrlParts(url);
 
   let routeIndex = 0;
   let urlPartIndex = 0;
 
-  while (result && routeIndex < routeChain.length) {
+  while (active && routeIndex < routeChain.length) {
     const routeParts = routeChain[routeIndex].routeName.split(PATH_DELIMITER);
-    for (let routePartIndex = 0; result && routePartIndex < routeParts.length; routePartIndex += 1) {
+    for (let routePartIndex = 0; active && routePartIndex < routeParts.length; routePartIndex += 1) {
       if (urlPartIndex >= urlParts.length) {
-        result = false;
+        active = false;
       } else {
         const [urlPartrouteName] = urlParts[urlPartIndex];
         if (routeParts[routePartIndex] !== urlPartrouteName) {
-          result = false;
+          active = false;
         }
         urlPartIndex += 1;
       }
@@ -128,13 +128,12 @@ export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => 
     routeIndex += 1;
   }
 
-  if (result) {
-    if (urlParts.length === urlPartIndex) {
-      return routeState.active;
-    }
-    if (urlParts.length > urlPartIndex) {
-      return routeState.activeAsParent;
-    }
+  if (active && urlParts.length === urlPartIndex) {
+    return routeState.active;
   }
+  if (active && urlParts.length > urlPartIndex) {
+    return routeState.activeAsParent;
+  }
+
   return routeState.inactive;
 };

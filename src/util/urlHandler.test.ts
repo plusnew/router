@@ -740,6 +740,19 @@ describe('urlHandler', () => {
           ),
         ).toThrow(new Error('The url /routeName;param=false has incorrect parameter param, it is not parsable as true'));
       });
+
+      it('with incorrect value for parseUrl', () => {
+        const spec = {
+          param: [serializer.boolean(false)],
+        };
+
+        expect(() =>
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            '/routeName;param=true',
+          ),
+        ).toThrow(new Error('The url /routeName;param=true has incorrect parameter param, it is not parsable as false'));
+      });
     });
   });
 

@@ -73,6 +73,9 @@ describe('api', () => {
           <NotFound>
             <span>not found</span>
           </NotFound>
+          <Invalid>
+            <span>invalid</span>
+          </Invalid>
         </StaticProvider>
       }</urlStore.Observer>,
     );
@@ -278,6 +281,9 @@ describe('api', () => {
           <NotFound>
             <span>not found</span>
           </NotFound>
+          <Invalid>
+            <span>invalid</span>
+          </Invalid>
           <rootRoute.Component />
           <rootRoute.Link
             parameter={{
