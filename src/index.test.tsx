@@ -1,95 +1,308 @@
-import plusnew, { component } from '@plusnew/core';
-import { createRoute, Invalid, NotFound, serializer } from '.';
+import plusnew, { component, store } from '@plusnew/core';
+import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
+import { configure } from 'enzyme';
+import { createRoute, serializer, StaticProvider, NotFound, Invalid } from './index';
 
-const rootRoute = createRoute(
-  // With the paths the route will be responsible for
-  'rootRouteName',
+configure({ adapter: new enzymeAdapterPlusnew() });
 
-  // Defines what parameter the route can have
-  {
-    oneParameter: [serializer.number()], // This parameter is required and a normal number
-    sortOrder: [serializer.string('asc'), serializer.string('desc'), serializer.undefined()], // This paramter is optional, when given it has to be the string literal 'asc' | 'desc'
-  } as const,
+describe('api', () => {
+  it('does createroute work as expected', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
 
-  // This Component will be shown, when the path is matching the routeName and the parameters
-  component(
-    'RootRouteComponent',
-    Props =>
-      <Props>{props =>
-        <>
-          <span>{props.parameter.rootRouteName.oneParameter}</span>
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
 
-          {/** Typescript is aware, that parameter.sortOrder has this type: 'asc' | 'desc' | undefined */}
-          {props.parameter.rootRouteName.sortOrder && <span>{props.parameter.rootRouteName.sortOrder}</span>}
-        </>
-      }</Props>,
-  ),
-);
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
 
-const childRoute = rootRoute.createChildRoute(
-  'childRouteName',
-  {
-    optionalParameter: [serializer.undefined(), serializer.boolean()], // Optional boolean parameter
-  } as const,
-  component(
-    'ChildRouteComponent',
-    Props =>
-      <Props>{props =>
-        <>
-          {/* compiler knows that optional parameter is either boolean or undefined */}
-          <div>{props.parameter.childRouteName.optionalParameter}</div>
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
 
-          {/* Child routes have parent parameters are also available */}
-          <div>{props.parameter.rootRouteName.oneParameter}</div>
+    wrapper.unmount();
+  });
 
-        </>
-      }</Props>,
-  ),
-);
+  it('does invalid work as expected', () => {
+    const urlStore = store('/rootPath;wrongParam=foo');
 
-const MainComponent = component(
-  'MainComponent',
-  () =>
-    <>
-      {/*This will create an a-tag with href /rootRouteName;oneParameter=1&sortOrder=asc
-      the typescript compiler will complain, in case the types defined as parameterSpecification are not matched
-      */}
-      <rootRoute.Link parameter={{
-        rootRouteName: {
-          oneParameter: 1,
-          sortOrder: 'asc',
-        },
-      }}>LinkText to root</rootRoute.Link>
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
 
-      {/*This will create an a-tag with href /rootRouteName;oneParameter=2&sortOrder=desc/childRouteName;optionalParameter=true
-      the typescript compiler will complain, in case the types defined as parameterSpecification are not matched
-      */}
-      <childRoute.Link parameter={{
-        rootRouteName: {
-          oneParameter: 2,
-          sortOrder: 'desc',
-        },
-        childRouteName: {
-          optionalParameter: true,
-        },
-      }}>LinkText to child</childRoute.Link>
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+          <Invalid><span>invalid</span></Invalid>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
 
-      {/* in case the current path is matching, the RouteComponent with the span's will be displayed here*/}
-      <rootRoute.Component />
+    expect(wrapper.contains(<span>invalid</span>)).toBe(true);
 
-      {/* in case the current path is matching, the RouteComponent with the span's will be displayed here*/}
-      <childRoute.Component />
+    wrapper.unmount();
+  });
 
-      {/* in case the current path does not match any existing routes, the children of NotFound will be displayed */}
-      <NotFound>No matching route found</NotFound>
+  it('does not work as expected, when route gets mounted and unmounted', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+    const show = store(false);
 
-      {/* in case the path matched the namespace of a route, but the parameters were not correct the children of Invalid will be display */}
-      <Invalid>Route found, but with invalid parameter</Invalid>
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
 
-      {/* a consumer is a listener for routechanges*/}
-      <rootRoute.Consumer>{routeState =>
-        // when the route is active, or active whith some kids, then the parameter come available for the compiler
-        (routeState.isActive || routeState.isActiveAsParent) && routeState.parameter.rootRouteName.oneParameter
-      }</rootRoute.Consumer>
-    </>,
-);
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <show.Observer>{showState =>
+            showState && <rootRoute.Component />
+          }</show.Observer>
+          <NotFound>
+            <span>not found</span>
+          </NotFound>
+          <Invalid>
+            <span>invalid</span>
+          </Invalid>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
+
+    show.dispatch(true);
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(false);
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
+
+    show.dispatch(false);
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does createChildRoute work as expected', () => {
+    const urlStore = store('/rootPath;parentParam=foo/childPath;childParam=bar');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const childRoute = rootRoute.createChildRoute('childPath', {
+      childParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props =>
+        <Props>{props =>
+          <div>
+            <span>{props.parameter.rootPath.parentParam}</span>
+            <span>{props.parameter.childPath.childParam}</span>
+          </div>
+        }</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+          <childRoute.Component />
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<div>foo</div>)).toBe(false);
+    expect(wrapper.contains(
+      <div>
+        <span>foo</span>
+        <span>bar</span>
+      </div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when active', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive && (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              )}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>
+        <span>foo</span>
+      </div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when ill-formed', () => {
+    const urlStore = store('/somepath');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive ? (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              ) : 'inactive'}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>inactive</div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when inactive', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.number()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive ? (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              ) : 'inactive'}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>inactive</div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when parent', () => {
+    const urlStore = store('/rootPath;parentParam=foo/childPath;childParam=bar');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActiveAsParent && (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              )}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>
+        <span>foo</span>
+      </div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does link work as expected, for root component', () => {
+    const urlStore = store('/');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <NotFound>
+            <span>not found</span>
+          </NotFound>
+          <Invalid>
+            <span>invalid</span>
+          </Invalid>
+          <rootRoute.Component />
+          <rootRoute.Link
+            parameter={{
+              rootPath: {
+                parentParam: 'foo',
+              },
+            }}
+          >link</rootRoute.Link>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
+
+    wrapper.find('a').simulate('click');
+
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
+    expect(wrapper.contains(<span>not found</span>)).toBe(false);
+
+    wrapper.unmount();
+  });
+});
