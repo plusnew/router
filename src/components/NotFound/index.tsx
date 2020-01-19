@@ -1,7 +1,7 @@
 import plusnew, { component, Props } from '@plusnew/core';
-import urlHandler from '../../contexts/urlHandler';
-import url from '../../contexts/url';
 import activeRoutes from '../../contexts/activeRoutes';
+import url from '../../contexts/url';
+import urlHandler, { routeState } from '../../contexts/urlHandler';
 
 type props = {
   children: any;
@@ -13,8 +13,8 @@ export default component(
     <activeRoutes.Consumer>{activeRoutesState =>
       <url.Consumer>{urlState =>
         <urlHandler.Consumer>{(urlHandlerState) => {
-          const activeRoute = activeRoutesState.find(route =>
-            urlHandlerState.isNamespaceActive(route.namespace, urlState),
+          const activeRoute = activeRoutesState.find(routeChain =>
+            urlHandlerState.getRouteState(routeChain, urlState) === routeState.active,
           );
 
           if (activeRoute === undefined) {

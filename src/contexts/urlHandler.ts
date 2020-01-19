@@ -1,10 +1,32 @@
 import { context } from '@plusnew/core';
-import { SpecToType, RouteParameterSpec } from '../types/mapper';
+import { parameterSpecTemplate, routeContainerToType } from '../types/mapper';
 
-type linkHandler = {
-  isNamespaceActive: (namespaces: string, url: string) => boolean;
-  createUrl: <Spec extends RouteParameterSpec>(namespace: string, spec: Spec, params: any) => string;
-  parseUrl: <Spec extends RouteParameterSpec>(namespace: string, spec: Spec, url: string) => SpecToType<Spec>
+type routeContainer<
+  routeName extends string,
+  parameterSpec extends parameterSpecTemplate,
+> = {
+  routeName: string,
+  parameterSpec: parameterSpec,
+};
+
+export enum routeState {
+  active,
+  activeAsParent,
+  inactive,
+}
+
+export type linkHandler = {
+  getRouteState: (routeChain: routeContainer<any, any>[], url: string) => routeState;
+  createUrl: <
+    routeName extends string,
+    parameterSpec extends parameterSpecTemplate,
+    parentParameter,
+  >(routeChain: routeContainer<any, parameterSpecTemplate>[], parameter: routeContainerToType<routeName, parameterSpec> & parentParameter) => string;
+  getParameter:<
+    routeName extends string,
+    parameterSpec extends parameterSpecTemplate,
+    parentParameter,
+  >(routeChain: routeContainer<any, parameterSpecTemplate>[], url: string) => routeContainerToType<routeName, parameterSpec> & parentParameter,
 };
 
 export default context<linkHandler, never>();

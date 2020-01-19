@@ -1,11 +1,18 @@
 import { serializer } from '../index';
-import { createUrl, parseUrl } from './urlHandler';
+import { createUrl, getParameter } from './urlHandler';
+import { parameterSpecToType } from 'types/mapper';
 
 describe('urlHandler', () => {
-  it('namespace missmatch', () => {
+  it('routeName missmatch', () => {
     expect(() =>
-      parseUrl('bar', {}, createUrl('foo', {}, {})),
-    ).toThrow(new Error('Can not parse url /foo for wrong namespace bar'));
+      getParameter(
+        [{ routeName: 'bar', parameterSpec: {} }],
+        createUrl(
+          [{ routeName: 'foo', parameterSpec: {} }],
+          {},
+        ),
+      ),
+    ).toThrow(new Error('Can not parse url /foo for wrong routeName bar'));
   });
 
   describe('missing parameter', () => {
@@ -16,8 +23,11 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl('namespace', spec, '/namespace?foo=bar'),
-      ).toThrow(new Error('The url /namespace?foo=bar has incorrect parameter bar, it is not parsable as string'));
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          '/routeName;foo=bar',
+        ),
+      ).toThrow(new Error('The url /routeName;foo=bar has incorrect parameter bar, it is not parsable as string'));
     });
 
     it('createUrl', () => {
@@ -27,8 +37,15 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' } as any),
-      ).toThrow(new Error('Could not create url for namespace, the property bar was not serializable as string with the value undefined'));
+        createUrl<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          {
+            routeName: {
+              foo: 'fooValue',
+            } as any,
+          },
+        ),
+      ).toThrow(new Error('Could not create url for routeName, the property bar was not serializable as string with the value undefined'));
     });
   });
 
@@ -39,11 +56,19 @@ describe('urlHandler', () => {
     };
 
     const parameter = {
-      bar: 'baz',
+      routeName: {
+        bar: 'baz',
+      },
     };
 
     expect(
-      parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+      getParameter<'routeName', typeof spec, {}>(
+        [{ routeName: 'routeName', parameterSpec: spec }],
+        createUrl<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          parameter,
+        ),
+      ),
     ).toEqual(parameter);
   });
 
@@ -54,11 +79,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: 'fooValue',
+        routeName: {
+          foo: 'fooValue',
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -68,11 +101,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: '',
+        routeName: {
+          foo: '',
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -82,8 +123,15 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 42 as any }),
-      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as string with the value 42'));
+        createUrl<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          {
+            routeName: {
+              foo: 42 as any,
+            },
+          },
+        ),
+      ).toThrow(new Error('Could not create url for routeName, the property foo was not serializable as string with the value 42'));
     });
 
     it('basic with multiple', () => {
@@ -93,12 +141,20 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: 'fooValue',
-        bar: 'barValue',
+        routeName: {
+          foo: 'fooValue',
+          bar: 'barValue',
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -109,12 +165,20 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: 'foo&Value',
-        bar: 'barValue',
+        routeName: {
+          foo: 'foo&Value',
+          bar: 'barValue',
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -123,10 +187,18 @@ describe('urlHandler', () => {
         foo: [serializer.string(), serializer.undefined()],
       };
 
-      const parameter = {};
+      const parameter = {
+        routeName: {},
+      };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -136,11 +208,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: 'string',
+        routeName: {
+          foo: 'string',
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -151,11 +231,19 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: 'foo' as const,
+          routeName: {
+            param: 'foo' as const,
+          },
         };
 
         expect(
-          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            createUrl<'routeName', typeof spec, {}>(
+              [{ routeName: 'routeName', parameterSpec: spec }],
+              parameter,
+            ),
+          ),
         ).toEqual(parameter);
       });
 
@@ -165,11 +253,19 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: 'foo&' as const,
+          routeName: {
+            param: 'foo&' as const,
+          },
         };
 
         expect(
-          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            createUrl<'routeName', typeof spec, {}>(
+              [{ routeName: 'routeName', parameterSpec: spec }],
+              parameter,
+            ),
+          ),
         ).toEqual(parameter);
       });
 
@@ -179,12 +275,14 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: 'baz' as any,
+          routeName: {
+            param: 'baz' as any,
+          },
         };
 
         expect(() =>
-          createUrl('namespace', spec, parameter),
-        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as \'foo\' | \'bar\' with the value baz'));
+          createUrl<'routeName', typeof spec, {}>([{ routeName: 'routeName', parameterSpec: spec }], parameter),
+        ).toThrow(new Error('Could not create url for routeName, the property param was not serializable as \'foo\' | \'bar\' with the value baz'));
       });
 
       it('with incorrect value for parseUrl', () => {
@@ -193,8 +291,11 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          parseUrl('namespace', spec, '/namespace?param=baz'),
-        ).toThrow(new Error('The url /namespace?param=baz has incorrect parameter param, it is not parsable as \'foo\' | \'bar\''));
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            '/routeName;param=baz',
+          ),
+        ).toThrow(new Error('The url /routeName;param=baz has incorrect parameter param, it is not parsable as \'foo\' | \'bar\''));
       });
     });
   });
@@ -206,11 +307,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: 23,
+        routeName: {
+          foo: 23,
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -219,10 +328,18 @@ describe('urlHandler', () => {
         foo: [serializer.number(), serializer.undefined()],
       };
 
-      const parameter = {};
+      const parameter = {
+        routeName: {},
+      };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -232,11 +349,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: 34,
+        routeName: {
+          foo: 34,
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -246,8 +371,15 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' as any }),
-      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as number with the value fooValue'));
+        createUrl<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          {
+            routeName: {
+              foo: 'fooValue' as any,
+            },
+          },
+        ),
+      ).toThrow(new Error('Could not create url for routeName, the property foo was not serializable as number with the value fooValue'));
     });
 
     it('parseUrl with invalid type', () => {
@@ -256,8 +388,11 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl('namespace', spec, '/namespace?foo=invalid'),
-      ).toThrow(new Error('The url /namespace?foo=invalid has incorrect parameter foo, it is not parsable as number'));
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          '/routeName;foo=invalid',
+        ),
+      ).toThrow(new Error('The url /routeName;foo=invalid has incorrect parameter foo, it is not parsable as number'));
     });
 
     describe('literal', () => {
@@ -267,11 +402,19 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: 2 as const,
+          routeName: {
+            param: 2 as const,
+          },
         };
 
         expect(
-          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            createUrl<'routeName', typeof spec, {}>(
+              [{ routeName: 'routeName', parameterSpec: spec }],
+              parameter,
+            ),
+          ),
         ).toEqual(parameter);
       });
 
@@ -281,12 +424,17 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: 5 as any,
+          routeName: {
+            param: 5 as any,
+          },
         };
 
         expect(() =>
-          createUrl('namespace', spec, parameter),
-        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as 2 | 3 with the value 5'));
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ).toThrow(new Error('Could not create url for routeName, the property param was not serializable as 2 | 3 with the value 5'));
       });
 
       it('with incorrect value for parseUrl', () => {
@@ -295,8 +443,11 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          parseUrl('namespace', spec, '/namespace?param=5'),
-        ).toThrow(new Error('The url /namespace?param=5 has incorrect parameter param, it is not parsable as 2 | 3'));
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            '/routeName;param=5',
+          ),
+        ).toThrow(new Error('The url /routeName;param=5 has incorrect parameter param, it is not parsable as 2 | 3'));
       });
 
     });
@@ -310,11 +461,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: new Date(),
+        routeName: {
+          foo: new Date(),
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -323,10 +482,18 @@ describe('urlHandler', () => {
         foo: [serializer.date(), serializer.undefined()],
       };
 
-      const parameter = {};
+      const parameter = {
+        routeName: {},
+      };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -336,11 +503,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: new Date(),
+        routeName: {
+          foo: new Date(),
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -350,8 +525,15 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' as any }),
-      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as date with the value fooValue'));
+        createUrl<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          {
+            routeName: {
+              foo: 'fooValue' as any,
+            },
+          },
+        ),
+      ).toThrow(new Error('Could not create url for routeName, the property foo was not serializable as date with the value fooValue'));
     });
 
     it('parseUrl with invalid type', () => {
@@ -360,8 +542,11 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl('namespace', spec, '/namespace?foo=invalid'),
-      ).toThrow(new Error('The url /namespace?foo=invalid has incorrect parameter foo, it is not parsable as date'));
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          '/routeName;foo=invalid',
+        ),
+      ).toThrow(new Error('The url /routeName;foo=invalid has incorrect parameter foo, it is not parsable as date'));
     });
   });
 
@@ -372,11 +557,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: true,
+        routeName: {
+          foo: true,
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -386,11 +579,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: false,
+        routeName: {
+          foo: false,
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -399,10 +600,18 @@ describe('urlHandler', () => {
         foo: [serializer.boolean(), serializer.undefined()],
       };
 
-      const parameter = {};
+      const parameter = {
+        routeName: {},
+      };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -412,11 +621,19 @@ describe('urlHandler', () => {
       };
 
       const parameter = {
-        foo: true,
+        routeName: {
+          foo: true,
+        },
       };
 
       expect(
-        parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ),
       ).toEqual(parameter);
     });
 
@@ -426,8 +643,15 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        createUrl('namespace', spec, { foo: 'fooValue' as any }),
-      ).toThrow(new Error('Could not create url for namespace, the property foo was not serializable as boolean with the value fooValue'));
+        createUrl<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          {
+            routeName: {
+              foo: 'fooValue' as any,
+            },
+          },
+        ),
+      ).toThrow(new Error('Could not create url for routeName, the property foo was not serializable as boolean with the value fooValue'));
     });
 
     it('parseUrl with invalid type', () => {
@@ -436,8 +660,11 @@ describe('urlHandler', () => {
       };
 
       expect(() =>
-        parseUrl('namespace', spec, '/namespace?foo=invalid'),
-      ).toThrow(new Error('The url /namespace?foo=invalid has incorrect parameter foo, it is not parsable as boolean'));
+        getParameter<'routeName', typeof spec, {}>(
+          [{ routeName: 'routeName', parameterSpec: spec }],
+          '/routeName;foo=invalid',
+        ),
+      ).toThrow(new Error('The url /routeName;foo=invalid has incorrect parameter foo, it is not parsable as boolean'));
     });
 
     describe('literal', () => {
@@ -447,11 +674,19 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: true as const,
+          routeName: {
+            param: true as const,
+          },
         };
 
         expect(
-          parseUrl('namespace', spec, createUrl('namespace', spec, parameter)),
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            createUrl<'routeName', typeof spec, {}>(
+              [{ routeName: 'routeName', parameterSpec: spec }],
+              parameter,
+            ),
+          ),
         ).toEqual(parameter);
       });
 
@@ -461,12 +696,17 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: false as any,
+          routeName: {
+            param: false as any,
+          },
         };
 
         expect(() =>
-          createUrl('namespace', spec, parameter),
-        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as true with the value false'));
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ).toThrow(new Error('Could not create url for routeName, the property param was not serializable as true with the value false'));
       });
 
       it('with incorrect value for createUrl', () => {
@@ -475,12 +715,17 @@ describe('urlHandler', () => {
         };
 
         const parameter = {
-          param: true as any,
+          routeName: {
+            param: true as any,
+          },
         };
 
         expect(() =>
-          createUrl('namespace', spec, parameter),
-        ).toThrow(new Error('Could not create url for namespace, the property param was not serializable as false with the value true'));
+          createUrl<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            parameter,
+          ),
+        ).toThrow(new Error('Could not create url for routeName, the property param was not serializable as false with the value true'));
       });
 
       it('with incorrect value for parseUrl', () => {
@@ -489,10 +734,133 @@ describe('urlHandler', () => {
         };
 
         expect(() =>
-          parseUrl('namespace', spec, '/namespace?param=false'),
-        ).toThrow(new Error('The url /namespace?param=false has incorrect parameter param, it is not parsable as true'));
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            '/routeName;param=false',
+          ),
+        ).toThrow(new Error('The url /routeName;param=false has incorrect parameter param, it is not parsable as true'));
       });
 
+      it('with incorrect value for parseUrl', () => {
+        const spec = {
+          param: [serializer.boolean(false)],
+        };
+
+        expect(() =>
+          getParameter<'routeName', typeof spec, {}>(
+            [{ routeName: 'routeName', parameterSpec: spec }],
+            '/routeName;param=true',
+          ),
+        ).toThrow(new Error('The url /routeName;param=true has incorrect parameter param, it is not parsable as false'));
+      });
+    });
+  });
+
+  describe('nested routes', () => {
+    it('when a routechain with parent and child is given, then these should be parseable', () => {
+      const rootSpec = {
+        rootParam: [serializer.string()],
+      };
+
+      const childSpec = {
+        childParam: [serializer.string()],
+      };
+
+      const parameter = {
+        root: {
+          rootParam: 'foo',
+        },
+        child: {
+          childParam: 'bar',
+        },
+      };
+
+      expect(
+        getParameter<'root', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+          [
+            { routeName: 'root', parameterSpec: rootSpec },
+            { routeName: 'child', parameterSpec: childSpec },
+          ],
+          createUrl<'root', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+            [
+              { routeName: 'root', parameterSpec: rootSpec },
+              { routeName: 'child', parameterSpec: childSpec },
+            ],
+            parameter,
+          ),
+        ),
+      ).toEqual(parameter);
+    });
+
+    it('when a routename with slash comes, that should work', () => {
+      const rootSpec = {
+        rootParam: [serializer.string()],
+      };
+
+      const childSpec = {
+        childParam: [serializer.string()],
+      };
+
+      const parameter = {
+        'root/name': {
+          rootParam: 'foo',
+        },
+        child: {
+          childParam: 'bar',
+        },
+      };
+
+      expect(
+        getParameter<'root/name', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+          [
+            { routeName: 'root/name', parameterSpec: rootSpec },
+            { routeName: 'child', parameterSpec: childSpec },
+          ],
+          createUrl<'root/name', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+            [
+              { routeName: 'root/name', parameterSpec: rootSpec },
+              { routeName: 'child', parameterSpec: childSpec },
+            ],
+            parameter,
+          ),
+        ),
+      ).toEqual(parameter);
+    });
+
+    it('when a nested route is given, and asked for the parent parameter, that should give the parents parameter', () => {
+      const rootSpec = {
+        rootParam: [serializer.string()],
+      };
+
+      const childSpec = {
+        childParam: [serializer.string()],
+      };
+
+      const parameter = {
+        root: {
+          rootParam: 'foo',
+        },
+      };
+
+      expect(
+        getParameter<'root', typeof rootSpec, {}>(
+          [
+            { routeName: 'root', parameterSpec: rootSpec },
+          ],
+          createUrl<'root', typeof rootSpec, { child: parameterSpecToType<typeof childSpec> }>(
+            [
+              { routeName: 'root', parameterSpec: rootSpec },
+              { routeName: 'child', parameterSpec: childSpec },
+            ],
+            {
+              ...parameter,
+              child: {
+                childParam: 'bar',
+              },
+            },
+          ),
+        ),
+      ).toEqual(parameter);
     });
   });
 });

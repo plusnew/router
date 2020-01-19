@@ -1,177 +1,308 @@
-import plusnew, { component, Props, store } from '@plusnew/core';
-import enzymeAdapterPlusnew, { getComponentPartial, mount } from '@plusnew/enzyme-adapter';
+import plusnew, { component, store } from '@plusnew/core';
+import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
-import { createRoute, Invalid, NotFound, serializer, StaticProvider, SpecToType } from './index';
+import { createRoute, serializer, StaticProvider, NotFound, Invalid } from './index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
-describe('test router', () => {
-  it('link should be found and be clickable', () => {
-    const spec = {
-      param1: [serializer.string()],
-      param2: [serializer.number()],
-    };
+describe('api', () => {
+  it('does createroute work as expected', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
 
-    const Component = component(
-      'Component',
-      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
-    );
-
-    const route = createRoute('namespace', spec, Component);
-
-    const urlStore = store('/');
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
 
     const wrapper = mount(
       <urlStore.Observer>{urlState =>
         <StaticProvider url={urlState} onchange={urlStore.dispatch}>
-          <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
-          <route.Component />
-          <Invalid><span>error happened</span></Invalid>
-          <NotFound><span>404</span></NotFound>
+          <rootRoute.Component />
         </StaticProvider>
       }</urlStore.Observer>,
     );
 
-    const ComponentPartial = getComponentPartial(Component);
-    expect(wrapper.contains(<span>404</span>)).toBe(true);
-    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
 
-    expect(wrapper.containsMatchingElement(<a href="/namespace?param1=foo&param2=2">link</a>)).toBe(true);
-    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+    wrapper.unmount();
+  });
+
+  it('does invalid work as expected', () => {
+    const urlStore = store('/rootPath;wrongParam=foo');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+          <Invalid><span>invalid</span></Invalid>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>invalid</span>)).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does not work as expected, when route gets mounted and unmounted', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+    const show = store(false);
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <show.Observer>{showState =>
+            showState && <rootRoute.Component />
+          }</show.Observer>
+          <NotFound>
+            <span>not found</span>
+          </NotFound>
+          <Invalid>
+            <span>invalid</span>
+          </Invalid>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
+
+    show.dispatch(true);
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(false);
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
+
+    show.dispatch(false);
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does createChildRoute work as expected', () => {
+    const urlStore = store('/rootPath;parentParam=foo/childPath;childParam=bar');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const childRoute = rootRoute.createChildRoute('childPath', {
+      childParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props =>
+        <Props>{props =>
+          <div>
+            <span>{props.parameter.rootPath.parentParam}</span>
+            <span>{props.parameter.childPath.childParam}</span>
+          </div>
+        }</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+          <childRoute.Component />
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<div>foo</div>)).toBe(false);
+    expect(wrapper.contains(
+      <div>
+        <span>foo</span>
+        <span>bar</span>
+      </div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when active', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive && (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              )}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>
+        <span>foo</span>
+      </div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when ill-formed', () => {
+    const urlStore = store('/somepath');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive ? (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              ) : 'inactive'}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>inactive</div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when inactive', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.number()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive ? (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              ) : 'inactive'}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>inactive</div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when parent', () => {
+    const urlStore = store('/rootPath;parentParam=foo/childPath;childParam=bar');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActiveAsParent && (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              )}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>
+        <span>foo</span>
+      </div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does link work as expected, for root component', () => {
+    const urlStore = store('/');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <NotFound>
+            <span>not found</span>
+          </NotFound>
+          <Invalid>
+            <span>invalid</span>
+          </Invalid>
+          <rootRoute.Component />
+          <rootRoute.Link
+            parameter={{
+              rootPath: {
+                parentParam: 'foo',
+              },
+            }}
+          >link</rootRoute.Link>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<span>not found</span>)).toBe(true);
 
     wrapper.find('a').simulate('click');
 
-    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
+    expect(wrapper.contains(<span>not found</span>)).toBe(false);
 
-    expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} props={{ children: [] }} />)).toBe(true);
-
-    urlStore.dispatch('/namespace?invalid=parameter');
-
-    expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<span>error happened</span>)).toBe(true);
-  });
-
-  it('routes should be programmaticly dispatchable', () => {
-    const spec = {
-      param1: [serializer.string()],
-      param2: [serializer.number()],
-    };
-
-    const Component = component(
-      'Component',
-      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
-    );
-
-    const route = createRoute('namespace', spec, Component);
-
-    const urlStore = store('/');
-
-    const wrapper = mount(
-      <urlStore.Observer>{urlState =>
-        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
-          <route.Consumer>{(_routeState, redirect) =>
-            <div onclick={() => redirect({ param2: 2, param1: 'foo' })}>link</div>
-          }</route.Consumer>
-          <route.Component />
-          <Invalid><span>error happened</span></Invalid>
-          <NotFound><span>404</span></NotFound>
-        </StaticProvider>
-      }</urlStore.Observer>,
-    );
-
-    const ComponentPartial = getComponentPartial(Component);
-    expect(wrapper.contains(<span>404</span>)).toBe(true);
-    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
-
-    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
-
-    wrapper.find('div').simulate('click');
-
-    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
-
-    expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} props={{ children: [] }} />)).toBe(true);
-
-    urlStore.dispatch('/namespace?invalid=parameter');
-
-    expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<span>error happened</span>)).toBe(true);
-  });
-
-  it('components should be updatable', () => {
-    const spec = {
-      param1: [serializer.string()],
-      param2: [serializer.number()],
-    };
-
-    const Component = component(
-      'Component',
-      (_Props: Props<{ parameter: SpecToType<typeof spec>, props: {} }>) => <div />,
-    );
-
-    const route = createRoute('namespace', spec, Component);
-
-    const urlStore = store('/');
-
-    const wrapper = mount(
-      <urlStore.Observer>{urlState =>
-        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
-          <route.Link parameter={{ param2: 2, param1: 'foo' }}>link</route.Link>
-          <route.Component />
-          <Invalid><span>error happened</span></Invalid>
-          <NotFound><span>404</span></NotFound>
-        </StaticProvider>
-      }</urlStore.Observer>,
-    );
-
-    const ComponentPartial = getComponentPartial(Component);
-    expect(wrapper.contains(<span>404</span>)).toBe(true);
-    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
-
-    expect(wrapper.containsMatchingElement(<a href="/namespace?param1=foo&param2=2">link</a>)).toBe(true);
-    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
-
-    wrapper.find('a').simulate('click');
-
-    expect(urlStore.getState()).toBe('/namespace?param1=foo&param2=2');
-
-    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
-    expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<Component parameter={{ param1: 'foo', param2: 2 }} props={{ children: [] }} />)).toBe(true);
-
-    urlStore.dispatch('/namespace?param1=bar&param2=3');
-
-    expect(wrapper.contains(<span>error happened</span>)).toBe(false);
-    expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.contains(<Component parameter={{ param1: 'bar', param2: 3 }} props={{ children: [] }} />)).toBe(true);
-  });
-
-  it('mounting and unmounting component switches notfound', () => {
-    const Component = component('Component', (_Props: Props<{props: {}, parameter: {}}>) => <div />);
-    const ComponentPartial = getComponentPartial(Component);
-
-    const route = createRoute('namespace', {}, Component);
-    const local = store(false);
-
-    const wrapper = mount(
-      <StaticProvider url="namespace" onchange={() => null}>
-        <local.Observer>{localState => localState && <route.Component />}</local.Observer>
-        <NotFound><span>404</span></NotFound>
-      </StaticProvider>,
-    );
-
-    expect(wrapper.contains(<span>404</span>)).toBe(true);
-    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
-
-    local.dispatch(true);
-
-    expect(wrapper.contains(<span>404</span>)).toBe(false);
-    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(true);
-
-    local.dispatch(false);
-
-    expect(wrapper.contains(<span>404</span>)).toBe(true);
-    expect(wrapper.containsMatchingElement(<ComponentPartial />)).toBe(false);
+    wrapper.unmount();
   });
 });

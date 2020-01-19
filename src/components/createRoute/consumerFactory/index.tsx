@@ -1,57 +1,75 @@
-import plusnew, { Component, Props, ApplicationElement } from '@plusnew/core';
-import urlHandler from '../../../contexts/urlHandler';
+import plusnew, { ApplicationElement, Component, Props } from '@plusnew/core';
 import url from '../../../contexts/url';
-import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
-import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
+import urlHandler, { routeState } from '../../../contexts/urlHandler';
+import { parameterSpecTemplate, parameterSpecToType } from '../../../types/mapper';
+import { routeContainer } from '../../../types/route';
 
-type renderProps<params extends RouteParameterSpec> =
-  (state: { active: false } | { active: true, parameter: SpecToType<params> }, redirect: (parameter: SpecToType<params>) => void) => ApplicationElement;
+type inactive = { isActive: false, isActiveAsParent: false, invalid: false };
+type active<parameter> = { isActive: true, isActiveAsParent: false, parameter: parameter, invalid: false };
+type activeAsParent<parameter> = { isActive: false, isActiveAsParent: true, parameter: parameter, invalid: false };
+type invalid = { isActive: false, isActiveAsParent: false, invalid: true };
 
-type props<params extends RouteParameterSpec> = {
-  children: renderProps<params>;
+type props<parameter> = {
+  children: (state: inactive | active<parameter> | activeAsParent<parameter> | invalid) => ApplicationElement;
 };
 
 export default function <
-  spec extends RouteParameterSpec,
-  >(namespace: string, spec: spec) {
-  return class RouteConsumer extends Component<props<spec>>{
+  routeName extends string,
+  parameterSpec extends parameterSpecTemplate,
+  parentParameter
+>(routeChain: routeContainer<routeName, parameterSpec, parentParameter>[]) {
+  type parameter = parentParameter & parameterSpecToType<parameterSpec>;
+  return class Link extends Component<props<parameter>> {
     static displayName = 'RouteConsumer';
-    render(Props: Props<props<spec>>, componentInstance: ComponentInstance<any>) {
-      const redirect = (parameter: SpecToType<spec>) => {
-        const urlHandlerState = urlHandler.findProvider(componentInstance).props.state;
-        const urlDispatch = url.findProvider(componentInstance).props.dispatch;
-
-        const targetUrl = urlHandlerState.createUrl(namespace, spec, parameter);
-        urlDispatch(targetUrl);
-      };
-
+    render(Props: Props<props<parameter>>) {
       return (
-        <urlHandler.Consumer>{urlHandlerState =>
-          <Props>{propsState =>
-            <url.Consumer>{(urlState) => {
-              const [renderProps]: [renderProps<spec>] = propsState.children as any;
+        <url.Consumer>{urlState =>
+          <urlHandler.Consumer>{(urlHandlerState) => {
+            const currentRouteState = urlHandlerState.getRouteState(routeChain, urlState);
+            if (currentRouteState === routeState.inactive) {
+              return (
+                <Props>{props =>
+                  (((props.children as any)[0]) as props<parameter>['children'])({
+                    isActive: false,
+                    isActiveAsParent: false,
+                    invalid: false,
+                  })
+                }</Props>
+              );
+            }
 
-              const activeNamespace = urlHandlerState.isNamespaceActive(namespace, urlState);
+            // Active
+            try {
+              const parameter = urlHandlerState.getParameter<
+                routeName,
+                parameterSpec,
+                parentParameter>(routeChain, urlState);
 
-              if (activeNamespace) {
-                try {
-                  const parameter = urlHandlerState.parseUrl(namespace, spec, urlState);
-
-                  return renderProps({
+              return (
+                <Props>{props =>
+                  (((props.children as any)[0]) as props<parameter>['children'])({
                     parameter,
-                    active: true,
-                  }, redirect);
-                } catch (error) {
+                    isActive: currentRouteState === routeState.active,
+                    isActiveAsParent: currentRouteState === routeState.activeAsParent,
+                    invalid: false,
+                  } as inactive | active<parameter> | activeAsParent<parameter>)
+                }</Props>
+              );
+            } catch (error) {
 
-                }
-              }
-
-              return renderProps({
-                active: false,
-              }, redirect);
-            }}</url.Consumer>
-          }</Props>
-        }</urlHandler.Consumer>
+              // Active but invalid
+              return (
+                <Props>{props =>
+                  (((props.children as any)[0]) as props<parameter>['children'])({
+                    isActive: false,
+                    isActiveAsParent: false,
+                    invalid: true,
+                  })
+                }</Props>
+              );
+            }
+          }}</urlHandler.Consumer>
+        }</url.Consumer>
       );
     }
   };

@@ -1,7 +1,7 @@
 import plusnew, { component, Props } from '@plusnew/core';
-import urlHandler from '../../contexts/urlHandler';
-import url from '../../contexts/url';
 import activeRoutes from 'contexts/activeRoutes';
+import url from '../../contexts/url';
+import urlHandler, { routeState } from '../../contexts/urlHandler';
 
 type props = {
   children: any;
@@ -13,10 +13,10 @@ export default component(
     <activeRoutes.Consumer>{activeRoutesState =>
       <url.Consumer>{urlState =>
         <urlHandler.Consumer>{(urlHandlerState) => {
-          const activeBrokenRoute = activeRoutesState.find((route) => {
-            if (urlHandlerState.isNamespaceActive(route.namespace, urlState)) {
+          const activeBrokenRoute = activeRoutesState.find((routeChain) => {
+            if (urlHandlerState.getRouteState(routeChain, urlState) !== routeState.inactive) {
               try {
-                urlHandlerState.parseUrl(route.namespace, route.spec, urlState);
+                urlHandlerState.getParameter(routeChain, urlState);
               } catch (error) {
                 return true;
               }

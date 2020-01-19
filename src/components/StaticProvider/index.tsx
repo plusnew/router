@@ -1,8 +1,8 @@
 import plusnew, { component, Props } from '@plusnew/core';
+import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
-import { isNamespaceActive, createUrl, parseUrl } from '../../util/urlHandler';
-import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
+import { createUrl, getParameter, getRouteState } from '../../util/urlHandler';
 
 type props = {
   url: string;
@@ -18,14 +18,14 @@ export default component(
     return (
         <urlHandler.Provider
           state={{
-            isNamespaceActive,
+            getRouteState,
             createUrl,
-            parseUrl,
+            getParameter,
           }}
           dispatch={null as never}
         >
           <Props>{props =>
-            <url.Provider state={props.url} dispatch={(url) => { props.onchange(url); return true; }}>
+            <url.Provider state={props.url} dispatch={props.onchange}>
               <activeRoutes.Observer>{activeRouteState =>
                 <activeRoutesContext.Provider state={activeRouteState} dispatch={activeRoutes.dispatch}>
                   {props.children}

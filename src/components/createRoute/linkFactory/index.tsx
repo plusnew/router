@@ -1,11 +1,12 @@
-import plusnew, { Component, Props } from '@plusnew/core';
+import plusnew, { ApplicationElement, Component, Props } from '@plusnew/core';
+import { routeContainer } from '../../../types/route';
+import { parameterSpecTemplate, routeContainerToType } from '../../../types/mapper';
 import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
-import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
 
-type props<params extends RouteParameterSpec> = {
-  parameter: SpecToType<params>;
-  children: any;
+type props<parameter> = {
+  children: ApplicationElement,
+  parameter: parameter,
 };
 
 function hasModifier(evt: MouseEvent) {
@@ -13,39 +14,36 @@ function hasModifier(evt: MouseEvent) {
 }
 
 export default function <
-  spec extends RouteParameterSpec,
->(namespace: string, spec: spec) {
-  return class RouterLink extends Component<props<spec>>{
+  routeName extends string,
+  parameterSpec extends parameterSpecTemplate,
+  parentParameter
+>(routeChain: routeContainer<routeName, parameterSpec, parentParameter>[]) {
+  type parameter = routeContainerToType<routeName, parameterSpec> & parentParameter;
+
+  return class Link extends Component<props<parameter>> {
     static displayName = 'RouteLink';
-    render(Props: Props<props<spec>>) {
+    render(Props: Props<props<parameter>>) {
       return (
         <urlHandler.Consumer>{urlHandlerState =>
-          <Props>{propsState =>
-            <url.Consumer>{(urlState, dispatch) => {
-              const targetUrl = urlHandlerState.createUrl(namespace, spec, propsState.parameter);
+          <url.Consumer>{(urlState, dispatch) =>
+            <Props>{(props) => {
+              const targetUrl = urlHandlerState.createUrl(routeChain, props.parameter);
 
-              let className = 'router__link';
+              const className = 'router__link';
 
-              if (urlState === targetUrl) {
-                className += ' router__link--active';
-              }
-
-              return plusnew.createElement(
-                'a',
-                {
-                  className,
-                  href: targetUrl,
-                  onclick: (evt: MouseEvent) => {
-                    if (hasModifier(evt) === false) {
-                      evt.preventDefault();
-                      dispatch(targetUrl);
-                    }
-                  },
+              return plusnew.createElement('a', {
+                className,
+                href: targetUrl,
+                onclick: (evt) => {
+                  if (hasModifier(evt) === false) {
+                    dispatch(targetUrl);
+                    evt.preventDefault();
+                  }
                 },
-                ...propsState.children,
-              );
-            }}</url.Consumer>
-          }</Props>
+              }, ...props.children as any);
+            }
+            }</Props>
+          }</url.Consumer>
         }</urlHandler.Consumer>
       );
     }

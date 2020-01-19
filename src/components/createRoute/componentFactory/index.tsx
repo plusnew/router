@@ -1,73 +1,57 @@
-import activeRoutes, { route } from '../../../contexts/activeRoutes';
-import plusnew, { Component, ComponentContainer, Props } from '@plusnew/core';
+import plusnew, { Component, Props } from '@plusnew/core';
 import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
+import activeRoutes from '../../../contexts/activeRoutes';
 import url from '../../../contexts/url';
-import urlHandler from '../../../contexts/urlHandler';
-import { RouteParameterSpec, SpecToType } from '../../../types/mapper';
-
-export type RouteComponent<Spec extends RouteParameterSpec, props> = ComponentContainer<{ props: props, parameter: SpecToType<Spec> }>;
+import urlHandler, { routeState } from '../../../contexts/urlHandler';
+import { parameterSpecTemplate } from '../../../types/mapper';
+import { routeContainer } from '../../../types/route';
 
 export default function <
-  params extends RouteParameterSpec,
-  componentProps
->(namespace: string, params: params, RouteComponent: RouteComponent<params, componentProps>) {
-  return class RouterComponent extends Component<componentProps>{
-    static displayName = 'RouterComponent';
-    render(Props: Props<componentProps>, componentInstance: ComponentInstance<any>) {
+  routeName extends string,
+  parameterSpec extends parameterSpecTemplate,
+  parentParameter
+>(routeChain: routeContainer<routeName, parameterSpec, parentParameter>[]) {
+  return class Link extends Component<{}> {
+    static displayName = 'RouteComponent';
+    render(_Props: Props<{}>, componentInstance: ComponentInstance<any>) {
       componentInstance.registerLifecycleHook('componentDidMount', () => {
         const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
-        const props = activeRouteProvider.props as {
-          state: route[],
-          dispatch: (routes: route[]) => void;
-        };
-
-        props.dispatch([
-          ...props.state,
-          {
-            namespace,
-            spec: params,
-          },
-        ]);
+        activeRouteProvider.props.dispatch({
+          type: 'mount',
+          payload: routeChain,
+        });
       });
 
       componentInstance.registerLifecycleHook('componentWillUnmount', () => {
         const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
-        const props = activeRouteProvider.props as {
-          state: route[],
-          dispatch: (routes: route[]) => void;
-        };
-
-        props.dispatch(props.state.filter(route => route.namespace !== namespace));
+        activeRouteProvider.props.dispatch({
+          type: 'unmount',
+          payload: routeChain,
+        });
       });
 
       return (
-        <urlHandler.Consumer>{linkState =>
-          <url.Consumer>{(urlState) => {
-            const activeNamespace = linkState.isNamespaceActive(namespace, urlState);
+        <url.Consumer>{urlState =>
+          <urlHandler.Consumer>{(urlHandlerState) => {
+            if (urlHandlerState.getRouteState(routeChain, urlState) === routeState.active) {
+              try {
+                const parameter = urlHandlerState.getParameter<
+                  routeName,
+                  parameterSpec,
+                  parentParameter>(routeChain, urlState);
+                const route = routeChain[routeChain.length - 1];
 
-            if (activeNamespace === false) {
-              return false;
+                return <route.component parameter={parameter} />;
+              } catch (error) {
+
+              }
             }
 
-            let parameter: SpecToType<params>;
-            try {
-              parameter = linkState.parseUrl(namespace, params, urlState);
-            } catch (error) {
-              return false;
-            }
-
-            return (
-              <Props>{props =>
-                <RouteComponent
-                  parameter={parameter}
-                  props={props}
-                />
-              }</Props>
-            );
-          }}</url.Consumer>
-        }</urlHandler.Consumer>
+            return null;
+          }}</urlHandler.Consumer>
+        }</url.Consumer>
       );
     }
   };

@@ -1,7 +1,7 @@
+import plusnew, { store } from '@plusnew/core';
+import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import url from 'contexts/url';
 import { configure } from 'enzyme';
-import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
-import plusnew, { store } from '@plusnew/core';
 import BrowserProvider from './index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
