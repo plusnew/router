@@ -5,7 +5,7 @@ At compile and runtime the typesafety is guaranteed, for the Route-Components an
 
 ```ts
 import plusnew, { component } from '@plusnew/core';
-import { createRoute, Invalid, NotFound, serializer } from '.';
+import { createRoute, Invalid, NotFound, serializer } from '@plusnew/router';
 
 const rootRoute = createRoute(
   // With the paths the route will be responsible for
@@ -91,6 +91,12 @@ const MainComponent = component(
 
       {/* in case the path matched the namespace of a route, but the parameters were not correct the children of Invalid will be display */}
       <Invalid>Route found, but with invalid parameter</Invalid>
+
+      {/* a consumer is a listener for routechanges*/}
+      <rootRoute.Consumer>{routeState =>
+        // when the route is active, or active whith some kids, then the parameter come available for the compiler
+        (routeState.isActive || routeState.isActiveAsParent) && routeState.parameter.rootRouteName.oneParameter
+      }</rootRoute.Consumer>
     </>,
 );
 ```
