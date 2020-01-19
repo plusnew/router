@@ -1,6 +1,6 @@
 {
   "name": "@plusnew/router",
-  "version": "0.6.70",
+  "version": "0.7.0",
   "description": "typesafe router for plusnew",
   "main": "dist/app.js",
   "types": "dist/index.d.ts",
@@ -17,7 +17,7 @@
   "author": "Carlo Jeske",
   "dependencies": {},
   "devDependencies": {
-    "@plusnew/core": "^0.7.0",
+    "@plusnew/core": "^0.6.63",
     "@plusnew/enzyme-adapter": "^0.6.54",
     "@types/jasmine": "^3.5.1",
     "awesome-typescript-loader": "^5.2.0",
