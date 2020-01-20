@@ -1,7 +1,8 @@
 import plusnew, { component, store } from '@plusnew/core';
+import '@plusnew/driver-dom';
 import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
-import { createRoute, serializer, StaticProvider, NotFound, Invalid } from './index';
+import { createRoute, Invalid, NotFound, serializer, StaticProvider } from './index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 

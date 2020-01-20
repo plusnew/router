@@ -31,10 +31,10 @@ export default function <
 
               const className = 'router__link';
 
-              return plusnew.createElement('a', {
+              return plusnew.createElement('a' as any, {
                 className,
                 href: targetUrl,
-                onclick: (evt) => {
+                onclick: (evt: MouseEvent) => {
                   if (hasModifier(evt) === false) {
                     dispatch(targetUrl);
                     evt.preventDefault();
