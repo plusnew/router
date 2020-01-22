@@ -3,6 +3,7 @@ import url from '../../../contexts/url';
 import urlHandler, { routeState } from '../../../contexts/urlHandler';
 import { parameterSpecTemplate, parameterSpecToType } from '../../../types/mapper';
 import { routeContainer } from '../../../types/route';
+import ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
 
 type inactive = { isActive: false, isActiveAsParent: false, invalid: false };
 type active<parameter> = { isActive: true, isActiveAsParent: false, parameter: parameter, invalid: false };
@@ -10,7 +11,10 @@ type activeAsParent<parameter> = { isActive: false, isActiveAsParent: true, para
 type invalid = { isActive: false, isActiveAsParent: false, invalid: true };
 
 type props<parameter> = {
-  children: (state: inactive | active<parameter> | activeAsParent<parameter> | invalid) => ApplicationElement;
+  children: (
+    state: inactive | active<parameter> | activeAsParent<parameter> | invalid,
+    redirect: (opt: {parameter: parameter}) => void,
+  ) => ApplicationElement;
 };
 
 export default function <
@@ -21,7 +25,16 @@ export default function <
   type parameter = parentParameter & parameterSpecToType<parameterSpec>;
   return class Link extends Component<props<parameter>> {
     static displayName = 'RouteConsumer';
-    render(Props: Props<props<parameter>>) {
+    render(Props: Props<props<parameter>>, componentInstance: ComponentInstance<any, any, any>) {
+      const redirect = (opt: { parameter: parameter }) => {
+        const newUrl = urlHandler.findProvider(componentInstance).props.state.createUrl(
+          routeChain,
+          opt.parameter,
+        );
+
+        url.findProvider(componentInstance).props.dispatch(newUrl);
+      };
+
       return (
         <url.Consumer>{urlState =>
           <urlHandler.Consumer>{(urlHandlerState) => {
@@ -33,7 +46,7 @@ export default function <
                     isActive: false,
                     isActiveAsParent: false,
                     invalid: false,
-                  })
+                  }, redirect)
                 }</Props>
               );
             }
@@ -52,7 +65,7 @@ export default function <
                     isActive: currentRouteState === routeState.active,
                     isActiveAsParent: currentRouteState === routeState.activeAsParent,
                     invalid: false,
-                  } as inactive | active<parameter> | activeAsParent<parameter>)
+                  } as inactive | active<parameter> | activeAsParent<parameter>, redirect)
                 }</Props>
               );
             } catch (error) {
@@ -64,7 +77,7 @@ export default function <
                     isActive: false,
                     isActiveAsParent: false,
                     invalid: true,
-                  })
+                  }, redirect)
                 }</Props>
               );
             }
