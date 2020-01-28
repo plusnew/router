@@ -2,7 +2,7 @@ import plusnew, { component, store } from '@plusnew/core';
 import '@plusnew/driver-dom';
 import enzymeAdapterPlusnew, { mount } from '@plusnew/enzyme-adapter';
 import { configure } from 'enzyme';
-import { createRoute, Invalid, NotFound, serializer, StaticProvider } from './index';
+import { createRoute, Invalid, NotFound, serializer, StaticProvider, RouteToParameter } from './index';
 
 configure({ adapter: new enzymeAdapterPlusnew() });
 
@@ -110,11 +110,18 @@ describe('api', () => {
     } as const, component(
       'RootComponent',
       Props =>
-        <Props>{props =>
-          <div>
-            <span>{props.parameter.rootPath.parentParam}</span>
-            <span>{props.parameter.childPath.childParam}</span>
-          </div>
+        <Props>{(props) => {
+          const _parameter: RouteToParameter<typeof childRoute> = props.parameter;
+          _parameter.childPath.childParam;
+          _parameter.rootPath.parentParam;
+
+          return (
+            <div>
+              <span>{props.parameter.rootPath.parentParam}</span>
+              <span>{props.parameter.childPath.childParam}</span>
+            </div>
+          );
+        }
         }</Props>,
     ));
 

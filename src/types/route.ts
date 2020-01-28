@@ -8,5 +8,5 @@ export type routeContainer<
 > = {
   routeName: string,
   parameterSpec: parameterSpec,
-  component: ComponentContainer<{ parameter: routeContainerToType<routeName, parameterSpec> & parentParameter }>;
+  component: ComponentContainer<{ parameter: routeContainerToType<routeName, parameterSpec> & parentParameter }, unknown, unknown>;
 };
