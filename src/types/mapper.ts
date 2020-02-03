@@ -1,3 +1,5 @@
+import { ComponentContainer } from '@plusnew/core';
+
 type serializerToUrlResult = { valid: false } | { valid: true, value: string | undefined};
 type serializerFromUrlResult<T> = { valid: false } | { valid: true, value: T };
 
@@ -35,3 +37,16 @@ export type parameterSpecToType<parameterSpec extends parameterSpecTemplate> =
 export type routeContainerToType<routeName extends string, parameterSpec extends parameterSpecTemplate> = {
   [routeIndex in routeName]: parameterSpecToType<parameterSpec>;
 };
+
+export type routeObj<routeName extends string, parameterSpec extends parameterSpecTemplate, parentParameter> = {
+  Link: ComponentContainer<{parameter: parentParameter & routeContainerToType<routeName, parameterSpec>, children: any }>;
+};
+
+type inferRouteName<T> = T extends routeObj<infer I, any, any> ? I : never;
+type inferParameterSpecName<T> = T extends routeObj<any, infer I, any> ? I : never;
+type inferParentParameterName<T> = T extends routeObj<any, any, infer I> ? I : never;
+
+export type RouteToParameter<route extends routeObj<any, any, any>> = (
+  inferParentParameterName<route> &
+  routeContainerToType<inferRouteName<route>, inferParameterSpecName<route>>
+);

@@ -7,3 +7,4 @@ export { default as activeRoutesContext } from './contexts/activeRoutes';
 export { default as urlContext } from './contexts/url';
 export { default as urlHandlerContext } from './contexts/urlHandler';
 export { default as serializer } from './serializer';
+export { RouteToParameter } from './types/mapper';
