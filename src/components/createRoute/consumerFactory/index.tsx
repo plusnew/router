@@ -27,12 +27,12 @@ export default function <
     static displayName = 'RouteConsumer';
     render(Props: Props<props<parameter>>, componentInstance: ComponentInstance<any, any, any>) {
       const redirect = (opt: { parameter: parameter }) => {
-        const newUrl = urlHandler.findProvider(componentInstance).props.state.createUrl(
+        const newUrl = urlHandler.findProvider(componentInstance).state.createUrl(
           routeChain,
           opt.parameter,
         );
 
-        url.findProvider(componentInstance).props.dispatch(newUrl);
+        url.findProvider(componentInstance).dispatch(newUrl);
       };
 
       return (

@@ -17,7 +17,7 @@ export default function <
       componentInstance.registerLifecycleHook('componentDidMount', () => {
         const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
-        activeRouteProvider.props.dispatch({
+        activeRouteProvider.dispatch({
           type: 'mount',
           payload: routeChain,
         });
@@ -26,7 +26,7 @@ export default function <
       componentInstance.registerLifecycleHook('componentWillUnmount', () => {
         const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
-        activeRouteProvider.props.dispatch({
+        activeRouteProvider.dispatch({
           type: 'unmount',
           payload: routeChain,
         });
