@@ -3,7 +3,7 @@ import url from '../../../contexts/url';
 import urlHandler, { routeState } from '../../../contexts/urlHandler';
 import { parameterSpecTemplate, parameterSpecToType } from '../../../types/mapper';
 import { routeContainer } from '../../../types/route';
-import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
+import ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
 
 type inactive = { isActive: false, isActiveAsParent: false, invalid: false };
 type active<parameter> = { isActive: true, isActiveAsParent: false, parameter: parameter, invalid: false };
@@ -25,14 +25,14 @@ export default function <
   type parameter = parentParameter & parameterSpecToType<parameterSpec>;
   return class Link extends Component<props<parameter>> {
     static displayName = 'RouteConsumer';
-    render(Props: Props<props<parameter>>, componentInstance: ComponentInstance<any>) {
+    render(Props: Props<props<parameter>>, componentInstance: ComponentInstance<any, any, any>) {
       const redirect = (opt: { parameter: parameter }) => {
-        const newUrl = urlHandler.findProvider(componentInstance).props.state.createUrl(
+        const newUrl = urlHandler.findProvider(componentInstance).state.createUrl(
           routeChain,
           opt.parameter,
         );
 
-        url.findProvider(componentInstance).props.dispatch(newUrl);
+        url.findProvider(componentInstance).dispatch(newUrl);
       };
 
       return (
@@ -65,8 +65,7 @@ export default function <
                     isActive: currentRouteState === routeState.active,
                     isActiveAsParent: currentRouteState === routeState.activeAsParent,
                     invalid: false,
-                  } as inactive | active<parameter> | activeAsParent<parameter>,
-                  redirect)
+                  } as inactive | active<parameter> | activeAsParent<parameter>, redirect)
                 }</Props>
               );
             } catch (error) {

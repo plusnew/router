@@ -1,5 +1,5 @@
 import plusnew, { Component, Props, store } from '@plusnew/core';
-import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
+import ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
 import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
@@ -11,7 +11,7 @@ type props = {
 
 export default class BrowserProvider extends Component<props> {
   static displayName = 'BrowserProvider';
-  render(Props: Props<props>, componentInstance: ComponentInstance<any>) {
+  render(Props: Props<props>, componentInstance: ComponentInstance<any, any, any>) {
     const activeRoutes = activeRouteStoreFactory();
     const local = store(this.getPath(), (_state, action: string) => action);
 

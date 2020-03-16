@@ -39,7 +39,7 @@ export type routeContainerToType<routeName extends string, parameterSpec extends
 };
 
 export type routeObj<routeName extends string, parameterSpec extends parameterSpecTemplate, parentParameter> = {
-  Link: ComponentContainer<{parameter: parentParameter & routeContainerToType<routeName, parameterSpec>, children: any }>;
+  Link: ComponentContainer<{parameter: parentParameter & routeContainerToType<routeName, parameterSpec>, children: any }, any, any>;
 };
 
 type inferRouteName<T> = T extends routeObj<infer I, any, any> ? I : never;

@@ -5,7 +5,7 @@ type routeContainer<
   routeName extends string,
   parameterSpec extends parameterSpecTemplate,
 > = {
-  routeName: string,
+  routeName: routeName,
   parameterSpec: parameterSpec,
 };
 

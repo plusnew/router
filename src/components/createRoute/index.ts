@@ -11,7 +11,7 @@ export default function createRoute<
   >(
     routeName: routeName,
     parameterSpec: parameterSpec,
-    component: ComponentContainer<{ parameter: routeContainerToType<routeName, parameterSpec> }>) {
+    component: ComponentContainer<{ parameter: routeContainerToType<routeName, parameterSpec> }, any, any>) {
   return abstractCreateRoute<routeContainerToType<routeName, parameterSpec>>([{
     routeName,
     parameterSpec,
@@ -28,7 +28,7 @@ function abstractCreateRoute<
     >(
       routeName: routeName,
       parameterSpec: parameterSpec,
-      component: ComponentContainer<{ parameter: parentParameter & routeContainerToType<routeName, parameterSpec> }>) {
+      component: ComponentContainer<{ parameter: parentParameter & routeContainerToType<routeName, parameterSpec> }, any, any>) {
     return abstractCreateRoute<parentParameter & routeContainerToType<routeName, parameterSpec>>([...routeChain, {
       routeName,
       parameterSpec,

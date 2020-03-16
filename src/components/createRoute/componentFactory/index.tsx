@@ -1,5 +1,5 @@
 import plusnew, { Component, Props } from '@plusnew/core';
-import ComponentInstance from '@plusnew/core/dist/src/instances/types/Component/Instance';
+import ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
 import activeRoutes from '../../../contexts/activeRoutes';
 import url from '../../../contexts/url';
 import urlHandler, { routeState } from '../../../contexts/urlHandler';
@@ -13,11 +13,11 @@ export default function <
 >(routeChain: routeContainer<routeName, parameterSpec, parentParameter>[]) {
   return class Link extends Component<{}> {
     static displayName = 'RouteComponent';
-    render(_Props: Props<{}>, componentInstance: ComponentInstance<any>) {
+    render(_Props: Props<{}>, componentInstance: ComponentInstance<any, any, any>) {
       componentInstance.registerLifecycleHook('componentDidMount', () => {
         const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
-        activeRouteProvider.props.dispatch({
+        activeRouteProvider.dispatch({
           type: 'mount',
           payload: routeChain,
         });
@@ -26,7 +26,7 @@ export default function <
       componentInstance.registerLifecycleHook('componentWillUnmount', () => {
         const activeRouteProvider = activeRoutes.findProvider(componentInstance);
 
-        activeRouteProvider.props.dispatch({
+        activeRouteProvider.dispatch({
           type: 'unmount',
           payload: routeChain,
         });

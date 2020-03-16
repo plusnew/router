@@ -25,16 +25,16 @@ export default function <
     render(Props: Props<props<parameter>>) {
       return (
         <urlHandler.Consumer>{urlHandlerState =>
-          <url.Consumer>{(urlState, dispatch) =>
+          <url.Consumer>{(_urlState, dispatch) =>
             <Props>{(props) => {
               const targetUrl = urlHandlerState.createUrl(routeChain, props.parameter);
 
               const className = 'router__link';
 
-              return plusnew.createElement('a', {
-                className,
+              return plusnew.createElement('a' as any, {
+                class: className,
                 href: targetUrl,
-                onclick: (evt) => {
+                onclick: (evt: MouseEvent) => {
                   if (hasModifier(evt) === false) {
                     dispatch(targetUrl);
                     evt.preventDefault();
