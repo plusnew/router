@@ -65,11 +65,18 @@ describe('api', () => {
       <urlStore.Observer>{urlState =>
         <StaticProvider url={urlState} onchange={urlStore.dispatch}>
           <rootRoute.Component />
+          <rootRoute.Link parameter={{
+            '/': {},
+          }}>link</rootRoute.Link>
         </StaticProvider>
       }</urlStore.Observer>,
     );
 
     expect(wrapper.contains(<div />)).toBe(true);
+    const debug = wrapper.debug();
+    debug;
+    debugger;
+    expect(wrapper.containsMatchingElement(<a href="/">link</a>)).toBe(true);
 
     wrapper.unmount();
   });
@@ -88,11 +95,13 @@ describe('api', () => {
       <urlStore.Observer>{urlState =>
         <StaticProvider url={urlState} onchange={urlStore.dispatch}>
           <rootRoute.Component />
+          <rootRoute.Link parameter={{'/': {parentParam: 'bar'}}}>link</rootRoute.Link>
         </StaticProvider>
       }</urlStore.Observer>,
     );
 
     expect(wrapper.contains(<div>foo</div>)).toBe(true);
+    expect(wrapper.containsMatchingElement(<a href="/;parentParam=bar">link</a>)).toBe(true);
 
     wrapper.unmount();
   });

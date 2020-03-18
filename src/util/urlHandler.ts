@@ -27,7 +27,7 @@ export const createUrl: linkHandler['createUrl'] = (routeChain, parameter) => {
         throw new Error(
           `Could not create url for ${routeContainer.routeName}, the property ${specKey} was not serializable as ${type} with the value ${paramValue}`,
         );
-      }, `${path}${PATH_DELIMITER}${routeContainer.routeName}`);
+      }, `${path}${routeContainer.routeName[0] === PATH_DELIMITER ? routeContainer.routeName : PATH_DELIMITER + routeContainer.routeName}`);
   }, '');
 };
 
@@ -121,7 +121,6 @@ export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => 
   let active = true;
   const urlParts = getUrlParts(url);
 
-  debugger;
   let routeIndex = 0;
   let urlPartIndex = 0;
 
