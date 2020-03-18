@@ -121,21 +121,18 @@ export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => 
   let active = true;
   const urlParts = getUrlParts(url);
 
+  debugger;
   let routeIndex = 0;
   let urlPartIndex = 0;
 
   while (active && routeIndex < routeChain.length) {
     const routeParts = normalizePath(routeChain[routeIndex].routeName).split(PATH_DELIMITER);
     for (let routePartIndex = 0; active && routePartIndex < routeParts.length; routePartIndex += 1) {
-      if (urlPartIndex >= urlParts.length) {
+      const [urlPartrouteName] = urlParts[urlPartIndex];
+      if (routeParts[routePartIndex] !== urlPartrouteName) {
         active = false;
-      } else {
-        const [urlPartrouteName] = urlParts[urlPartIndex];
-        if (routeParts[routePartIndex] !== urlPartrouteName) {
-          active = false;
-        }
-        urlPartIndex += 1;
       }
+      urlPartIndex += 1;
     }
     routeIndex += 1;
   }

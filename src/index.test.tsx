@@ -340,6 +340,69 @@ describe('api', () => {
     wrapper.unmount();
   });
 
+
+  it('does Consumer work as expected when no-parent', () => {
+    const urlStore = store('/otherRootPath;parentParam=foo/childPath;childParam=bar');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive ? (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              ) : 'inactive'}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>inactive</div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does Consumer work as expected when no-parent', () => {
+    const urlStore = store('/otherRootPath;parentParam=foo/childPath;childParam=bar');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActiveAsParent ? (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              ) : 'inactive'}
+            </div>
+          }</rootRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>inactive</div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
   it('does link work as expected, for root component', () => {
     const urlStore = store('/');
 
