@@ -30,6 +30,73 @@ describe('api', () => {
     wrapper.unmount();
   });
 
+  it('does createroute work as expected, even with trailing slash', () => {
+    const urlStore = store('/rootPath;parentParam=foo/');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does createroute work as expected, when root path is used', () => {
+    const urlStore = store('/');
+
+    const rootRoute = createRoute('/', {} as const, component(
+      'RootComponent',
+      Props => <Props>{_props => <div />}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<div />)).toBe(true);
+
+    wrapper.unmount();
+  });
+
+  it('does createroute work as expected, when root path with parameter', () => {
+    const urlStore = store('/;parentParam=foo');
+
+    const rootRoute = createRoute('/', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter['/'].parentParam}</div>}</Props>,
+    ));
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <rootRoute.Component />
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(<div>foo</div>)).toBe(true);
+
+    wrapper.unmount();
+  });
+
   it('does invalid work as expected', () => {
     const urlStore = store('/rootPath;wrongParam=foo');
 

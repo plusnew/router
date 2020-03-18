@@ -67,9 +67,21 @@ function getParameterOfRoutePart<spec extends parameterSpecTemplate>(parameter: 
   return result as parameterSpecToType<spec>;
 }
 
+function normalizePath(url: string) {
+  let result = url;
+  while(result[0] === '/') { // Removes leading slashes
+    result = result.slice(1);
+  }
+
+  while(result[result.length - 1] === '/') { // Removes trailing slashes
+    result = result.slice(0, -1);
+  }
+
+  return result;
+}
+
 function getUrlParts(url: string): ([string, string])[] {
-  return url.split(PATH_DELIMITER)
-    .filter(urlPart => urlPart !== '') // remove pre and post slash stuff
+  return normalizePath(url).split(PATH_DELIMITER)
     .map((urlPart) => {
       const parameterStartPosition = urlPart.indexOf(PARAMETER_DELIMITER);
       if (parameterStartPosition === -1) {
@@ -87,7 +99,7 @@ export const getParameter: linkHandler['getParameter'] = (routeChain, url) => {
   let urlPartIndex = 0;
 
   while (routeIndex < routeChain.length) {
-    const routeParts = routeChain[routeIndex].routeName.split(PATH_DELIMITER);
+    const routeParts = normalizePath(routeChain[routeIndex].routeName).split(PATH_DELIMITER);
     for (let routePartIndex = 0; routePartIndex < routeParts.length; routePartIndex += 1) {
       const [urlPartrouteName] = urlParts[urlPartIndex];
 
@@ -113,7 +125,7 @@ export const getRouteState: linkHandler['getRouteState'] = (routeChain, url) => 
   let urlPartIndex = 0;
 
   while (active && routeIndex < routeChain.length) {
-    const routeParts = routeChain[routeIndex].routeName.split(PATH_DELIMITER);
+    const routeParts = normalizePath(routeChain[routeIndex].routeName).split(PATH_DELIMITER);
     for (let routePartIndex = 0; active && routePartIndex < routeParts.length; routePartIndex += 1) {
       if (urlPartIndex >= urlParts.length) {
         active = false;

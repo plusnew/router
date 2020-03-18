@@ -15,6 +15,38 @@ describe('urlHandler', () => {
     ).toThrow(new Error('Can not parse url /foo for wrong routeName bar'));
   });
 
+  it('routeName for root', () => {
+    getParameter(
+      [{ routeName: '/', parameterSpec: {} }],
+      createUrl(
+        [{ routeName: '/', parameterSpec: {} }],
+        {},
+      ),
+    );
+  });
+
+  it('routeName for root, with parameter', () => {
+    const spec = {
+      foo: [serializer.string()],
+    };
+
+    const parameter = {
+      '/': {
+        foo: 'baz',
+      },
+    };
+
+    expect(
+      getParameter<'/', typeof spec, {}>(
+        [{ routeName: '/', parameterSpec: spec }],
+        createUrl<'/', typeof spec, {}>(
+          [{ routeName: '/', parameterSpec: spec }],
+          parameter,
+        ),
+      ),
+    ).toEqual(parameter);
+  });
+
   describe('missing parameter', () => {
     it('parseUrl', () => {
       const spec = {
