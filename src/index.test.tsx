@@ -349,6 +349,43 @@ describe('api', () => {
     wrapper.unmount();
   });
 
+  it('does Consumer work as expected when child', () => {
+    const urlStore = store('/rootPath;parentParam=foo');
+
+    const rootRoute = createRoute('rootPath', {
+      parentParam: [serializer.string()],
+    } as const, component(
+      'RootComponent',
+      Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ));
+
+    const childRoute = rootRoute.createChildRoute(
+      'childPath',
+      {} as const,
+      component('ChildComponent', Props => <Props>{props => <div>{props.parameter.rootPath.parentParam}</div>}</Props>,
+    ))
+
+    const wrapper = mount(
+      <urlStore.Observer>{urlState =>
+        <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+          <childRoute.Consumer>{rootRouteState =>
+            <div>
+              {rootRouteState.isActive ? (
+                <span>{rootRouteState.parameter.rootPath.parentParam}</span>
+              ) : 'inactive'}
+            </div>
+          }</childRoute.Consumer>
+        </StaticProvider>
+      }</urlStore.Observer>,
+    );
+
+    expect(wrapper.contains(
+      <div>inactive</div>,
+    )).toBe(true);
+
+    wrapper.unmount();
+  });
+
 
   it('does Consumer work as expected when no-parent', () => {
     const urlStore = store('/otherRootPath;parentParam=foo/childPath;childParam=bar');
