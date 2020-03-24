@@ -1,9 +1,9 @@
 import plusnew, { ApplicationElement, Component, Props } from '@plusnew/core';
+import type ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
 import url from '../../../contexts/url';
 import urlHandler, { routeState } from '../../../contexts/urlHandler';
-import { parameterSpecTemplate, parameterSpecToType } from '../../../types/mapper';
-import { routeContainer } from '../../../types/route';
-import ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
+import type { parameterSpecTemplate, parameterSpecToType } from '../../../types/mapper';
+import type { routeContainer } from '../../../types/route';
 
 type inactive = { isActive: false, isActiveAsParent: false, invalid: false };
 type active<parameter> = { isActive: true, isActiveAsParent: false, parameter: parameter, invalid: false };

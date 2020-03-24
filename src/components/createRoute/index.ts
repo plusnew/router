@@ -1,6 +1,6 @@
-import { ComponentContainer } from '@plusnew/core';
-import { parameterSpecTemplate, routeContainerToType } from '../../types/mapper';
-import { routeContainer } from '../../types/route';
+import type { ComponentContainer } from '@plusnew/core';
+import type { parameterSpecTemplate, routeContainerToType } from '../../types/mapper';
+import type { routeContainer } from '../../types/route';
 import componentFactory from './componentFactory';
 import consumerFactory from './consumerFactory';
 import linkFactory from './linkFactory';

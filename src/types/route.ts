@@ -1,5 +1,5 @@
-import { ComponentContainer } from '@plusnew/core';
-import { parameterSpecTemplate, routeContainerToType } from './mapper';
+import type { ComponentContainer } from '@plusnew/core';
+import type { parameterSpecTemplate, routeContainerToType } from './mapper';
 
 export type routeContainer<
   routeName extends string,

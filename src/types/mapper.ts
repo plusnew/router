@@ -1,4 +1,4 @@
-import { ComponentContainer } from '@plusnew/core';
+import type { ComponentContainer } from '@plusnew/core';
 
 type serializerToUrlResult = { valid: false } | { valid: true, value: string | undefined};
 type serializerFromUrlResult<T> = { valid: false } | { valid: true, value: T };

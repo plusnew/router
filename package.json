@@ -1,6 +1,6 @@
 {
 	"name": "@plusnew/router",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "typesafe router for plusnew",
 	"main": "src/index.ts",
 	"module": "src/index.ts",
@@ -9,13 +9,15 @@
 		"test": "jest --coverage",
 		"test:watch": "jest --watch"
 	},
-	"keywords": [ "plusnew" ],
+	"keywords": [
+		"plusnew"
+	],
 	"author": "Carlo Jeske",
 	"dependencies": {},
 	"devDependencies": {
-		"@plusnew/core": "^1.0.0",
-		"@plusnew/driver-dom": "^1.0.0",
-		"@plusnew/enzyme-adapter": "^1.0.0",
+		"@plusnew/core": "^1.0.1",
+		"@plusnew/driver-dom": "^1.0.2",
+		"@plusnew/enzyme-adapter": "^1.0.1",
 		"@types/jest": "^25.1.4",
 		"enzyme": "^3.11.0",
 		"jest": "^25.1.0",

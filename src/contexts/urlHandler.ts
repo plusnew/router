@@ -1,5 +1,5 @@
 import { context } from '@plusnew/core';
-import { parameterSpecTemplate, routeContainerToType } from '../types/mapper';
+import type { parameterSpecTemplate, routeContainerToType } from '../types/mapper';
 
 type routeContainer<
   routeName extends string,

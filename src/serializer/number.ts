@@ -1,4 +1,4 @@
-import { serializer } from '../types/mapper';
+import type { serializer } from '../types/mapper';
 
 export default <literal extends number = number>(literal?: literal): serializer<literal> => ({
   displayName: literal === undefined ? 'number' : `${literal}`,

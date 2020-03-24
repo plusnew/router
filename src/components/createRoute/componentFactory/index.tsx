@@ -1,10 +1,10 @@
 import plusnew, { Component, Props } from '@plusnew/core';
-import ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
+import type ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
 import activeRoutes from '../../../contexts/activeRoutes';
 import url from '../../../contexts/url';
 import urlHandler, { routeState } from '../../../contexts/urlHandler';
-import { parameterSpecTemplate } from '../../../types/mapper';
-import { routeContainer } from '../../../types/route';
+import type { parameterSpecTemplate } from '../../../types/mapper';
+import type { routeContainer } from '../../../types/route';
 
 export default function <
   routeName extends string,

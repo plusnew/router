@@ -1,6 +1,6 @@
+import type { parameterSpecToType } from 'types/mapper';
 import { serializer } from '../index';
 import { createUrl, getParameter } from './urlHandler';
-import { parameterSpecToType } from 'types/mapper';
 
 describe('urlHandler', () => {
   it('routeName missmatch', () => {

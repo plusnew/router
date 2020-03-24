@@ -1,4 +1,4 @@
-import { serializer } from '../types/mapper';
+import type { serializer } from '../types/mapper';
 
 export default (): serializer<Date> => ({
   displayName: 'date',

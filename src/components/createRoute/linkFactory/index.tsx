@@ -1,8 +1,8 @@
 import plusnew, { ApplicationElement, Component, Props } from '@plusnew/core';
-import { routeContainer } from '../../../types/route';
-import { parameterSpecTemplate, routeContainerToType } from '../../../types/mapper';
-import urlHandler from '../../../contexts/urlHandler';
 import url from '../../../contexts/url';
+import urlHandler from '../../../contexts/urlHandler';
+import type { parameterSpecTemplate, routeContainerToType } from '../../../types/mapper';
+import type { routeContainer } from '../../../types/route';
 
 type props<parameter> = {
   children: ApplicationElement,

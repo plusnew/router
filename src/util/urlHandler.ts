@@ -1,5 +1,5 @@
 import { linkHandler, routeState } from '../contexts/urlHandler';
-import { parameterSpecTemplate, parameterSpecToType } from '../types/mapper';
+import type { parameterSpecTemplate, parameterSpecToType } from '../types/mapper';
 
 const PATH_DELIMITER = '/';
 const PARAMETER_DELIMITER = ';';

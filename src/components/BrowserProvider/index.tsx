@@ -1,5 +1,5 @@
 import plusnew, { Component, Props, store } from '@plusnew/core';
-import ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
+import type ComponentInstance from '@plusnew/core/src/instances/types/Component/Instance';
 import activeRoutesContext, { storeFactory as activeRouteStoreFactory } from '../../contexts/activeRoutes';
 import url from '../../contexts/url';
 import urlHandler from '../../contexts/urlHandler';
