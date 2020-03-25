@@ -1,4 +1,4 @@
-# plusnew-router [![Build Status](https://api.travis-ci.org/plusnew/router.svg?branch=master)](https://travis-ci.org/plusnew/router) [![Coverage Status](https://coveralls.io/repos/github/plusnew/router/badge.svg?branch=master)](https://coveralls.io/github/plusnew/router)
+# plusnew-router [![Build Status](https://api.travis-ci.com/plusnew/router.svg?branch=master)](https://travis-ci.com/plusnew/router) [![Coverage Status](https://coveralls.io/repos/github/plusnew/router/badge.svg?branch=master)](https://coveralls.io/github/plusnew/router)
 
 This router makes complete typesafety possible.
 At compile and runtime the typesafety is guaranteed, for the Route-Components and also the Links.
