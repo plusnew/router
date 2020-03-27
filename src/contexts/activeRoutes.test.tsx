@@ -1,11 +1,13 @@
-import { storeFactory } from './activeRoutes';
+import { storeFactory } from "./activeRoutes";
 
-describe('activeRoutes', () => {
-  it('when activeroutes store gets called with incorrect action, error gets thrown', () => {
+describe("activeRoutes", () => {
+  it("when activeroutes store gets called with incorrect action, error gets thrown", () => {
     const activeRoutes = storeFactory();
 
-    expect(() => activeRoutes.dispatch({
-      type: 'invalid',
-    } as any)).toThrowError('No such action');
+    expect(() =>
+      activeRoutes.dispatch({
+        type: "invalid",
+      } as any)
+    ).toThrowError("No such action");
   });
 });

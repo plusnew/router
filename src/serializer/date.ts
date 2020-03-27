@@ -1,7 +1,7 @@
-import type { serializer } from '../types/mapper';
+import type { serializer } from "../types/mapper";
 
 export default (): serializer<Date> => ({
-  displayName: 'date',
+  displayName: "date",
   fromUrl: (value) => {
     if (value !== undefined) {
       const date = new Date(decodeURIComponent(value));

@@ -1,7 +1,7 @@
-import type { serializer } from '../types/mapper';
+import type { serializer } from "../types/mapper";
 
 export default (): serializer<undefined> => ({
-  displayName: 'undefined',
+  displayName: "undefined",
   fromUrl: (value) => {
     if (value === undefined) {
       return {

@@ -1,3 +1,3 @@
-import { context } from '@plusnew/core';
+import { context } from "@plusnew/core";
 
 export default context<string, string>();

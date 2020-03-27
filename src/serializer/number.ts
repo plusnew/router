@@ -1,7 +1,9 @@
-import type { serializer } from '../types/mapper';
+import type { serializer } from "../types/mapper";
 
-export default <literal extends number = number>(literal?: literal): serializer<literal> => ({
-  displayName: literal === undefined ? 'number' : `${literal}`,
+export default <literal extends number = number>(
+  literal?: literal
+): serializer<literal> => ({
+  displayName: literal === undefined ? "number" : `${literal}`,
   fromUrl: (value) => {
     if (value !== undefined) {
       const result = Number(value);
@@ -25,7 +27,7 @@ export default <literal extends number = number>(literal?: literal): serializer<
     };
   },
   toUrl: (value: number) => {
-    if (typeof value === 'number') {
+    if (typeof value === "number") {
       if (literal === undefined || literal === value) {
         return {
           value: value.toString(),
