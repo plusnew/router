@@ -182,15 +182,21 @@ export const getRouteState: linkHandler["getRouteState"] = (
         active = false;
       } else {
         const [urlPartrouteName] = urlParts[urlPartIndex];
-        if (routeParts[routePartIndex] !== urlPartrouteName) {
-          active = false;
+        if (
+          (routeParts[routePartIndex] === "" && urlPartrouteName !== "") ===
+          false
+        ) {
+          if (routeParts[routePartIndex] !== urlPartrouteName) {
+            active = false;
+          }
+          urlPartIndex += 1;
         }
-        urlPartIndex += 1;
       }
     }
     routeIndex += 1;
   }
 
+  debugger;
   if (active && urlParts.length === urlPartIndex) {
     return routeState.active;
   }
