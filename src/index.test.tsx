@@ -609,4 +609,148 @@ describe("api", () => {
 
     wrapper.unmount();
   });
+
+  it("does childRoute work as expected, for root component without parameter", () => {
+    const urlStore = store("/");
+
+    const rootRoute = createRoute(
+      "/",
+      {} as const,
+      component("RootComponent", () => null)
+    );
+
+    const childRoute = rootRoute.createChildRoute(
+      "childPath",
+      {} as const,
+      component("ChildComponent", () => null)
+    );
+
+    const wrapper = mount(
+      <urlStore.Observer>
+        {(urlState) => (
+          <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+            <rootRoute.Consumer>
+              {(rootRouteState) =>
+                rootRouteState.isActive ? (
+                  <span>root-active</span>
+                ) : rootRouteState.isActiveAsParent ? (
+                  <span>root-active-as-parent</span>
+                ) : rootRouteState.invalid ? (
+                  <span>root-invalid</span>
+                ) : (
+                  <span>root-inactive</span>
+                )
+              }
+            </rootRoute.Consumer>
+
+            <childRoute.Consumer>
+              {(childRouteState) =>
+                childRouteState.isActive ? (
+                  <span>child-active</span>
+                ) : childRouteState.isActiveAsParent ? (
+                  <span>child-active-as-parent</span>
+                ) : childRouteState.invalid ? (
+                  <span>child-invalid</span>
+                ) : (
+                  <span>child-inactive</span>
+                )
+              }
+            </childRoute.Consumer>
+
+            <childRoute.Link
+              parameter={{
+                "/": {},
+                childPath: {},
+              }}
+            >
+              link
+            </childRoute.Link>
+          </StaticProvider>
+        )}
+      </urlStore.Observer>
+    );
+
+    expect(wrapper.contains(<span>root-active</span>)).toBe(true);
+    expect(wrapper.contains(<span>child-inactive</span>)).toBe(true);
+
+    wrapper.find("a").simulate("click");
+
+    expect(wrapper.contains(<span>root-active-as-parent</span>)).toBe(true);
+    expect(wrapper.contains(<span>child-active</span>)).toBe(true);
+    expect(urlStore.getState()).toBe("/childPath");
+
+    wrapper.unmount();
+  });
+
+  it("does childRoute work as expected, for root component with paramenters", () => {
+    const urlStore = store("/;rootParam=bar");
+
+    const rootRoute = createRoute(
+      "/",
+      {
+        rootParam: [serializer.string()],
+      } as const,
+      component("RootComponent", () => null)
+    );
+
+    const childRoute = rootRoute.createChildRoute(
+      "childPath",
+      {} as const,
+      component("ChildComponent", () => null)
+    );
+
+    const wrapper = mount(
+      <urlStore.Observer>
+        {(urlState) => (
+          <StaticProvider url={urlState} onchange={urlStore.dispatch}>
+            <rootRoute.Consumer>
+              {(rootRouteState) =>
+                rootRouteState.isActive ? (
+                  <span>root-active</span>
+                ) : rootRouteState.isActiveAsParent ? (
+                  <span>root-active-as-parent</span>
+                ) : (
+                  <span>root-inactive</span>
+                )
+              }
+            </rootRoute.Consumer>
+
+            <childRoute.Consumer>
+              {(childRouteState) =>
+                childRouteState.isActive ? (
+                  <span>child-active</span>
+                ) : childRouteState.isActiveAsParent ? (
+                  <span>child-active-as-parent</span>
+                ) : (
+                  <span>child-inactive</span>
+                )
+              }
+            </childRoute.Consumer>
+
+            <childRoute.Link
+              parameter={{
+                "/": {
+                  rootParam: "foo",
+                },
+                childPath: {},
+              }}
+            >
+              link
+            </childRoute.Link>
+          </StaticProvider>
+        )}
+      </urlStore.Observer>
+    );
+
+    expect(wrapper.contains(<span>root-active</span>)).toBe(true);
+    expect(wrapper.contains(<span>child-inactive</span>)).toBe(true);
+
+    wrapper.find("a").simulate("click");
+
+    expect(wrapper.contains(<span>root-active-as-parent</span>)).toBe(true);
+    expect(wrapper.contains(<span>child-active</span>)).toBe(true);
+    expect(urlStore.getState()).toBe("/;rootParam=foo/childPath");
+
+    wrapper.unmount();
+  });
 });

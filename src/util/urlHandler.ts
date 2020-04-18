@@ -36,7 +36,9 @@ export const createUrl: linkHandler["createUrl"] = (routeChain, parameter) => {
         );
       },
       `${path}${
-        routeContainer.routeName[0] === PATH_DELIMITER
+      path[path.length - 1] === PATH_DELIMITER // If last character we dont want to add another slash to it
+        ? routeContainer.routeName
+        : routeContainer.routeName === PATH_DELIMITER
           ? routeContainer.routeName
           : PATH_DELIMITER + routeContainer.routeName
       }`
@@ -102,7 +104,7 @@ function normalizePath(url: string) {
     result = result.slice(0, -1);
   }
 
-  return result;
+  return `${result}`;
 }
 
 function getUrlParts(url: string): [string, string][] {
@@ -126,6 +128,7 @@ export const getParameter: linkHandler["getParameter"] = (routeChain, url) => {
 
   let routeIndex = 0;
   let urlPartIndex = 0;
+  debugger;
 
   while (routeIndex < routeChain.length) {
     const routeParts = normalizePath(routeChain[routeIndex].routeName).split(
@@ -136,23 +139,36 @@ export const getParameter: linkHandler["getParameter"] = (routeChain, url) => {
       routePartIndex < routeParts.length;
       routePartIndex += 1
     ) {
-      const [urlPartrouteName] = urlParts[urlPartIndex];
+      const [urlPartrouteName, parameterString] = urlParts[urlPartIndex];
 
       if (urlPartrouteName !== routeParts[routePartIndex]) {
-        throw new Error(
-          `Can not parse url ${url} for wrong routeName ${routeChain[routeIndex].routeName}`
+        if (routeParts[routePartIndex] === "") {
+          result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(
+            [],
+            routeChain[routeIndex].parameterSpec,
+            url
+          );
+          continue;
+        } else {
+          throw new Error(
+            `Can not parse url ${url} for wrong routeName ${routeChain[routeIndex].routeName}`
+          );
+        }
+      } else {
+        urlPartIndex += 1;
+      }
+
+      if (routePartIndex + 1 === routeParts.length) {
+        const parameter =
+          parameterString === "" ? [] : parameterString.split(PARAMETER_DELIMITER);
+        result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(
+          parameter,
+          routeChain[routeIndex].parameterSpec,
+          url
         );
       }
-      urlPartIndex += 1;
     }
-    const [, parameterString] = urlParts[urlPartIndex - 1];
-    const parameter =
-      parameterString === "" ? [] : parameterString.split(PARAMETER_DELIMITER);
-    result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(
-      parameter,
-      routeChain[routeIndex].parameterSpec,
-      url
-    );
+
     routeIndex += 1;
   }
 
@@ -163,40 +179,43 @@ export const getRouteState: linkHandler["getRouteState"] = (
   routeChain,
   url
 ) => {
-  let active = true;
   const urlParts = getUrlParts(url);
 
   let routeIndex = 0;
   let urlPartIndex = 0;
 
-  while (active && routeIndex < routeChain.length) {
+  while (routeIndex < routeChain.length) {
     const routeParts = normalizePath(routeChain[routeIndex].routeName).split(
       PATH_DELIMITER
     );
+
     for (
       let routePartIndex = 0;
-      active && routePartIndex < routeParts.length;
+      routePartIndex < routeParts.length;
       routePartIndex += 1
     ) {
       if (urlPartIndex >= urlParts.length) {
-        active = false;
+        return routeState.inactive;
       } else {
         const [urlPartrouteName] = urlParts[urlPartIndex];
-        if (routeParts[routePartIndex] !== urlPartrouteName) {
-          active = false;
+        if (
+          (routeParts[routePartIndex] === "" && urlPartrouteName !== "") ===
+          false
+        ) {
+          if (routeParts[routePartIndex] === urlPartrouteName) {
+            urlPartIndex += 1;
+          } else {
+            return routeState.inactive;
+          }
         }
-        urlPartIndex += 1;
       }
     }
     routeIndex += 1;
   }
 
-  if (active && urlParts.length === urlPartIndex) {
-    return routeState.active;
-  }
-  if (active && urlParts.length > urlPartIndex) {
+  if (urlPartIndex < urlParts.length) {
     return routeState.activeAsParent;
   }
 
-  return routeState.inactive;
+  return routeState.active;
 };
