@@ -635,6 +635,8 @@ describe("api", () => {
                   <span>root-active</span>
                 ) : rootRouteState.isActiveAsParent ? (
                   <span>root-active-as-parent</span>
+                ) : rootRouteState.invalid ? (
+                  <span>root-invalid</span>
                 ) : (
                   <span>root-inactive</span>
                 )
@@ -647,6 +649,8 @@ describe("api", () => {
                   <span>child-active</span>
                 ) : childRouteState.isActiveAsParent ? (
                   <span>child-active-as-parent</span>
+                ) : childRouteState.invalid ? (
+                  <span>child-invalid</span>
                 ) : (
                   <span>child-inactive</span>
                 )
@@ -669,7 +673,6 @@ describe("api", () => {
     expect(wrapper.contains(<span>root-active</span>)).toBe(true);
     expect(wrapper.contains(<span>child-inactive</span>)).toBe(true);
 
-    debugger;
     wrapper.find("a").simulate("click");
 
     expect(wrapper.contains(<span>root-active-as-parent</span>)).toBe(true);
@@ -680,7 +683,7 @@ describe("api", () => {
   });
 
   it("does childRoute work as expected, for root component with paramenters", () => {
-    const urlStore = store("/");
+    const urlStore = store("/;rootParam=bar");
 
     const rootRoute = createRoute(
       "/",
