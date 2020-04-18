@@ -36,9 +36,9 @@ export const createUrl: linkHandler["createUrl"] = (routeChain, parameter) => {
         );
       },
       `${path}${
-      path[path.length - 1] === PATH_DELIMITER // If last character we dont want to add another slash to it
-        ? routeContainer.routeName
-        : routeContainer.routeName === PATH_DELIMITER
+        path[path.length - 1] === PATH_DELIMITER // If last character we dont want to add another slash to it
+          ? routeContainer.routeName
+          : routeContainer.routeName === PATH_DELIMITER
           ? routeContainer.routeName
           : PATH_DELIMITER + routeContainer.routeName
       }`
@@ -128,7 +128,6 @@ export const getParameter: linkHandler["getParameter"] = (routeChain, url) => {
 
   let routeIndex = 0;
   let urlPartIndex = 0;
-  debugger;
 
   while (routeIndex < routeChain.length) {
     const routeParts = normalizePath(routeChain[routeIndex].routeName).split(
@@ -160,7 +159,9 @@ export const getParameter: linkHandler["getParameter"] = (routeChain, url) => {
 
       if (routePartIndex + 1 === routeParts.length) {
         const parameter =
-          parameterString === "" ? [] : parameterString.split(PARAMETER_DELIMITER);
+          parameterString === ""
+            ? []
+            : parameterString.split(PARAMETER_DELIMITER);
         result[routeChain[routeIndex].routeName] = getParameterOfRoutePart(
           parameter,
           routeChain[routeIndex].parameterSpec,

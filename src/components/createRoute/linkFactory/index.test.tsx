@@ -31,6 +31,10 @@ describe("linkFactory", () => {
       </urlStore.Observer>
     );
 
+    expect(wrapper.find(".router__link").hasClass("router__link--active")).toBe(
+      false
+    );
+
     const clickEvent = new MouseEvent("click", {
       cancelable: true,
     });
@@ -41,6 +45,9 @@ describe("linkFactory", () => {
 
     expect(urlStore.getState()).toBe("/foo");
     expect(clickEvent.defaultPrevented).toBe(true);
+    expect(wrapper.find(".router__link").hasClass("router__link--active")).toBe(
+      true
+    );
   });
 
   it("when clicked with ctrl, preventDefault should not be triggered", () => {

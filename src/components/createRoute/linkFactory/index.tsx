@@ -1,6 +1,6 @@
 import plusnew, { ApplicationElement, Component, Props } from "@plusnew/core";
 import url from "../../../contexts/url";
-import urlHandler from "../../../contexts/urlHandler";
+import urlHandler, { routeState } from "../../../contexts/urlHandler";
 import type {
   parameterSpecTemplate,
   routeContainerToType,
@@ -36,7 +36,7 @@ export default function <
         <urlHandler.Consumer>
           {(urlHandlerState) => (
             <url.Consumer>
-              {(_urlState, dispatch) => (
+              {(urlState, dispatch) => (
                 <Props>
                   {(props) => {
                     const targetUrl = urlHandlerState.createUrl(
@@ -44,7 +44,16 @@ export default function <
                       props.parameter
                     );
 
-                    const className = "router__link";
+                    const currentRouteState = urlHandlerState.getRouteState(
+                      routeChain,
+                      urlState
+                    );
+
+                    let className = "router__link";
+
+                    if (currentRouteState === routeState.active) {
+                      className += " router__link--active";
+                    }
 
                     return plusnew.createElement(
                       "a" as any,
