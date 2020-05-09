@@ -10,6 +10,8 @@ import type { routeContainer } from "../../../types/route";
 type props<parameter> = {
   children: ApplicationElement;
   parameter: parameter;
+  class?: string;
+  classActive?: string;
 };
 
 function hasModifier(evt: MouseEvent) {
@@ -49,16 +51,23 @@ export default function <
                       urlState
                     );
 
-                    let className = "router__link";
+                    const classes: string[] = [];
 
-                    if (currentRouteState === routeState.active) {
-                      className += " router__link--active";
+                    if (props.class) {
+                      classes.push(props.class);
+                    }
+
+                    if (
+                      currentRouteState === routeState.active &&
+                      props.classActive
+                    ) {
+                      classes.push(props.classActive);
                     }
 
                     return plusnew.createElement(
                       "a" as any,
                       {
-                        class: className,
+                        class: classes.join(" ") || null,
                         href: targetUrl,
                         onclick: (evt: MouseEvent) => {
                           if (hasModifier(evt) === false) {

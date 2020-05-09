@@ -23,6 +23,8 @@ describe("linkFactory", () => {
               parameter={{
                 foo: {},
               }}
+              class="link-class"
+              classActive="link-class-active"
             >
               link
             </fooRoute.Link>
@@ -31,23 +33,19 @@ describe("linkFactory", () => {
       </urlStore.Observer>
     );
 
-    expect(wrapper.find(".router__link").hasClass("router__link--active")).toBe(
-      false
-    );
+    expect(wrapper.find("a").hasClass("link-class")).toBe(true);
+    expect(wrapper.find("a").hasClass("link-class-active")).toBe(false);
 
     const clickEvent = new MouseEvent("click", {
       cancelable: true,
     });
 
-    (wrapper.find(".router__link").getDOMNode() as HTMLElement).dispatchEvent(
-      clickEvent
-    );
+    (wrapper.find("a").getDOMNode() as HTMLElement).dispatchEvent(clickEvent);
 
     expect(urlStore.getState()).toBe("/foo");
     expect(clickEvent.defaultPrevented).toBe(true);
-    expect(wrapper.find(".router__link").hasClass("router__link--active")).toBe(
-      true
-    );
+    expect(wrapper.find("a").hasClass("link-class")).toBe(true);
+    expect(wrapper.find("a").hasClass("link-class-active")).toBe(true);
   });
 
   it("when clicked with ctrl, preventDefault should not be triggered", () => {
@@ -89,9 +87,7 @@ describe("linkFactory", () => {
       ctrlKey: true,
     });
 
-    (wrapper.find(".router__link").getDOMNode() as HTMLElement).dispatchEvent(
-      clickEvent
-    );
+    (wrapper.find("a").getDOMNode() as HTMLElement).dispatchEvent(clickEvent);
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
@@ -136,9 +132,7 @@ describe("linkFactory", () => {
       altKey: true,
     });
 
-    (wrapper.find(".router__link").getDOMNode() as HTMLElement).dispatchEvent(
-      clickEvent
-    );
+    (wrapper.find("a").getDOMNode() as HTMLElement).dispatchEvent(clickEvent);
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
@@ -183,9 +177,7 @@ describe("linkFactory", () => {
       metaKey: true,
     });
 
-    (wrapper.find(".router__link").getDOMNode() as HTMLElement).dispatchEvent(
-      clickEvent
-    );
+    (wrapper.find("a").getDOMNode() as HTMLElement).dispatchEvent(clickEvent);
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
@@ -230,9 +222,7 @@ describe("linkFactory", () => {
       shiftKey: true,
     });
 
-    (wrapper.find(".router__link").getDOMNode() as HTMLElement).dispatchEvent(
-      clickEvent
-    );
+    (wrapper.find("a").getDOMNode() as HTMLElement).dispatchEvent(clickEvent);
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
