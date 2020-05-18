@@ -45,7 +45,8 @@ export default function <
       const redirect = (opt: { parameter: parameter }) => {
         const newUrl = urlHandler
           .findProvider(componentInstance)
-          .state.createUrl(routeChain, opt.parameter);
+          .getState()
+          .createUrl(routeChain, opt.parameter);
 
         url.findProvider(componentInstance).dispatch(newUrl);
       };
