@@ -18,4 +18,5 @@ module.exports = {
       lines: 100,
     },
   },
+  coverageProvider: "v8",
 };
