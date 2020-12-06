@@ -220,7 +220,8 @@ describe("api", () => {
               props.parameter;
             _parameter.childPath.childParam;
             _parameter.rootPath.parentParam;
-
+            // @ts--expect-error
+            _parameter.mep;
             return (
               <div>
                 <span>{props.parameter.rootPath.parentParam}</span>
