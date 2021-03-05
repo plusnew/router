@@ -43,7 +43,7 @@ type getOptionalKeys<T> = Pick<
 
 export type parameterSpecToType<
   parameterSpec extends parameterSpecTemplate
-> = getOptionalKeys<getMappedObject<parameterSpec>> &
+> = Partial<getOptionalKeys<getMappedObject<parameterSpec>>> &
   getRequiredKeys<getMappedObject<parameterSpec>>;
 
 export type routeContainerToType<
