@@ -69,15 +69,6 @@ export type routeObj<
   >;
 };
 
-type inferRouteName<T> = T extends routeObj<infer I, any, any> ? I : never;
-type inferParameterSpecName<T> = T extends routeObj<any, infer I, any>
-  ? I
-  : never;
-type inferParentParameterName<T> = T extends routeObj<any, any, infer I>
-  ? I
-  : never;
-
 export type RouteToParameter<
   route extends routeObj<any, any, any>
-> = inferParentParameterName<route> &
-  routeContainerToType<inferRouteName<route>, inferParameterSpecName<route>>;
+> = route extends routeObj<any, any, infer I> ? I : unknown;

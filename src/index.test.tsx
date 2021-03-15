@@ -6,9 +6,9 @@ import {
   createRoute,
   Invalid,
   NotFound,
+  RouteToParameter,
   serializer,
   StaticProvider,
-  RouteToParameter,
 } from "./index";
 
 configure({ adapter: new enzymeAdapterPlusnew() });
@@ -220,8 +220,10 @@ describe("api", () => {
               props.parameter;
             _parameter.childPath.childParam;
             _parameter.rootPath.parentParam;
-            // // @ts-expect-error
-            // _parameter.invalid_namespace;
+
+            // @ts-expect-error next line should
+            _parameter.invalid_namespace;
+
             return (
               <div>
                 <span>{props.parameter.rootPath.parentParam}</span>
