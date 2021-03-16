@@ -6,7 +6,7 @@
 	"module": "src/index.ts",
 	"scripts": {
 		"prepublishOnly": "yarn run test --no-cache",
-		"test": "jest --coverage",
+		"test": "jest --coverage --no-cache",
 		"test:watch": "jest --watch"
 	},
 	"keywords": [
