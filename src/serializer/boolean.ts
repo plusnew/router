@@ -1,8 +1,8 @@
 import type { serializer } from "../types/mapper";
 
-export default <literal extends boolean = boolean>(
+export default <literal extends boolean>(
   literal?: literal
-): serializer<literal> => ({
+): serializer<undefined extends literal ? boolean : literal> => ({
   displayName: literal === undefined ? "boolean" : `${literal}`,
   fromUrl: (value) => {
     if (value !== undefined) {
@@ -10,7 +10,7 @@ export default <literal extends boolean = boolean>(
         if (literal === undefined || literal === true) {
           return {
             valid: true,
-            value: true as literal,
+            value: true as undefined extends literal ? boolean : literal,
           };
         }
       }
@@ -18,7 +18,7 @@ export default <literal extends boolean = boolean>(
         if (literal === undefined || literal === false) {
           return {
             valid: true,
-            value: false as literal,
+            value: false as undefined extends literal ? boolean : literal,
           };
         }
       }
