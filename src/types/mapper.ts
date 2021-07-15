@@ -41,10 +41,9 @@ type getOptionalKeys<T> = Pick<
   }[keyof T]
 >;
 
-export type parameterSpecToType<
-  parameterSpec extends parameterSpecTemplate
-> = Partial<getOptionalKeys<getMappedObject<parameterSpec>>> &
-  getRequiredKeys<getMappedObject<parameterSpec>>;
+export type parameterSpecToType<parameterSpec extends parameterSpecTemplate> =
+  Partial<getOptionalKeys<getMappedObject<parameterSpec>>> &
+    getRequiredKeys<getMappedObject<parameterSpec>>;
 
 export type routeContainerToType<
   routeName extends string,
@@ -69,6 +68,5 @@ export type routeObj<
   >;
 };
 
-export type RouteToParameter<
-  route extends routeObj<any, any, any>
-> = route extends routeObj<any, any, infer I> ? I : unknown;
+export type RouteToParameter<route extends routeObj<any, any, any>> =
+  route extends routeObj<any, any, infer I> ? I : unknown;

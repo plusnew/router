@@ -7,7 +7,7 @@ type props = {
   children: any;
 };
 
-export default component(__dirname, (Props: Props<props>) => (
+export default component("RouteInvalid", (Props: Props<props>) => (
   <activeRoutes.Consumer>
     {(activeRoutesState) => (
       <url.Consumer>
