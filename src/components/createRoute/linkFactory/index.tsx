@@ -12,6 +12,7 @@ type props<parameter> = {
   parameter: parameter;
   class?: string;
   classActive?: string;
+  onclick?: () => void;
 };
 
 function hasModifier(evt: MouseEvent) {
@@ -73,6 +74,9 @@ export default function <
                           if (hasModifier(evt) === false) {
                             dispatch(targetUrl);
                             evt.preventDefault();
+                            if (props.onclick) {
+                              props.onclick();
+                            }
                           }
                         },
                       },

@@ -14,6 +14,7 @@ describe("linkFactory", () => {
       {} as const,
       component("FooComponent", () => <div />)
     );
+    const routeClick = jasmine.createSpy("clickSpy");
 
     const wrapper = mount(
       <urlStore.Observer>
@@ -25,6 +26,7 @@ describe("linkFactory", () => {
               }}
               class="link-class"
               classActive="link-class-active"
+              onclick={routeClick}
             >
               link
             </fooRoute.Link>
@@ -46,6 +48,7 @@ describe("linkFactory", () => {
     expect(clickEvent.defaultPrevented).toBe(true);
     expect(wrapper.find("a").hasClass("link-class")).toBe(true);
     expect(wrapper.find("a").hasClass("link-class-active")).toBe(true);
+    expect(routeClick).toHaveBeenCalled();
   });
 
   it("when clicked with ctrl, preventDefault should not be triggered", () => {
@@ -62,6 +65,7 @@ describe("linkFactory", () => {
         evt.preventDefault();
       })
       .and.callThrough();
+    const routeClick = jasmine.createSpy("clickSpy");
 
     const wrapper = mount(
       <urlStore.Observer>
@@ -72,6 +76,7 @@ describe("linkFactory", () => {
                 parameter={{
                   foo: {},
                 }}
+                onclick={routeClick}
               >
                 link
               </fooRoute.Link>
@@ -91,6 +96,7 @@ describe("linkFactory", () => {
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
+    expect(routeClick).not.toHaveBeenCalled();
   });
 
   it("when clicked with alt, preventDefault should not be triggered", () => {
@@ -107,6 +113,7 @@ describe("linkFactory", () => {
         evt.preventDefault();
       })
       .and.callThrough();
+    const routeClick = jasmine.createSpy("clickSpy");
 
     const wrapper = mount(
       <urlStore.Observer>
@@ -117,6 +124,7 @@ describe("linkFactory", () => {
                 parameter={{
                   foo: {},
                 }}
+                onclick={routeClick}
               >
                 link
               </fooRoute.Link>
@@ -136,6 +144,7 @@ describe("linkFactory", () => {
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
+    expect(routeClick).not.toHaveBeenCalled();
   });
 
   it("when clicked with metaKey, preventDefault should not be triggered", () => {
@@ -152,6 +161,7 @@ describe("linkFactory", () => {
         evt.preventDefault();
       })
       .and.callThrough();
+    const routeClick = jasmine.createSpy("clickSpy");
 
     const wrapper = mount(
       <urlStore.Observer>
@@ -162,6 +172,7 @@ describe("linkFactory", () => {
                 parameter={{
                   foo: {},
                 }}
+                onclick={routeClick}
               >
                 link
               </fooRoute.Link>
@@ -181,6 +192,7 @@ describe("linkFactory", () => {
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
+    expect(routeClick).not.toHaveBeenCalled();
   });
 
   it("when clicked with shift, preventDefault should not be triggered", () => {
@@ -197,6 +209,7 @@ describe("linkFactory", () => {
         evt.preventDefault();
       })
       .and.callThrough();
+    const routeClick = jasmine.createSpy("clickSpy");
 
     const wrapper = mount(
       <urlStore.Observer>
@@ -207,6 +220,7 @@ describe("linkFactory", () => {
                 parameter={{
                   foo: {},
                 }}
+                onclick={routeClick}
               >
                 link
               </fooRoute.Link>
@@ -226,5 +240,6 @@ describe("linkFactory", () => {
 
     expect(urlStore.getState()).toBe("/");
     expect(clickSpy).toHaveBeenCalled();
+    expect(routeClick).not.toHaveBeenCalled();
   });
 });
