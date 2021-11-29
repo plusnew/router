@@ -976,4 +976,152 @@ describe("urlHandler", () => {
       ).toEqual(parameter);
     });
   });
+
+  describe("array", () => {
+    it("basic", () => {
+      const spec = {
+        foo: [serializer.array([serializer.number(1), serializer.number()])],
+      };
+
+      const parameter = {
+        routeName: {
+          foo: [23],
+        },
+      };
+
+      expect(
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          createUrl<"routeName", typeof spec, {}>(
+            [{ routeName: "routeName", parameterSpec: spec }],
+            parameter
+          )
+        )
+      ).toEqual(parameter);
+    });
+
+    it("empty array", () => {
+      const spec = {
+        foo: [serializer.array([serializer.number()])],
+      };
+
+      const parameter = {
+        routeName: {
+          foo: [],
+        },
+      };
+
+      expect(
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          createUrl<"routeName", typeof spec, {}>(
+            [{ routeName: "routeName", parameterSpec: spec }],
+            parameter
+          )
+        )
+      ).toEqual(parameter);
+    });
+
+    it("mixed serializer array", () => {
+      const spec = {
+        foo: [serializer.array([serializer.number(), serializer.string()])],
+      };
+
+      const parameter = {
+        routeName: {
+          foo: ["fo,o", 5],
+        },
+      };
+
+      expect(
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          createUrl<"routeName", typeof spec, {}>(
+            [{ routeName: "routeName", parameterSpec: spec }],
+            parameter
+          )
+        )
+      ).toEqual(parameter);
+    });
+
+    it("with optional serializer, and no value given", () => {
+      const spec = {
+        foo: [serializer.array([serializer.number()]), serializer.undefined()],
+      };
+
+      const parameter = {
+        routeName: {},
+      };
+
+      expect(
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          createUrl<"routeName", typeof spec, {}>(
+            [{ routeName: "routeName", parameterSpec: spec }],
+            parameter
+          )
+        )
+      ).toEqual(parameter);
+    });
+
+    it("with optional serializer, and value given", () => {
+      const spec = {
+        foo: [serializer.undefined(), serializer.array([serializer.number()])],
+      };
+
+      const parameter = {
+        routeName: {
+          foo: [34],
+        },
+      };
+
+      expect(
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          createUrl<"routeName", typeof spec, {}>(
+            [{ routeName: "routeName", parameterSpec: spec }],
+            parameter
+          )
+        )
+      ).toEqual(parameter);
+    });
+
+    it("createUrl with invalid type", () => {
+      const spec = {
+        foo: [serializer.array([serializer.number()])],
+      };
+
+      expect(() =>
+        createUrl<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          {
+            routeName: {
+              foo: "fooValue" as any,
+            },
+          }
+        )
+      ).toThrow(
+        new Error(
+          "Could not create url for routeName, the property foo was not serializable as array with the value fooValue"
+        )
+      );
+    });
+
+    it("parseUrl with invalid type", () => {
+      const spec = {
+        foo: [serializer.array([serializer.number()])],
+      };
+
+      expect(() =>
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          "/routeName;foo=invalid"
+        )
+      ).toThrow(
+        new Error(
+          "The url /routeName;foo=invalid has incorrect parameter foo, it is not parsable as array"
+        )
+      );
+    });
+  });
 });

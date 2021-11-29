@@ -1,7 +1,9 @@
+import { fromUrl, toUrl } from "serializer";
 import { linkHandler, routeState } from "../contexts/urlHandler";
 import type {
   parameterSpecTemplate,
   parameterSpecToType,
+  serializer as serializerType,
 } from "../types/mapper";
 
 const PATH_DELIMITER = "/";
@@ -25,6 +27,19 @@ export const createUrl: linkHandler["createUrl"] = (routeChain, parameter) => {
 
             return `${path}${PARAMETER_DELIMITER}${specKey}${PARAMETER_PARAMETERVALUE_DELIMITER}${serializerResult.value}`;
           }
+        }
+
+        const serializersResult = toUrl(
+          serializers as serializerType<any>[],
+          paramValue
+        );
+
+        if (serializersResult.valid === true) {
+          if (serializersResult.value === undefined) {
+            return path;
+          }
+
+          return `${path}${PARAMETER_DELIMITER}${specKey}${PARAMETER_PARAMETERVALUE_DELIMITER}${serializersResult.value}`;
         }
 
         const type = serializers
@@ -65,28 +80,22 @@ function getParameterOfRoutePart<spec extends parameterSpecTemplate>(
   }
 
   for (const specKey in spec) {
-    let valid = false;
-
     const serializers = spec[specKey];
-    for (const serializer of serializers) {
-      const serializerResult = serializer.fromUrl(parameterObject[specKey]);
-      if (serializerResult.valid === true) {
-        if (serializerResult.value !== undefined) {
-          result[specKey] = serializerResult.value;
-        }
-        valid = true;
-        break;
-      }
-    }
+    const serializersResult = fromUrl(
+      serializers as any,
+      parameterObject[specKey]
+    );
 
-    const types = serializers
-      .map((serializer) => serializer.displayName)
-      .join(" | ");
-    if (valid === false) {
+    if (serializersResult.valid === false) {
+      const types = serializers
+        .map((serializer) => serializer.displayName)
+        .join(" | ");
+
       throw new Error(
         `The url ${url} has incorrect parameter ${specKey}, it is not parsable as ${types}`
       );
     }
+    result[specKey] = serializersResult.value;
   }
 
   return result as parameterSpecToType<spec>;
