@@ -17,17 +17,6 @@ export const createUrl: linkHandler["createUrl"] = (routeChain, parameter) => {
         const paramValue = (parameter as any)[routeContainer.routeName][
           specKey
         ];
-        for (const serializer of serializers) {
-          const serializerResult = serializer.toUrl(paramValue);
-
-          if (serializerResult.valid === true) {
-            if (serializerResult.value === undefined) {
-              return path;
-            }
-
-            return `${path}${PARAMETER_DELIMITER}${specKey}${PARAMETER_PARAMETERVALUE_DELIMITER}${serializerResult.value}`;
-          }
-        }
 
         const serializersResult = toUrl(
           serializers as serializerType<any>[],

@@ -1096,7 +1096,7 @@ describe("urlHandler", () => {
           [{ routeName: "routeName", parameterSpec: spec }],
           {
             routeName: {
-              foo: "fooValue" as any,
+              foo: ["fooValue"] as any,
             },
           }
         )
