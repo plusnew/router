@@ -1,4 +1,4 @@
-import { fromUrl, toUrl } from "serializer";
+import { fromUrl, toUrl } from "../serializer";
 import { linkHandler, routeState } from "../contexts/urlHandler";
 import type {
   parameterSpecTemplate,

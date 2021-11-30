@@ -1,4 +1,4 @@
-import { fromUrl, toUrl } from "serializer";
+import { fromUrl, toUrl } from "./index";
 import type { serializer } from "../types/mapper";
 
 const DELIMITER = ",";
