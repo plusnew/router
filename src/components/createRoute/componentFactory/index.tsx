@@ -1,4 +1,4 @@
-import plusnew, { Component, Props } from "@plusnew/core";
+import plusnew, { Component, type Props } from "@plusnew/core";
 import type ComponentInstance from "@plusnew/core/src/instances/types/Component/Instance";
 import activeRoutes from "../../../contexts/activeRoutes";
 import url from "../../../contexts/url";

@@ -1,4 +1,4 @@
-import plusnew, { ApplicationElement, Component, Props } from "@plusnew/core";
+import plusnew, { type ApplicationElement, Component, type Props } from "@plusnew/core";
 import url from "../../../contexts/url";
 import urlHandler, { routeState } from "../../../contexts/urlHandler";
 import type {

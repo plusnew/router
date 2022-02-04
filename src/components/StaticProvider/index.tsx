@@ -1,4 +1,4 @@
-import plusnew, { component, Props } from "@plusnew/core";
+import plusnew, { component, type Props } from "@plusnew/core";
 import activeRoutesContext, {
   storeFactory as activeRouteStoreFactory,
 } from "../../contexts/activeRoutes";
