@@ -262,6 +262,50 @@ describe("urlHandler", () => {
       ).toEqual(parameter);
     });
 
+    it("with null serializer, and no value given", () => {
+      const spec = {
+        foo: [serializer.string(), serializer.null()],
+      };
+
+      const parameter = {
+        routeName: {
+          foo: null
+        },
+      };
+
+      expect(
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          createUrl<"routeName", typeof spec, {}>(
+            [{ routeName: "routeName", parameterSpec: spec }],
+            parameter
+          )
+        )
+      ).toEqual(parameter);
+    });
+
+    it("with null serializer, and value given", () => {
+      const spec = {
+        foo: [serializer.null(), serializer.string()],
+      };
+
+      const parameter = {
+        routeName: {
+          foo: "string",
+        },
+      };
+
+      expect(
+        getParameter<"routeName", typeof spec, {}>(
+          [{ routeName: "routeName", parameterSpec: spec }],
+          createUrl<"routeName", typeof spec, {}>(
+            [{ routeName: "routeName", parameterSpec: spec }],
+            parameter
+          )
+        )
+      ).toEqual(parameter);
+    });
+
     describe("literal", () => {
       it("with correct value", () => {
         const spec = {

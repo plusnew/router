@@ -5,6 +5,7 @@ import date from "./date";
 import number from "./number";
 import string from "./string";
 import undefined from "./undefined";
+import nullSerializer from "./null";
 
 export default {
   array,
@@ -13,6 +14,7 @@ export default {
   number,
   string,
   undefined,
+  null: nullSerializer
 };
 
 export function fromUrl<T>(
