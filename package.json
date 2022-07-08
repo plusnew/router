@@ -1,13 +1,13 @@
 {
 	"name": "@plusnew/router",
-	"version": "1.7.0",
+	"version": "2.0.0",
 	"description": "typesafe router for plusnew",
 	"main": "src/index.ts",
 	"module": "src/index.ts",
 	"scripts": {
 		"prepublishOnly": "yarn run test --no-cache",
-		"test": "jest --coverage --no-cache",
-		"test:watch": "jest --watch"
+		"test": "web-test-runner",
+		"test:watch": "web-test-runner --watch"
 	},
 	"keywords": [
 		"plusnew"
@@ -15,19 +15,19 @@
 	"author": "Carlo Jeske",
 	"dependencies": {},
 	"devDependencies": {
+		"@esm-bundle/chai": "^4.3.4-fix.0",
 		"@plusnew/core": "^1.6.3",
 		"@plusnew/driver-dom": "^1.4.0",
 		"@plusnew/enzyme-adapter": "^1.0.1",
-		"@types/jest": "^26.0.20",
-		"@typescript-eslint/eslint-plugin": "^5.10.2",
-		"@typescript-eslint/parser": "^5.10.2",
+		"@typescript-eslint/eslint-plugin": "^5.30.5",
+		"@typescript-eslint/parser": "^5.30.5",
+		"@web/dev-server-esbuild": "^0.3.1",
+		"@web/test-runner": "^0.13.31",
 		"enzyme": "^3.11.0",
-		"eslint": "^8.8.0",
-		"eslint-config-prettier": "^8.1.0",
-		"eslint-plugin-prettier": "^4.0.0",
-		"jest": "^26.6.3",
-		"prettier": "^2.5.1",
-		"ts-jest": "^26.5.3",
-		"typescript": "^4.5.5"
+		"eslint": "^8.19.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-prettier": "^4.2.1",
+		"prettier": "^2.7.1",
+		"typescript": "^4.7.4"
 	}
 }
