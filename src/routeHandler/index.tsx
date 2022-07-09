@@ -8,5 +8,7 @@ type Route = {
 };
 
 export const createRoute = (_namespace: string, _parameterSpec: any): Route => {
-  return null as any;
+  return {
+    parseUrl: () => ({isActive: false, isActiveAsParent: false})
+  };
 };

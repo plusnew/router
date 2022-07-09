@@ -1,11 +1,11 @@
-import type { serializer } from "../types/mapper";
 import array from "./array";
 import boolean from "./boolean";
 import date from "./date";
 import number from "./number";
 import string from "./string";
-import undefined from "./undefined";
 import nullSerializer from "./null";
+
+import type { Serializer } from "../types";
 
 export default {
   array,
@@ -13,12 +13,11 @@ export default {
   date,
   number,
   string,
-  undefined,
   null: nullSerializer
 };
 
 export function fromUrl<T>(
-  serializers: serializer<T>[],
+  serializers: Serializer<T>[],
   value: string | undefined
 ): { valid: false } | { valid: true; value: T } {
   for (const serializer of serializers) {
@@ -34,7 +33,7 @@ export function fromUrl<T>(
 }
 
 export function toUrl<T>(
-  serializers: serializer<T>[],
+  serializers: Serializer<T>[],
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   value: any
 ): { valid: false } | { valid: true; value: string | undefined } {

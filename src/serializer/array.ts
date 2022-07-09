@@ -1,14 +1,14 @@
 import { fromUrl, toUrl } from "./index";
-import type { serializer } from "../types/mapper";
+import type { Serializer } from "../types";
 
 const DELIMITER = ",";
 
 type ArrayType<T> = T extends (infer R)[] ? R : never;
-type SerializerType<T> = T extends serializer<infer R> ? R : never;
+type SerializerType<T> = T extends Serializer<infer R> ? R : never;
 
-export default <T extends serializer<any>[]>(
+export default <T extends Serializer<any>[]>(
   serializers: T
-): serializer<SerializerType<ArrayType<T>>[]> => ({
+): Serializer<SerializerType<ArrayType<T>>[]> => ({
   displayName: "array",
   fromUrl: (value) => {
     if (value !== undefined) {

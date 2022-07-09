@@ -1,8 +1,8 @@
-import type { serializer } from "../types/mapper";
+import type { Serializer } from "../types";
 
 export default <literal extends boolean>(
   literal?: literal
-): serializer<undefined extends literal ? boolean : literal> => ({
+): Serializer<undefined extends literal ? boolean : literal> => ({
   displayName: literal === undefined ? "boolean" : `${literal}`,
   fromUrl: (value) => {
     if (value !== undefined) {
