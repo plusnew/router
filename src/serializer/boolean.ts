@@ -3,7 +3,7 @@ import type { Serializer } from "../types";
 export default <literal extends boolean>(
   literal?: literal
 ): Serializer<undefined extends literal ? boolean : literal> => ({
-  displayName: literal === undefined ? "boolean" : `${literal}`,
+  displayName: literal === undefined ? "boolean" : `${literal.toString()}`,
   fromUrl: (value) => {
     if (value !== undefined) {
       if (value === "true") {

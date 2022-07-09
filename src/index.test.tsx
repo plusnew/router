@@ -6,7 +6,7 @@ import driver from "@plusnew/driver-dom";
 
 describe("api", () => {
   it("does createroute work as expected", () => {
-    const container = document.createElement("div")
+    const container = document.createElement("div");
     const urlStore = store("/rootPath;parentParam=foo");
 
     const rootRoute = createRoute("rootPath", {
@@ -24,7 +24,8 @@ describe("api", () => {
             </UrlConsumer>
           </StaticProvider>
         )}
-      </urlStore.Observer>, {driver:driver(container) }
+      </urlStore.Observer>,
+      { driver: driver(container) }
     );
 
     expect(container.childNodes[0].textContent).to.equal("foo");

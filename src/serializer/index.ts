@@ -13,7 +13,7 @@ export default {
   date,
   number,
   string,
-  null: nullSerializer
+  null: nullSerializer,
 };
 
 export function fromUrl<T>(
