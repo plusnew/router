@@ -18,9 +18,14 @@ describe("api", () => {
         {(urlState) => (
           <StaticProvider state={urlState} dispatch={urlStore.dispatch}>
             <UrlConsumer>
-              {(urlState) => (
-                <div>{rootRoute.parseUrl(urlState).isActive && "foo"}</div>
-              )}
+              {(urlState) => {
+                const rootRouteState = rootRoute.parseUrl(urlState);
+
+                return (
+                  rootRouteState.isActive &&
+                  rootRouteState.parameter.rootPath.parentParam
+                );
+              }}
             </UrlConsumer>
           </StaticProvider>
         )}
@@ -28,7 +33,7 @@ describe("api", () => {
       { driver: driver(container) }
     );
 
-    expect(container.childNodes[0].textContent).to.equal("foo");
+    expect(container.textContent).to.equal("foo");
 
     component.remove(false);
   });
