@@ -14,12 +14,11 @@ describe("api", () => {
     } as const);
 
     const childARoute = rootRoute.createChildRoute("childAPath", {
-      childParam: [serializer.number()],
+      firstChildParam: [serializer.number()],
+      secondChildParam: [serializer.string()],
     } as const);
 
-    const childBRoute = rootRoute.createChildRoute("childBPath", {
-      childParam: [serializer.number()],
-    } as const);
+    const childBRoute = rootRoute.createChildRoute("childBPath", {} as const);
 
     const component = plusnew.render(
       <urlStore.Observer>
@@ -41,7 +40,10 @@ describe("api", () => {
                   return (
                     "childA-" +
                     childARouteState.parameter.rootPath.parentParam +
-                    childARouteState.parameter.childAPath.childParam
+                    "-" +
+                    childARouteState.parameter.childAPath.firstChildParam +
+                    "-" +
+                    childARouteState.parameter.childAPath.secondChildParam
                   );
                 }
 
@@ -49,9 +51,7 @@ describe("api", () => {
 
                 if (childBRouteState.isActive) {
                   return (
-                    "childB-" +
-                    childBRouteState.parameter.rootPath.parentParam +
-                    childBRouteState.parameter.childAPath.childParam
+                    "childB-" + childBRouteState.parameter.rootPath.parentParam
                   );
                 }
 
@@ -72,7 +72,7 @@ describe("api", () => {
                 urlStore.dispatch(
                   childARoute.createUrl({
                     rootPath: { parentParam: "bar" },
-                    childAPath: { childParam: 1 },
+                    childAPath: { firstChildParam: 1, secondChildParam: "mep" },
                   })
                 )
               }
@@ -82,8 +82,8 @@ describe("api", () => {
               onclick={() =>
                 urlStore.dispatch(
                   childBRoute.createUrl({
-                    rootPath: { parentParam: "bar" },
-                    childBPath: { childParam: 2 },
+                    rootPath: { parentParam: "baz" },
+                    childBPath: {},
                   })
                 )
               }
@@ -106,13 +106,13 @@ describe("api", () => {
       .querySelector("#childAButton")
       ?.dispatchEvent(new MouseEvent("click"));
 
-    expect(container.textContent).to.equal("childA-bar1");
+    expect(container.textContent).to.equal("childA-bar-1-mep");
 
     container
       .querySelector("#childBButton")
       ?.dispatchEvent(new MouseEvent("click"));
 
-    expect(container.textContent).to.equal("childB-bar2");
+    expect(container.textContent).to.equal("childB-baz");
 
     component.remove(false);
   });
