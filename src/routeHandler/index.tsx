@@ -8,6 +8,7 @@ type Route<T> = {
     | { isActive: false; isActiveAsParent: true; parameter: T }
     | { isActive: false; isActiveAsParent: false };
 
+  createUrl: (parameter: T) => string;
   createChildRoute: <U extends string, V extends parameterSpecTemplate>(
     namespace: U,
     parameterSpec: V
@@ -26,6 +27,7 @@ const createRouteFactory = function <T>(
       createChildRoute: createRouteFactory<
         T & { [namespace in U]: parameterSpecToType<V> }
       >([...parents, [namespace, parameterSpec]]),
+      createUrl: (_parameter: T) => "",
     };
   };
 };
