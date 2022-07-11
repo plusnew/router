@@ -47,7 +47,7 @@ describe("api", () => {
                   );
                 }
 
-                const childBRouteState = childARoute.parseUrl(urlState);
+                const childBRouteState = childBRoute.parseUrl(urlState);
 
                 if (childBRouteState.isActive) {
                   return (
