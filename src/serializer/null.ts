@@ -1,9 +1,9 @@
-import type { serializer } from "../types/mapper";
+import type { Serializer } from "../types";
 
-export default (): serializer<null> => ({
+export default (): Serializer<null> => ({
   displayName: "null",
   fromUrl: (value) => {
-    if (value === undefined) {
+    if (value === null) {
       return {
         valid: true,
         value: null,
@@ -17,7 +17,7 @@ export default (): serializer<null> => ({
     if (value === null) {
       return {
         valid: true,
-        value: undefined,
+        value: null,
       };
     }
     return {

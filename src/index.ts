@@ -1,7 +1,9 @@
-export { default as BrowserProvider } from "./components/BrowserProvider";
-export { default as createRoute } from "./components/createRoute";
-export { default as Invalid } from "./components/Invalid";
-export { default as NotFound } from "./components/NotFound";
-export { default as StaticProvider } from "./components/StaticProvider";
+import browserContext from "./context/browser";
+import routeContext from "./context/route";
+
+export { createRoute } from "./routeHandler";
 export { default as serializer } from "./serializer";
-export type { RouteToParameter } from "./types/mapper";
+
+export const BrowserProvider = browserContext.Provider;
+export const StaticProvider = routeContext.Provider;
+export const UrlConsumer = routeContext.Consumer;
