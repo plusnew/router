@@ -6,7 +6,7 @@ import driver from "@plusnew/driver-dom";
 
 describe("api", () => {
   it("does createroute work as expected", () => {
-    const container = document.body || document.createElement("div");
+    const container = document.createElement("div");
     const urlStore = store("/rootPath;parentParam=foo");
 
     const rootRoute = createRoute("rootPath", {
