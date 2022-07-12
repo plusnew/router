@@ -1,5 +1,4 @@
-import type { parameterSpecToType } from "../types";
-import type { parameterSpecTemplate } from "../types";
+import type { parameterSpecTemplate, parameterSpecToType } from "../types";
 
 type Route<T> = {
   parseUrl: (
@@ -145,16 +144,24 @@ const createRouteFactory = function <T>(
       createChildRoute: createRouteFactory<
         T & { [namespace in U]: parameterSpecToType<V> }
       >([...parents, [namespace, parameterSpec]]),
-      createUrl: (namespaces) =>
-        Object.entries(namespaces).reduce(
-          (path, [namespace, parameters]) =>
+      createUrl: (parameters) =>
+        allRoutes.reduce(
+          (path, [namespace, parameterSpec]) =>
             `${path}${NAMESPACE_DELIMITER}${namespace}${Object.entries(
-              parameters as { [key: string]: unknown }
-            ).reduce(
-              (path, [parameterName, parameterValue]) =>
-                `${path}${PARAMETER_DELIMITER}${parameterName}${PARAMETER_VALUE_DELIMITER}${parameterValue.toString()}`,
-              ""
-            )}`,
+              (parameters as any)[namespace]
+            ).reduce((path, [parameterName, parameterValue]) => {
+              for (const serializer of parameterSpec[parameterName]) {
+                const result = serializer.toUrl(parameterValue);
+                if (result.valid) {
+                  if (result.value === null) {
+                    return path;
+                  } else {
+                    return `${path}${PARAMETER_DELIMITER}${parameterName}${PARAMETER_VALUE_DELIMITER}${result.value}`;
+                  }
+                }
+              }
+              throw new Error("Could not serialize " + parameterName);
+            }, "")}`,
           ""
         ),
     };

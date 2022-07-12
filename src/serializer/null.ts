@@ -3,7 +3,7 @@ import type { Serializer } from "../types";
 export default (): Serializer<null> => ({
   displayName: "null",
   fromUrl: (value) => {
-    if (value === undefined) {
+    if (value === null) {
       return {
         valid: true,
         value: null,
@@ -17,7 +17,7 @@ export default (): Serializer<null> => ({
     if (value === null) {
       return {
         valid: true,
-        value: undefined,
+        value: null,
       };
     }
     return {

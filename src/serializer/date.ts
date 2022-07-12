@@ -3,7 +3,7 @@ import type { Serializer } from "../types";
 export default (): Serializer<Date> => ({
   displayName: "date",
   fromUrl: (value) => {
-    if (value !== undefined) {
+    if (value !== null) {
       const date = new Date(decodeURIComponent(value));
       if (isNaN(date.getTime()) === true) {
         return {

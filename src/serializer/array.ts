@@ -11,7 +11,7 @@ export default <T extends Serializer<any>[]>(
 ): Serializer<SerializerType<ArrayType<T>>[]> => ({
   displayName: "array",
   fromUrl: (value) => {
-    if (value !== undefined) {
+    if (value !== null) {
       if (value === "") {
         return {
           valid: true,

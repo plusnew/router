@@ -5,7 +5,7 @@ export default <literal extends number>(
 ): Serializer<undefined extends literal ? number : literal> => ({
   displayName: literal === undefined ? "number" : `${literal}`,
   fromUrl: (value) => {
-    if (value !== undefined) {
+    if (value !== null) {
       const result = Number(value);
 
       // @TODO evaluate if a stricter number parser makes sense /(-)?([0-9]+)(.[0-9]+)?/
