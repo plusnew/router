@@ -6,7 +6,7 @@ import driver from "@plusnew/driver-dom";
 
 describe("api", () => {
   it("does createroute work as expected", () => {
-    const container = document.createElement("div");
+    const container = document.body || document.createElement("div");
     const urlStore = store("/rootPath;parentParam=foo");
 
     const rootRoute = createRoute("rootPath", {
@@ -25,69 +25,72 @@ describe("api", () => {
         {(urlState) => (
           <StaticProvider state={urlState} dispatch={urlStore.dispatch}>
             <UrlConsumer>
-              {(urlState) => {
-                const rootRouteState = rootRoute.parseUrl(urlState);
+              {(urlState, redirect) => (
+                <>
+                  {(() => {
+                    const rootRouteState = rootRoute.parseUrl(urlState);
 
-                if (rootRouteState.isActive) {
-                  return (
-                    "root-" + rootRouteState.parameter.rootPath.parentParam
-                  );
-                }
+                    if (rootRouteState.isActive) {
+                      return (
+                        "root-" + rootRouteState.parameter.rootPath.parentParam
+                      );
+                    }
 
-                const childARouteState = childARoute.parseUrl(urlState);
+                    const childARouteState = childARoute.parseUrl(urlState);
 
-                if (childARouteState.isActive) {
-                  return (
-                    "childA-" +
-                    childARouteState.parameter.rootPath.parentParam +
-                    "-" +
-                    childARouteState.parameter.childAPath.firstChildParam +
-                    "-" +
-                    childARouteState.parameter.childAPath.secondChildParam
-                  );
-                }
+                    if (childARouteState.isActive) {
+                      return (
+                        "childA-" +
+                        childARouteState.parameter.rootPath.parentParam +
+                        "-" +
+                        childARouteState.parameter.childAPath.firstChildParam +
+                        "-" +
+                        childARouteState.parameter.childAPath.secondChildParam
+                      );
+                    }
 
-                const childBRouteState = childBRoute.parseUrl(urlState);
+                    const childBRouteState = childBRoute.parseUrl(urlState);
 
-                if (childBRouteState.isActive) {
-                  return (
-                    "childB-" + childBRouteState.parameter.rootPath.parentParam
-                  );
-                }
+                    if (childBRouteState.isActive) {
+                      return (
+                        "childB-" +
+                        childBRouteState.parameter.rootPath.parentParam
+                      );
+                    }
 
-                return "not-found";
-              }}
+                    return "not-found";
+                  })()}
+                  <button
+                    id="rootButton"
+                    onclick={() =>
+                      redirect(
+                        rootRoute.createUrl({
+                          rootPath: { parentParam: "bar" },
+                        })
+                      )
+                    }
+                  />
+                  <a
+                    id="childALink"
+                    href={childARoute.createUrl({
+                      rootPath: { parentParam: "bar" },
+                      childAPath: {
+                        firstChildParam: 1,
+                        secondChildParam: "mep",
+                      },
+                    })}
+                  />
+                  <a
+                    href={childBRoute.createUrl({
+                      rootPath: { parentParam: "baz" },
+                      childBPath: {},
+                    })}
+                  >
+                    <span id="childBLink" />
+                  </a>
+                </>
+              )}
             </UrlConsumer>
-            <button
-              id="rootButton"
-              onclick={() =>
-                urlStore.dispatch(
-                  rootRoute.createUrl({ rootPath: { parentParam: "bar" } })
-                )
-              }
-            />
-            <button
-              id="childAButton"
-              onclick={() =>
-                urlStore.dispatch(
-                  childARoute.createUrl({
-                    rootPath: { parentParam: "bar" },
-                    childAPath: { firstChildParam: 1, secondChildParam: "mep" },
-                  })
-                )
-              }
-            />
-            <button
-              id="childBButton"
-              onclick={() =>
-                urlStore.dispatch(
-                  childBRoute.createUrl({
-                    rootPath: { parentParam: "baz" },
-                    childBPath: {},
-                  })
-                )
-              }
-            />
           </StaticProvider>
         )}
       </urlStore.Observer>,
@@ -98,19 +101,26 @@ describe("api", () => {
 
     container
       .querySelector("#rootButton")
-      ?.dispatchEvent(new MouseEvent("click"));
+      ?.dispatchEvent(
+        new MouseEvent("click", { bubbles: true, cancelable: true })
+      );
 
     expect(container.textContent).to.equal("root-bar");
 
-    container
-      .querySelector("#childAButton")
-      ?.dispatchEvent(new MouseEvent("click"));
+    const childAEvent = new MouseEvent("click", {
+      bubbles: true,
+      cancelable: true,
+    });
+    (container.querySelector("#childALink") as HTMLElement).dispatchEvent(
+      childAEvent
+    );
 
     expect(container.textContent).to.equal("childA-bar-1-mep");
+    expect(childAEvent.defaultPrevented).to.eq(true);
 
-    container
-      .querySelector("#childBButton")
-      ?.dispatchEvent(new MouseEvent("click"));
+    (container.querySelector("#childBLink") as HTMLElement).dispatchEvent(
+      new MouseEvent("click", { bubbles: true, cancelable: true })
+    );
 
     expect(container.textContent).to.equal("childB-baz");
 

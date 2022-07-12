@@ -9,10 +9,17 @@ type props = {
 export default {
   Provider: component("RouteProvider", (Props: Props<props>) => {
     const url = store(location.pathname);
+
     return (
       <url.Observer>
         {(urlState) => (
-          <routeContext.Provider state={urlState} dispatch={() => null}>
+          <routeContext.Provider
+            state={urlState}
+            dispatch={(path) => {
+              history.pushState({}, "", path);
+              url.dispatch(path);
+            }}
+          >
             <Props>{(props) => props.children}</Props>
           </routeContext.Provider>
         )}
