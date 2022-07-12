@@ -112,12 +112,26 @@ const createRouteFactory = function <T>(
                   isActive = false;
                 }
               }
-              if (
-                Object.keys(result[currentRouteNamespace]).length !==
-                Object.keys(currentRouteParameterSpec).length
-              ) {
-                isActive = false;
-              }
+              result[currentRouteNamespace] = {
+                ...Object.fromEntries(
+                  Object.entries(currentRouteParameterSpec)
+                    .filter(
+                      ([parameterName, _]) =>
+                        parameterName in result[currentRouteNamespace] === false
+                    )
+                    .map(([parameterName, serializers]) => {
+                      for (const serializer of serializers) {
+                        const serializerResult = serializer.fromUrl(null);
+                        if (serializerResult.valid) {
+                          return [parameterName, serializerResult.value];
+                        }
+                      }
+                      isActive = false;
+                      return [parameterName, null];
+                    })
+                ),
+                ...result[currentRouteNamespace],
+              };
             }
           } else {
             isActive = false;

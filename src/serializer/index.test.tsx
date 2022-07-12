@@ -303,4 +303,29 @@ describe("serializer", () => {
       );
     });
   });
+
+  describe("order", () => {
+    const route = createRoute("test", {
+      foo: [serializer.string()],
+      bar: [serializer.null()],
+      baz: [serializer.string()],
+    });
+
+    const parameter = {
+      test: {
+        bar: null,
+        baz: "first",
+        foo: "second",
+      },
+    } as const;
+
+    const result = route.parseUrl(route.createUrl(parameter));
+
+    expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
+      result
+    );
+    expect(Object.keys(parameter.test)).to.eql(
+      result.isActive && Object.keys(result.parameter.test)
+    );
+  });
 });
