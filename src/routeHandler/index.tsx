@@ -15,6 +15,10 @@ type Route<T> = {
   ) => Route<T & { [namespace in U]: parameterSpecToType<V> }>;
 };
 
+export type RouteToParameter<T extends Route<any>> = T extends Route<infer I>
+  ? I
+  : never;
+
 const NAMESPACE_DELIMITER = "/";
 const PARAMETER_DELIMITER = ";";
 const PARAMETER_VALUE_DELIMITER = "=";

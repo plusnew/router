@@ -1,8 +1,8 @@
+import { expect } from "@esm-bundle/chai";
 import plusnew, { store } from "@plusnew/core";
 import "@plusnew/driver-dom";
-import { expect } from "@esm-bundle/chai";
-import { StaticProvider, UrlConsumer, createRoute, serializer } from "./index";
 import driver from "@plusnew/driver-dom";
+import { createRoute, serializer, StaticProvider, UrlConsumer } from "./index";
 
 describe("api", () => {
   it("does createroute work as expected", () => {
