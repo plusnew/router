@@ -13,6 +13,10 @@ type Route<T> = {
     namespace: U,
     parameterSpec: V
   ) => Route<T & { [namespace in U]: parameterSpecToType<V> }>;
+  map: <U>(
+    url: string,
+    map: (state: { isActiveAsParent: boolean; parameter: T }) => U
+  ) => U | null;
 };
 
 export type RouteToParameter<T extends Route<any>> = T extends Route<infer I>
@@ -31,7 +35,7 @@ const createRouteFactory = function <T>(
     parameterSpec: V
   ): Route<T & { [namespace in U]: parameterSpecToType<V> }> {
     const allRoutes: typeof parents = [...parents, [namespace, parameterSpec]];
-    return {
+    const result: Route<T & { [namespace in U]: parameterSpecToType<V> }> = {
       parseUrl: (path: string) => {
         const result: any = {};
         let isActive = true;
@@ -182,7 +186,19 @@ const createRouteFactory = function <T>(
             }, "")}`,
           ""
         ),
+      map: function (url, callback) {
+        const routeState = result.parseUrl(url);
+
+        return routeState.isActive || routeState.isActiveAsParent
+          ? callback({
+              isActiveAsParent: routeState.isActiveAsParent,
+              parameter: routeState.parameter,
+            })
+          : null;
+      },
     };
+
+    return result;
   };
 };
 export const createRoute = function <
