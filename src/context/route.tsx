@@ -22,7 +22,7 @@ function findLink(element: HTMLElement): URL | null {
   }
 }
 
-const result: typeof contextResult = {
+const result = {
   Consumer: contextResult.Consumer,
   findProvider: contextResult.findProvider,
   Provider: component(
@@ -30,7 +30,7 @@ const result: typeof contextResult = {
     (
       Props: Props<{
         state: string;
-        dispatch: (action: string) => void;
+        dispatch: (action: string) => boolean;
         children: any;
       }>,
       componentInstance
@@ -40,8 +40,10 @@ const result: typeof contextResult = {
         const link = findLink(evt.target as HTMLElement);
 
         if (hasModifier(evt) === false && link !== null) {
-          if (selfUrl.origin === link.origin) {
-            Props.getState().dispatch(link.pathname);
+          if (
+            selfUrl.origin === link.origin &&
+            Props.getState().dispatch(link.pathname)
+          ) {
             evt.preventDefault();
           }
         }
