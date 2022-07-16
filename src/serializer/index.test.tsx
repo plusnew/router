@@ -1,6 +1,10 @@
 import { createRoute, serializer } from "..";
 import { expect } from "@esm-bundle/chai";
 
+function id<T>(value: T) {
+  return value;
+}
+
 describe("serializer", () => {
   describe("string", () => {
     it("base", () => {
@@ -14,8 +18,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -30,8 +34,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -46,8 +50,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
   });
@@ -64,8 +68,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -80,8 +84,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -96,8 +100,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -113,8 +117,8 @@ describe("serializer", () => {
           },
         } as const;
 
-        expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-          route.parseUrl(route.createUrl(parameter))
+        expect({ isActiveAsParent: false, parameter }).to.eql(
+          route.map(route.createUrl(parameter), id)
         );
       });
 
@@ -129,8 +133,8 @@ describe("serializer", () => {
           },
         } as const;
 
-        expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-          route.parseUrl(route.createUrl(parameter))
+        expect({ isActiveAsParent: false, parameter }).to.eql(
+          route.map(route.createUrl(parameter), id)
         );
       });
     });
@@ -148,8 +152,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -164,8 +168,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -180,8 +184,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
   });
@@ -198,8 +202,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -214,8 +218,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -230,8 +234,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -247,8 +251,8 @@ describe("serializer", () => {
           },
         } as const;
 
-        expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-          route.parseUrl(route.createUrl(parameter))
+        expect({ isActiveAsParent: false, parameter }).to.eql(
+          route.map(route.createUrl(parameter), id)
         );
       });
 
@@ -263,8 +267,8 @@ describe("serializer", () => {
           },
         } as const;
 
-        expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-          route.parseUrl(route.createUrl(parameter))
+        expect({ isActiveAsParent: false, parameter }).to.eql(
+          route.map(route.createUrl(parameter), id)
         );
       });
     });
@@ -282,8 +286,8 @@ describe("serializer", () => {
         },
       };
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
 
@@ -298,8 +302,8 @@ describe("serializer", () => {
         },
       } as const;
 
-      expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-        route.parseUrl(route.createUrl(parameter))
+      expect({ isActiveAsParent: false, parameter }).to.eql(
+        route.map(route.createUrl(parameter), id)
       );
     });
   });
@@ -319,13 +323,11 @@ describe("serializer", () => {
       },
     } as const;
 
-    const result = route.parseUrl(route.createUrl(parameter));
+    const result = route.map(route.createUrl(parameter), id);
 
-    expect({ isActive: true, isActiveAsParent: false, parameter }).to.eql(
-      result
-    );
+    expect({ isActiveAsParent: false, parameter }).to.eql(result);
     expect(Object.keys(parameter.test)).to.eql(
-      result.isActive && Object.keys(result.parameter.test)
+      result !== null && Object.keys(result.parameter.test)
     );
   });
 });

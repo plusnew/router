@@ -1,13 +1,6 @@
 import type { parameterSpecTemplate, parameterSpecToType } from "../types";
 
 type Route<T> = {
-  parseUrl: (
-    url: string
-  ) =>
-    | { isActive: true; isActiveAsParent: false; parameter: T }
-    | { isActive: false; isActiveAsParent: true; parameter: T }
-    | { isActive: false; isActiveAsParent: false };
-
   createUrl: (parameter: T) => string;
   createChildRoute: <U extends string, V extends parameterSpecTemplate>(
     namespace: U,
@@ -35,8 +28,31 @@ const createRouteFactory = function <T>(
     parameterSpec: V
   ): Route<T & { [namespace in U]: parameterSpecToType<V> }> {
     const allRoutes: typeof parents = [...parents, [namespace, parameterSpec]];
-    const result: Route<T & { [namespace in U]: parameterSpecToType<V> }> = {
-      parseUrl: (path: string) => {
+    return {
+      createChildRoute: createRouteFactory<
+        T & { [namespace in U]: parameterSpecToType<V> }
+      >([...parents, [namespace, parameterSpec]]),
+      createUrl: (parameters) =>
+        allRoutes.reduce(
+          (path, [namespace, parameterSpec]) =>
+            `${path}${NAMESPACE_DELIMITER}${namespace}${Object.entries(
+              (parameters as any)[namespace]
+            ).reduce((path, [parameterName, parameterValue]) => {
+              for (const serializer of parameterSpec[parameterName]) {
+                const result = serializer.toUrl(parameterValue);
+                if (result.valid) {
+                  if (result.value === null) {
+                    return path;
+                  } else {
+                    return `${path}${PARAMETER_DELIMITER}${parameterName}${PARAMETER_VALUE_DELIMITER}${result.value}`;
+                  }
+                }
+              }
+              throw new Error("Could not serialize " + parameterName);
+            }, "")}`,
+          ""
+        ),
+      map: function (path, callback) {
         const result: any = {};
         let isActive = true;
         let pathIndex = 0;
@@ -146,59 +162,15 @@ const createRouteFactory = function <T>(
           }
         }
         if (isActive) {
-          if (pathIndex === path.length) {
-            return {
-              isActive: true,
-              isActiveAsParent: false,
-              parameter: result,
-            };
-          } else {
-            return {
-              isActive: false,
-              isActiveAsParent: true,
-              parameter: result,
-            };
-          }
+          return callback({
+            isActiveAsParent: pathIndex !== path.length,
+            parameter: result,
+          });
         } else {
-          return { isActive: false, isActiveAsParent: false };
+          return null;
         }
       },
-      createChildRoute: createRouteFactory<
-        T & { [namespace in U]: parameterSpecToType<V> }
-      >([...parents, [namespace, parameterSpec]]),
-      createUrl: (parameters) =>
-        allRoutes.reduce(
-          (path, [namespace, parameterSpec]) =>
-            `${path}${NAMESPACE_DELIMITER}${namespace}${Object.entries(
-              (parameters as any)[namespace]
-            ).reduce((path, [parameterName, parameterValue]) => {
-              for (const serializer of parameterSpec[parameterName]) {
-                const result = serializer.toUrl(parameterValue);
-                if (result.valid) {
-                  if (result.value === null) {
-                    return path;
-                  } else {
-                    return `${path}${PARAMETER_DELIMITER}${parameterName}${PARAMETER_VALUE_DELIMITER}${result.value}`;
-                  }
-                }
-              }
-              throw new Error("Could not serialize " + parameterName);
-            }, "")}`,
-          ""
-        ),
-      map: function (url, callback) {
-        const routeState = result.parseUrl(url);
-
-        return routeState.isActive || routeState.isActiveAsParent
-          ? callback({
-              isActiveAsParent: routeState.isActiveAsParent,
-              parameter: routeState.parameter,
-            })
-          : null;
-      },
     };
-
-    return result;
   };
 };
 export const createRoute = function <
