@@ -74,10 +74,12 @@ describe("api", () => {
                     })}
                   />
                   <a
-                    href={childBRoute.createUrl({
-                      rootPath: { parentParam: "baz" },
-                      childBPath: {},
-                    })}
+                    href={
+                      childBRoute.createUrl({
+                        rootPath: { parentParam: "baz" },
+                        childBPath: {},
+                      }) + "/" // add trailing slash
+                    }
                   >
                     <span id="childBLink" />
                   </a>

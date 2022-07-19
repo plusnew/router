@@ -20,6 +20,13 @@ const NAMESPACE_DELIMITER = "/";
 const PARAMETER_DELIMITER = ";";
 const PARAMETER_VALUE_DELIMITER = "=";
 
+function sanitizePath(path: string) {
+  while (path[path.length - 1] === NAMESPACE_DELIMITER) {
+    path = path.slice(0, path.length - 1);
+  }
+  return path;
+}
+
 const createRouteFactory = function <T>(
   parents: [string, parameterSpecTemplate][]
 ) {
@@ -53,6 +60,7 @@ const createRouteFactory = function <T>(
           ""
         ),
       map: function (path, callback) {
+        const sanitizedPath = sanitizePath(path);
         const result: any = {};
         let isActive = true;
         let pathIndex = 0;
@@ -61,7 +69,7 @@ const createRouteFactory = function <T>(
           isActive && routeIndex < allRoutes.length;
           routeIndex++
         ) {
-          if (path[pathIndex] === NAMESPACE_DELIMITER) {
+          if (sanitizedPath[pathIndex] === NAMESPACE_DELIMITER) {
             pathIndex++;
             const [currentRouteNamespace, currentRouteParameterSpec] =
               allRoutes[routeIndex];
@@ -72,7 +80,8 @@ const createRouteFactory = function <T>(
               routeNamespaceIndex++
             ) {
               if (
-                currentRouteNamespace[routeNamespaceIndex] === path[pathIndex]
+                currentRouteNamespace[routeNamespaceIndex] ===
+                sanitizedPath[pathIndex]
               ) {
                 pathIndex++;
               } else {
@@ -82,35 +91,35 @@ const createRouteFactory = function <T>(
             if (isActive) {
               while (
                 isActive &&
-                pathIndex < path.length &&
-                path[pathIndex] !== NAMESPACE_DELIMITER &&
-                path[pathIndex] === PARAMETER_DELIMITER
+                pathIndex < sanitizedPath.length &&
+                sanitizedPath[pathIndex] !== NAMESPACE_DELIMITER &&
+                sanitizedPath[pathIndex] === PARAMETER_DELIMITER
               ) {
                 pathIndex++;
 
                 let parameterName = "";
                 for (
                   ;
-                  path[pathIndex] !== PARAMETER_VALUE_DELIMITER &&
-                  pathIndex < path.length;
+                  sanitizedPath[pathIndex] !== PARAMETER_VALUE_DELIMITER &&
+                  pathIndex < sanitizedPath.length;
                   pathIndex++
                 ) {
-                  parameterName += path[pathIndex];
+                  parameterName += sanitizedPath[pathIndex];
                 }
                 if (
                   parameterName in currentRouteParameterSpec &&
-                  path[pathIndex] === PARAMETER_VALUE_DELIMITER
+                  sanitizedPath[pathIndex] === PARAMETER_VALUE_DELIMITER
                 ) {
                   pathIndex++;
                   let parameterValue = "";
                   for (
                     ;
-                    path[pathIndex] !== NAMESPACE_DELIMITER &&
-                    path[pathIndex] !== PARAMETER_DELIMITER &&
-                    pathIndex < path.length;
+                    sanitizedPath[pathIndex] !== NAMESPACE_DELIMITER &&
+                    sanitizedPath[pathIndex] !== PARAMETER_DELIMITER &&
+                    pathIndex < sanitizedPath.length;
                     pathIndex++
                   ) {
-                    parameterValue += path[pathIndex];
+                    parameterValue += sanitizedPath[pathIndex];
                   }
                   let isSerialized = false;
 
@@ -163,7 +172,7 @@ const createRouteFactory = function <T>(
         }
         if (isActive) {
           return callback({
-            isActiveAsParent: pathIndex !== path.length,
+            isActiveAsParent: pathIndex !== sanitizedPath.length,
             parameter: result,
           });
         } else {
