@@ -170,14 +170,19 @@ const createRouteFactory = function <T>(
             isActive = false;
           }
         }
-        if (isActive) {
+
+        if (
+          isActive &&
+          (pathIndex === sanitizedPath.length ||
+            path[pathIndex] === NAMESPACE_DELIMITER)
+        ) {
           return callback({
             isActiveAsParent: pathIndex !== sanitizedPath.length,
             parameter: result,
           });
-        } else {
-          return null;
         }
+
+        return null;
       },
     };
   };

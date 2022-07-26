@@ -121,4 +121,12 @@ describe("api", () => {
 
     component.remove(false);
   });
+
+  it("namespaces starting with same name", () => {
+    const foo = createRoute("foo", {});
+    const foobar = createRoute("foobar", {});
+    expect(
+      foo.map(foobar.createUrl({ foobar: {} }), (value) => value)
+    ).to.equal(null);
+  });
 });
