@@ -4,7 +4,7 @@ export default <literal extends boolean>(
   literal?: literal
 ): Serializer<undefined extends literal ? boolean : literal> => ({
   displayName: literal === undefined ? "boolean" : `${literal.toString()}`,
-  fromUrl: (value) => {
+  fromPath: (value) => {
     if (value !== null) {
       if (value === "true") {
         if (literal === undefined || literal === true) {
@@ -28,7 +28,7 @@ export default <literal extends boolean>(
       valid: false,
     };
   },
-  toUrl: (value) => {
+  toPath: (value) => {
     if (typeof value === "boolean") {
       if (literal === undefined || literal === value) {
         return {

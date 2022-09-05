@@ -2,7 +2,7 @@ import type { Serializer } from "../types";
 
 export default (): Serializer<null> => ({
   displayName: "null",
-  fromUrl: (value) => {
+  fromPath: (value) => {
     if (value === null) {
       return {
         valid: true,
@@ -13,7 +13,7 @@ export default (): Serializer<null> => ({
       valid: false,
     };
   },
-  toUrl: (value) => {
+  toPath: (value) => {
     if (value === null) {
       return {
         valid: true,

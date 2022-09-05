@@ -21,7 +21,7 @@ export function fromUrl<T>(
   value: string | null
 ): { valid: false } | { valid: true; value: T } {
   for (const serializer of serializers) {
-    const serializerResult = serializer.fromUrl(value);
+    const serializerResult = serializer.fromPath(value);
     if (serializerResult.valid === true) {
       return serializerResult;
     }
@@ -38,7 +38,7 @@ export function toUrl<T>(
   value: any
 ): { valid: false } | { valid: true; value: string | null } {
   for (const serializer of serializers) {
-    const serializerResult = serializer.toUrl(value);
+    const serializerResult = serializer.toPath(value);
 
     if (serializerResult.valid === true) {
       return serializerResult;

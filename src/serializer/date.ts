@@ -2,7 +2,7 @@ import type { Serializer } from "../types";
 
 export default (): Serializer<Date> => ({
   displayName: "date",
-  fromUrl: (value) => {
+  fromPath: (value) => {
     if (value !== null) {
       const date = new Date(decodeURIComponent(value));
       if (isNaN(date.getTime()) === true) {
@@ -20,7 +20,7 @@ export default (): Serializer<Date> => ({
       valid: false,
     };
   },
-  toUrl: (value: unknown) => {
+  toPath: (value: unknown) => {
     if (value instanceof Date) {
       return {
         value: encodeURIComponent(value.toISOString()),

@@ -5,8 +5,8 @@ type serializerFromUrlResult<T> = { valid: false } | { valid: true; value: T };
 
 export type Serializer<T> = {
   displayName: string;
-  toUrl: (from: unknown) => serializerToUrlResult;
-  fromUrl: (from: string | null) => serializerFromUrlResult<T>;
+  toPath: (from: unknown) => serializerToUrlResult;
+  fromPath: (from: string | null) => serializerFromUrlResult<T>;
 };
 
 export type parameterSpecTemplate = {

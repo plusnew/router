@@ -4,7 +4,7 @@ export default <literal extends number>(
   literal?: literal
 ): Serializer<undefined extends literal ? number : literal> => ({
   displayName: literal === undefined ? "number" : `${literal}`,
-  fromUrl: (value) => {
+  fromPath: (value) => {
     if (value !== null) {
       const result = Number(value);
 
@@ -26,7 +26,7 @@ export default <literal extends number>(
       valid: false,
     };
   },
-  toUrl: (value) => {
+  toPath: (value) => {
     if (typeof value === "number") {
       if (literal === undefined || literal === value) {
         return {

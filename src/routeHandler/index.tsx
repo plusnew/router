@@ -1,7 +1,7 @@
 import type { parameterSpecTemplate, parameterSpecToType } from "../types";
 
 type Route<T> = {
-  createUrl: (parameter: T) => string;
+  createPath: (parameter: T) => string;
   createChildRoute: <U extends string, V extends parameterSpecTemplate>(
     namespace: U,
     parameterSpec: V
@@ -39,14 +39,14 @@ const createRouteFactory = function <T>(
       createChildRoute: createRouteFactory<
         T & { [namespace in U]: parameterSpecToType<V> }
       >([...parents, [namespace, parameterSpec]]),
-      createUrl: (parameters) =>
+      createPath: (parameters) =>
         allRoutes.reduce(
           (path, [namespace, parameterSpec]) =>
             `${path}${NAMESPACE_DELIMITER}${namespace}${Object.entries(
               (parameters as any)[namespace]
             ).reduce((path, [parameterName, parameterValue]) => {
               for (const serializer of parameterSpec[parameterName]) {
-                const result = serializer.toUrl(parameterValue);
+                const result = serializer.toPath(parameterValue);
                 if (result.valid) {
                   if (result.value === null) {
                     return path;
@@ -133,7 +133,7 @@ const createRouteFactory = function <T>(
                     const serializerResult =
                       currentRouteParameterSpec[parameterName][
                         parameterSpecIndex
-                      ].fromUrl(parameterValue);
+                      ].fromPath(parameterValue);
                     if (serializerResult.valid) {
                       result[currentRouteNamespace][parameterName] =
                         serializerResult.value;
@@ -154,7 +154,7 @@ const createRouteFactory = function <T>(
                     )
                     .map(([parameterName, serializers]) => {
                       for (const serializer of serializers) {
-                        const serializerResult = serializer.fromUrl(null);
+                        const serializerResult = serializer.fromPath(null);
                         if (serializerResult.valid) {
                           return [parameterName, serializerResult.value];
                         }

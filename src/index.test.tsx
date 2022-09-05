@@ -133,7 +133,7 @@ describe("api", () => {
                     id="rootButton"
                     onclick={() =>
                       redirect(
-                        rootRoute.createUrl({
+                        rootRoute.createPath({
                           rootPath: { parentParam: "bar" },
                         })
                       )
@@ -141,7 +141,7 @@ describe("api", () => {
                   />
                   <a
                     id="childALink"
-                    href={childARoute.createUrl({
+                    href={childARoute.createPath({
                       rootPath: { parentParam: "bar" },
                       childAPath: {
                         firstChildParam: 1,
@@ -151,7 +151,7 @@ describe("api", () => {
                   />
                   <a
                     href={
-                      childBRoute.createUrl({
+                      childBRoute.createPath({
                         rootPath: { parentParam: "baz" },
                         childBPath: {},
                       }) + "/" // add trailing slash
@@ -202,7 +202,7 @@ describe("api", () => {
     const foo = createRoute("foo", {});
     const foobar = createRoute("foobar", {});
     expect(
-      foo.map(foobar.createUrl({ foobar: {} }), (value) => value)
+      foo.map(foobar.createPath({ foobar: {} }), (value) => value)
     ).to.equal(null);
   });
 });

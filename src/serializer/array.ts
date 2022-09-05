@@ -10,7 +10,7 @@ export default <T extends Serializer<any>[]>(
   serializers: T
 ): Serializer<SerializerType<ArrayType<T>>[]> => ({
   displayName: "array",
-  fromUrl: (value) => {
+  fromPath: (value) => {
     if (value !== null) {
       if (value === "") {
         return {
@@ -36,7 +36,7 @@ export default <T extends Serializer<any>[]>(
       valid: false,
     };
   },
-  toUrl: (value) => {
+  toPath: (value) => {
     if (Array.isArray(value)) {
       const serializerResults = value.map((singleValue) =>
         toUrl(serializers, singleValue)

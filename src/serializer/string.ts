@@ -4,7 +4,7 @@ export default <literal extends string>(
   literal?: literal
 ): Serializer<undefined extends literal ? string : literal> => ({
   displayName: literal === undefined ? "string" : `'${literal}'`,
-  fromUrl: (value) => {
+  fromPath: (value) => {
     if (value !== null) {
       const result = decodeURIComponent(value);
 
@@ -19,7 +19,7 @@ export default <literal extends string>(
       valid: false,
     };
   },
-  toUrl: (value) => {
+  toPath: (value) => {
     if (typeof value === "string") {
       if (literal === undefined || literal === value) {
         return {
