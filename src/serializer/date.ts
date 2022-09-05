@@ -20,7 +20,7 @@ export default (): Serializer<Date> => ({
       valid: false,
     };
   },
-  toUrl: (value: Date) => {
+  toUrl: (value: unknown) => {
     if (value instanceof Date) {
       return {
         value: encodeURIComponent(value.toISOString()),

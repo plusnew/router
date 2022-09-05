@@ -5,7 +5,7 @@ type serializerFromUrlResult<T> = { valid: false } | { valid: true; value: T };
 
 export type Serializer<T> = {
   displayName: string;
-  toUrl: (from: T) => serializerToUrlResult;
+  toUrl: (from: unknown) => serializerToUrlResult;
   fromUrl: (from: string | null) => serializerFromUrlResult<T>;
 };
 
