@@ -1,6 +1,7 @@
 export const TOKENS = {
   PATH_SEPERATOR: "/",
   VALUE_SEPERATOR: ";",
+  LIST_SEPERATOR: ",",
   NAMESPACE_SEPERATOR: ".",
   VALUE_ASSIGNMENT: "=",
   LIST_OPEN: "[",

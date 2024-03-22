@@ -22,7 +22,13 @@ type NamespaceTemplate = {
 };
 
 export type Route<T extends NamespaceTemplate> = {
-  map: <U>(url: string, cb:( data: { parameter: RouteToParameter<T>; hasChildRouteActive: boolean }) => U) => U | null,
+  map: <U>(
+    url: string,
+    cb: (data: {
+      parameter: RouteToParameter<T>;
+      hasChildRouteActive: boolean;
+    }) => U,
+  ) => U | null;
   createChildRoute: <
     U extends string,
     V extends ParameterSpecificationTemplate,
@@ -39,7 +45,7 @@ type RouteToLinkParameter<T extends NamespaceTemplate> = {
       T[NamespaceName][ParameterName]["toUrl"]
     >["0"];
   };
-}
+};
 
 export type RouteToParameter<T extends NamespaceTemplate> = {
   [NamespaceName in keyof T]: {
