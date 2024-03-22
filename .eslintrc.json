@@ -17,15 +17,10 @@
   ],
   "env": {
     "browser": false,
-    "es6": true,
-    "jasmine": true
+    "es6": true
   },
-  "ignorePatterns": [
-    "configs/"
-  ],
+  "ignorePatterns": [],
   "rules": {
-    "no-unused-vars": "off", // necessary for import jsx components/modules
-    "@typescript-eslint/no-unused-vars": "off", // necessary for import jsx components/modules
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "@typescript-eslint/no-explicit-any": "off",

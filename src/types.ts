@@ -1,26 +1,50 @@
-type serializerToUrlResult =
-  | { valid: false }
-  | { valid: true; value: string | null };
-type serializerFromUrlResult<T> = { valid: false } | { valid: true; value: T };
+import type { TOKENS } from "tokenizer";
 
-export type Serializer<T> = {
-  displayName: string;
-  toPath: (from: unknown) => serializerToUrlResult;
-  fromPath: (from: string | null) => serializerFromUrlResult<T>;
+export type Token =
+  | {
+      [TokenName in keyof typeof TOKENS]: { type: TokenName };
+    }[keyof typeof TOKENS]
+  | {
+      type: "TEXT";
+    };
+
+export type Serializer<T, U> = {
+  toUrl: (value: T) => string;
+  fromUrl: (tokens: Token[]) => U;
 };
 
-export type parameterSpecTemplate = {
-  [paramName: string]: readonly Serializer<any>[];
+export type ParameterSpecificationTemplate = {
+  [ParameterName: string]: Serializer<any, any>;
 };
 
-export type parameterSpecToType<T extends parameterSpecTemplate> = {
-  [K in keyof T]: getMappedValue<T, K>;
+type NamespaceTemplate = {
+  [Namespace: string]: ParameterSpecificationTemplate;
 };
 
-type getMappedValue<
-  T extends parameterSpecTemplate,
-  K extends keyof T
-> = getTypeOfserializer<getTypeOfArray<T[K]>>;
+export type Route<T extends NamespaceTemplate> = {
+  map: <U>(url: string, cb:( data: { parameter: RouteToParameter<T>; hasChildRouteActive: boolean }) => U) => U | null,
+  createChildRoute: <
+    U extends string,
+    V extends ParameterSpecificationTemplate,
+  >(
+    namespace: U,
+    parameter: V,
+  ) => Route<T & { U: V }>;
+  createPath: (parameter: RouteToLinkParameter<T>) => string;
+};
 
-type getTypeOfArray<ArrayType extends readonly unknown[]> = ArrayType[number];
-type getTypeOfserializer<T> = T extends Serializer<infer I> ? I : never;
+type RouteToLinkParameter<T extends NamespaceTemplate> = {
+  [NamespaceName in keyof T]: {
+    [ParameterName in keyof T[NamespaceName]]: Parameters<
+      T[NamespaceName][ParameterName]["toUrl"]
+    >["0"];
+  };
+}
+
+export type RouteToParameter<T extends NamespaceTemplate> = {
+  [NamespaceName in keyof T]: {
+    [ParameterName in keyof T[NamespaceName]]: ReturnType<
+      T[NamespaceName][ParameterName]["fromUrl"]
+    >;
+  };
+};
