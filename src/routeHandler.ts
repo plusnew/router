@@ -125,9 +125,9 @@ function flattenUrlResult(
   if (typeof urlResult === "string") {
     return [[name, urlResult]];
   }
-  return Object.entries(urlResult).flatMap(([name, value]) =>
-    flattenUrlResult(name, value).map<[string, string]>(
-      ([nestedName, value]) => [
+  return Object.entries(urlResult).flatMap(([propertyName, value]) =>
+    flattenUrlResult(propertyName, value).map(
+      ([nestedName, value]): [string, string] => [
         `${name}${TOKENS.PROPERTY_SEPERATOR}${nestedName}`,
         value,
       ],

@@ -10,4 +10,19 @@ describe("map", () => {
       rootRoute.map(rootRoute.createPath(values), (result) => result),
     );
   });
+
+  it("objects", () => {
+    const rootRoute = createRootRoute({
+      foo: serializer.object({
+        bar: serializer.number(),
+        baz: serializer.number(),
+      }),
+      mep: serializer.number(),
+    });
+    const values = { "/": { foo: { bar: 2, baz: 5 }, mep: 1 } } as const;
+
+    expect({ parameter: values, hasChildRouteActive: false }).to.eql(
+      rootRoute.map(rootRoute.createPath(values), (result) => result),
+    );
+  });
 });

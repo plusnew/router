@@ -16,7 +16,7 @@ export type Serializer<T, U> = {
   fromUrl: (
     tokens: Token[],
     index: number | null,
-  ) => Generator<number, { index: number; value: U }, number | null>;
+  ) => Generator<number, { index: number | null; value: U }, number | null>;
 };
 
 export type InferSerializerToUrl<T extends Serializer<any, any>> =
