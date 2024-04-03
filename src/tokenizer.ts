@@ -13,7 +13,58 @@ export const TOKENS = {
 const TOKEN_KEYS = Object.keys(TOKENS) as (keyof typeof TOKENS)[];
 const TOKEN_VALUES = Object.values(TOKENS);
 
-export function tokenize(url: string) {
+export class Tokenizer {
+  private index = 0;
+  private tokens: Token[];
+  public done: boolean;
+  constructor(url: string) {
+    this.tokens = tokenize(url);
+    this.done = this.index === this.tokens.length;
+  }
+
+  eat<T extends keyof typeof TOKENS | "TEXT">(
+    eatToken: { type: T } | { type: "TEXT"; value: string },
+  ): Extract<Token, { type: T }> {
+    const currentToken = this.lookahead(eatToken);
+
+    if (currentToken === null) {
+      throw new Error(
+        `Couldnt find token ${eatToken.type}, but ${this.tokens[this.index].type}`,
+      );
+    }
+    this.index++;
+    this.done = this.index === this.tokens.length;
+
+    return currentToken;
+  }
+  lookahead<T extends keyof typeof TOKENS | "TEXT">(
+    eatToken: { type: T } | { type: "TEXT"; value: string },
+  ): Extract<Token, { type: T }> | null {
+    this.checkDone();
+
+    const currentToken = this.tokens[this.index];
+    if (currentToken.type === eatToken.type) {
+      if (
+        "value" in currentToken &&
+        "value" in eatToken &&
+        currentToken.value !== eatToken.value
+      ) {
+        return null;
+      }
+      return currentToken as any;
+    } else {
+      return null;
+    }
+  }
+
+  private checkDone() {
+    if (this.done === true) {
+      throw new Error("No new tokens available");
+    }
+  }
+}
+
+function tokenize(url: string) {
   const tokens: Token[] = [];
   for (let i = 0; i < url.length; i++) {
     let result = getToken(url, i);

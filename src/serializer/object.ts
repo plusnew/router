@@ -24,96 +24,77 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
         ]),
       );
     },
-    fromUrl: function* (tokens, index) {
+    fromUrl: function* (tokenizer, hasValues) {
       const result = {} as {
         [PropertyName in keyof T]: InferSerializerFromUrl<T[PropertyName]>;
       };
 
-      while (index !== null) {
-        const propertyToken = tokens[index];
-        if (propertyToken.type === "TEXT") {
-          index++;
-          if (
-            tokens[index].type === "VALUE_ASSIGNMENT" ||
-            tokens[index].type === "PROPERTY_SEPERATOR"
-          ) {
-            const hasMultipleValues =
-              tokens[index].type === "PROPERTY_SEPERATOR";
+      while (hasValues) {
+        const propertyToken = tokenizer.eat({ type: "TEXT" });
 
-            index++;
-            const propertyGenerator = serializers[propertyToken.value].fromUrl(
-              tokens,
-              index,
-            );
-            while (index !== null) {
-              const propertyResult = propertyGenerator.next(index);
+        const propertySeperator = tokenizer.lookahead({
+          type: "PROPERTY_SEPERATOR",
+        });
+
+        const hasMultipleValues = propertySeperator !== null;
+        if (hasMultipleValues) {
+          tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
+        } else {
+          tokenizer.eat({ type: "VALUE_ASSIGNMENT" });
+        }
+
+        const propertyGenerator = serializers[propertyToken.value].fromUrl(
+          tokenizer,
+          true,
+        );
+
+        while (true) {
+          const propertyResult = propertyGenerator.next(hasValues);
+
+          if (propertyResult.done === true) {
+            result[propertyToken.value as keyof T] = propertyResult.value;
+
+            break;
+          } else if (hasMultipleValues === false) {
+            throw new Error("Assignments have to be done after one call");
+          } else {
+            hasValues = yield;
+            const nextProperty = tokenizer.lookahead(propertyToken);
+
+            if (nextProperty === null) {
+              const propertyResult = propertyGenerator.next(false);
+
               if (propertyResult.done === true) {
-                index = propertyResult.value.index;
                 result[propertyToken.value as keyof T] =
                   propertyResult.value.value;
 
                 break;
-              } else if (hasMultipleValues === false) {
-                throw new Error("Assignments have to be done after one call");
               } else {
-                index = yield propertyResult.value;
-
-                let currentPropertyEnded = false;
-                if (index === null) {
-                  currentPropertyEnded = true;
-                } else {
-                  const currentToken = tokens[index];
-                  if (currentToken.type === "TEXT") {
-                    if (currentToken.value === propertyToken.value) {
-                      index++;
-                      if (tokens[index].type === "PROPERTY_SEPERATOR") {
-                        index++;
-                      } else {
-                        throw new Error("property seperator expected");
-                      }
-                    } else {
-                      currentPropertyEnded = true;
-                    }
-                  } else {
-                    throw new Error("text expected");
-                  }
-                }
-
-                if (currentPropertyEnded) {
-                  const propertyResult = propertyGenerator.next(null);
-
-                  if (propertyResult.done === true) {
-                    result[propertyToken.value as keyof T] =
-                      propertyResult.value.value;
-
-                    break;
-                  } else {
-                    throw new Error(
-                      "After null is given, generator has to be done",
-                    );
-                  }
-                }
+                throw new Error(
+                  "After null is given, generator has to be done",
+                );
               }
+            } else {
+              tokenizer.eat(propertyToken);
+              tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
             }
           }
-        } else {
-          throw new Error(`Expected property name at ${index}`);
         }
 
-        if (index !== null) {
+        if (hasValues === true) {
           if (Object.keys(result).length === serializerEntries.length) {
             break;
           }
-          index = yield { index };
+          hasValues = yield;
         }
       }
 
-      if (index === null) {
+      if (hasValues === false) {
         // @TODO implement default handling
-        return { value: result, index: null };
+        return result;
       }
 
-      return { value: result, index: index };
+      return result;
     },
   };
 };

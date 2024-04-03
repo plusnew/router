@@ -1,43 +1,46 @@
-import type { Serializer, Token } from "../types";
+import type { Tokenizer } from "../tokenizer";
+import type { Serializer } from "../types";
 
 export function containerHandler<T>(
   serializer: Serializer<any, T>,
-  tokens: Token[],
-  index: number | null,
+  tokenizer: Tokenizer,
+  hasValues: boolean,
 ) {
-  const generator = serializer.fromUrl(tokens, index);
+  const generator = serializer.fromUrl(tokenizer, hasValues);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const result = generator.next(index);
+    const result = generator.next(hasValues);
     if (result.done === true) {
-      if (
-        result.value.index !== null &&
-        result.value.index < tokens.length &&
-        tokens[result.value.index].type === "VALUE_SEPERATOR"
-      ) {
-        throw new Error(`To many properties at ${index}`);
+      const valueSeperator = tokenizer.done
+        ? null
+        : tokenizer.lookahead({ type: "VALUE_SEPERATOR" });
+      if (valueSeperator !== null) {
+        throw new Error(`To many properties`);
       }
+
       return result.value;
     } else {
-      if (result.value.index < tokens.length) {
-        index = result.value.index;
-        if (tokens[index].type === "VALUE_SEPERATOR") {
-          if (index + 1 < tokens.length) {
-            index++;
-          } else {
-            throw new Error("url stopped unexpectedly");
-          }
+      if (tokenizer.done) {
+        hasValues = false;
+      } else {
+        const valueSeperator = tokenizer.lookahead({ type: "VALUE_SEPERATOR" });
+        if (valueSeperator === null) {
+          hasValues = false;
         } else {
-          const result = generator.next(null);
+          tokenizer.eat({ type: "VALUE_SEPERATOR" });
+        }
 
-          if (result.done === true) {
-            return result.value;
-          } else {
-            throw new Error(
-              "When generator gets null for next, then it has to finish",
-            );
-          }
+        const result = generator.next(hasValues);
+
+        if (result.done === true) {
+          return result.value;
+        } else if (hasValues === false) {
+          throw new Error(
+            "When generator gets null for next, then it has to finish",
+          );
+        } else {
+          tokenizer.eat({ type: "VALUE_SEPERATOR" });
         }
       }
     }

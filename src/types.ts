@@ -1,4 +1,4 @@
-import type { TOKENS } from "tokenizer";
+import type { TOKENS, Tokenizer } from "./tokenizer";
 
 export type Token =
   | {
@@ -14,13 +14,9 @@ export type toUrlResult = string | { [parameter: string]: toUrlResult };
 export type Serializer<T, U> = {
   toUrl: (value: T) => toUrlResult;
   fromUrl: (
-    tokens: Token[],
-    index: number | null,
-  ) => Generator<
-    { index: number },
-    { index: number | null; value: U },
-    number | null
-  >;
+    tokenizer: Tokenizer,
+    hasValues: boolean,
+  ) => Generator<undefined, U, boolean>;
 };
 
 export type InferSerializerToUrl<T extends Serializer<any, any>> =

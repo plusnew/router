@@ -1,13 +1,13 @@
 import { object } from "./serializer";
 import { containerHandler } from "./serializer/util";
-import { TOKENS, tokenize } from "./tokenizer";
+import { Tokenizer } from "./tokenizer";
+import { TOKENS } from "./tokenizer";
 import type {
   NamespaceTemplate,
   ParameterSpecificationTemplate,
   Route,
   RouteToLinkParameter,
   RouteToParameter,
-  Token,
   toUrlResult,
 } from "./types";
 
@@ -18,51 +18,34 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
     toUrl: (namespacedParameter) =>
       `${TOKENS.PATH_SEPERATOR}${parameterToUrl(parameterSpec, namespacedParameter[TOKENS.PATH_SEPERATOR])}`,
     // eslint-disable-next-line require-yield
-    fromUrl: function (tokens, index) {
-      if (index === null) {
-        throw new Error("Cant handle null index");
-      } else if (tokens[index].type === "PATH_SEPERATOR") {
-        index++;
+    fromUrl: function (tokenizer) {
+      tokenizer.eat({ type: "PATH_SEPERATOR" });
 
-        const hasValueSeperator = tokens[index].type === "VALUE_SEPERATOR";
-        const result = handleParameter(parameterSpec, tokens, index);
+      const result = handleParameter(parameterSpec, tokenizer);
 
-        return {
-          index: hasValueSeperator ? result.value.index : 0,
-          value: {
-            [TOKENS.PATH_SEPERATOR]: result.value,
-          },
-        };
-      } else {
-        throw new Error(
-          `Parsing route has to start with ${TOKENS.PATH_SEPERATOR}`,
-        );
-      }
+      return {
+        [TOKENS.PATH_SEPERATOR]: result,
+      };
     },
   });
 }
 
 function createRoute<T extends NamespaceTemplate>(routeParser: {
   toUrl: (value: RouteToParameter<T>) => toUrlResult;
-  fromUrl: (
-    tokens: Token[],
-    index: number | null,
-  ) => { index: number | null; value: RouteToLinkParameter<T> };
+  fromUrl: (tokenizer: Tokenizer) => RouteToLinkParameter<T>;
 }): Route<T> {
   return {
     createPath(namespacedParameter) {
       return routeParser.toUrl(namespacedParameter) as string;
     },
     map(url, cb) {
-      const tokens = tokenize(url);
+      const tokenizer = new Tokenizer(url);
 
-      const index = 0;
-
-      const result = routeParser.fromUrl(tokens, index);
+      const result = routeParser.fromUrl(tokenizer);
 
       return cb({
         hasChildRouteActive: false,
-        parameter: result.value,
+        parameter: result,
       });
 
       // while (index < tokens.length) {
@@ -134,12 +117,14 @@ function flattenUrlResult(
 
 function handleParameter<T extends ParameterSpecificationTemplate>(
   parameterSpecification: T,
-  tokens: Token[],
-  index: number,
+  tokenizer: Tokenizer,
 ) {
-  return containerHandler(
-    object(parameterSpecification),
-    tokens,
-    tokens[index].type === "VALUE_SEPERATOR" ? index + 1 : null,
-  );
+  let hasValues = true;
+  const valueSeperator = tokenizer.lookahead({ type: "VALUE_SEPERATOR" });
+  if (valueSeperator === null) {
+    hasValues = false;
+  } else {
+    tokenizer.eat({ type: "VALUE_SEPERATOR" });
+  }
+  return containerHandler(object(parameterSpecification), tokenizer, hasValues);
 }
