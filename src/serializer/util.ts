@@ -7,7 +7,8 @@ export function containerHandler<T>(
 ) {
   const generator = serializer.fromUrl(tokens, index);
 
-  do {
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
     const result = generator.next(index);
     if (result.done === true) {
       if (
@@ -40,5 +41,5 @@ export function containerHandler<T>(
         }
       }
     }
-  } while (index !== null);
+  }
 }
