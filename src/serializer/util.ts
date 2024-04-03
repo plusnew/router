@@ -20,8 +20,8 @@ export function containerHandler<T>(
       }
       return result.value;
     } else {
-      if (result.value < tokens.length) {
-        index = result.value;
+      if (result.value.index < tokens.length) {
+        index = result.value.index;
         if (tokens[index].type === "VALUE_SEPERATOR") {
           if (index + 1 < tokens.length) {
             index++;
@@ -32,7 +32,7 @@ export function containerHandler<T>(
           const result = generator.next(null);
 
           if (result.done === true) {
-            return result;
+            return result.value;
           } else {
             throw new Error(
               "When generator gets null for next, then it has to finish",

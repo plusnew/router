@@ -7,7 +7,6 @@ import type {
   Route,
   RouteToLinkParameter,
   RouteToParameter,
-  Serializer,
   Token,
   toUrlResult,
 } from "./types";
@@ -29,7 +28,7 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
         const result = handleParameter(parameterSpec, tokens, index);
 
         return {
-          index: hasValueSeperator ? result.index : 0,
+          index: hasValueSeperator ? result.value.index : 0,
           value: {
             [TOKENS.PATH_SEPERATOR]: result.value,
           },

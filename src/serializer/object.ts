@@ -104,7 +104,7 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
           if (Object.keys(result).length === serializerEntries.length) {
             break;
           }
-          index = yield index;
+          index = yield { index };
         }
       }
 
