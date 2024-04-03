@@ -65,8 +65,7 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
               const propertyResult = propertyGenerator.next(false);
 
               if (propertyResult.done === true) {
-                result[propertyToken.value as keyof T] =
-                  propertyResult.value.value;
+                result[propertyToken.value as keyof T] = propertyResult.value;
 
                 break;
               } else {
