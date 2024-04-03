@@ -19,7 +19,7 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
     toUrl: (namespacedParameter) =>
       `${TOKENS.PATH_SEPERATOR}${parameterToUrl(parameterSpec, namespacedParameter[TOKENS.PATH_SEPERATOR])}`,
     // eslint-disable-next-line require-yield
-    fromUrl: function* (tokens, index) {
+    fromUrl: function (tokens, index) {
       if (index === null) {
         throw new Error("Cant handle null index");
       } else if (tokens[index].type === "PATH_SEPERATOR") {
@@ -43,31 +43,29 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
   });
 }
 
-function createRoute<T extends NamespaceTemplate>(
-  serializer: Serializer<RouteToParameter<T>, RouteToLinkParameter<T>>,
-): Route<T> {
+function createRoute<T extends NamespaceTemplate>(routeParser: {
+  toUrl: (value: RouteToParameter<T>) => toUrlResult;
+  fromUrl: (
+    tokens: Token[],
+    index: number | null,
+  ) => { index: number | null; value: RouteToLinkParameter<T> };
+}): Route<T> {
   return {
     createPath(namespacedParameter) {
-      return serializer.toUrl(namespacedParameter) as string;
+      return routeParser.toUrl(namespacedParameter) as string;
     },
     map(url, cb) {
       const tokens = tokenize(url);
 
       const index = 0;
 
-      const generator = serializer.fromUrl(tokens, index);
+      const result = routeParser.fromUrl(tokens, index);
 
-      const result = generator.next(index);
-      if (result.done === true) {
-        result.value.value;
+      return cb({
+        hasChildRouteActive: false,
+        parameter: result.value,
+      });
 
-        return cb({
-          hasChildRouteActive: false,
-          parameter: result.value.value,
-        });
-      } else {
-        throw new Error("Route serializer cant yield");
-      }
       // while (index < tokens.length) {
       //   if (tokens[index].type === "PATH_SEPERATOR") {
       //     const [namespace, parameterSpec] = routeValues[routeIndex];
