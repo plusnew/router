@@ -90,7 +90,18 @@ function tokenize(url: string) {
         }
       }
     }
+
+    if (i === 0 && result.type === "PATH_SEPERATOR") {
+      continue;
+    }
+
     tokens.push(result);
+  }
+  if (
+    tokens.length === 0 ||
+    tokens[tokens.length - 1].type !== "PATH_SEPERATOR"
+  ) {
+    tokens.push({ type: "PATH_SEPERATOR" });
   }
   return tokens;
 }

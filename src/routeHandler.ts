@@ -19,8 +19,6 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
       `${TOKENS.PATH_SEPERATOR}${parameterToUrl(parameterSpec, namespacedParameter[TOKENS.PATH_SEPERATOR])}`,
     // eslint-disable-next-line require-yield
     fromUrl: function (tokenizer) {
-      tokenizer.eat({ type: "PATH_SEPERATOR" });
-
       const result = handleParameter(parameterSpec, tokenizer);
 
       return {
@@ -44,7 +42,7 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
       const result = routeParser.fromUrl(tokenizer);
 
       return cb({
-        hasChildRouteActive: false,
+        hasChildRouteActive: tokenizer.done === false,
         parameter: result,
       });
 
@@ -126,5 +124,13 @@ function handleParameter<T extends ParameterSpecificationTemplate>(
   } else {
     tokenizer.eat({ type: "VALUE_SEPERATOR" });
   }
-  return containerHandler(object(parameterSpecification), tokenizer, hasValues);
+  const result = containerHandler(
+    object(parameterSpecification),
+    tokenizer,
+    hasValues,
+  );
+
+  tokenizer.eat({ type: "PATH_SEPERATOR" });
+
+  return result;
 }
