@@ -46,7 +46,7 @@ export type Route<T extends NamespaceTemplate> = {
   >(
     namespace: U,
     parameterSpec: V,
-  ) => Route<T & { U: V }>;
+  ) => Route<T & { [namespace in U]: V }>;
   createPath: (parameter: RouteToLinkParameter<T>) => string;
 };
 

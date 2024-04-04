@@ -29,8 +29,8 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
 }
 
 function createRoute<T extends NamespaceTemplate>(routeParser: {
-  toUrl: (value: RouteToParameter<T>) => toUrlResult;
-  fromUrl: (tokenizer: Tokenizer) => RouteToLinkParameter<T>;
+  toUrl: (value: RouteToParameter<T>) => string;
+  fromUrl: (tokenizer: Tokenizer) => RouteToLinkParameter<T> | null;
 }): Route<T> {
   return {
     createPath(namespacedParameter) {
@@ -38,8 +38,11 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
     },
     map(url, cb) {
       const tokenizer = new Tokenizer(url);
-
       const result = routeParser.fromUrl(tokenizer);
+
+      if (result === null) {
+        return null;
+      }
 
       return cb({
         hasChildRouteActive: tokenizer.done === false,
@@ -74,7 +77,30 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
       return null;
     },
     createChildRoute(namespace, parameterSpec) {
-      return createRoute({ ...routes, [namespace]: parameterSpec });
+      return createRoute({
+        toUrl: (namespacedParameter) => {
+          const parentUrl = routeParser.toUrl(namespacedParameter);
+
+          return `${parentUrl === TOKENS.PATH_SEPERATOR ? "" : parentUrl}${TOKENS.PATH_SEPERATOR}${namespace}${parameterToUrl(parameterSpec, namespacedParameter[namespace])}`;
+        },
+        // eslint-disable-next-line require-yield
+        fromUrl: function (tokenizer) {
+          const parentResult = routeParser.fromUrl(tokenizer);
+
+          if (
+            tokenizer.lookahead({ type: "TEXT", value: namespace }) === null
+          ) {
+            return null;
+          }
+          tokenizer.eat({ type: "TEXT", value: namespace });
+          const result = handleParameter(parameterSpec, tokenizer);
+
+          return {
+            ...parentResult,
+            [namespace]: result,
+          };
+        },
+      });
     },
   };
 }
