@@ -4,10 +4,9 @@ import { Tokenizer } from "./tokenizer";
 import { TOKENS } from "./tokenizer";
 import type {
   NamespaceTemplate,
+  NamespaceToParameter,
   ParameterSpecificationTemplate,
   Route,
-  RouteToLinkParameter,
-  RouteToParameter,
   toUrlResult,
 } from "./types";
 
@@ -17,7 +16,6 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
   return createRoute({
     toUrl: (namespacedParameter) =>
       `${TOKENS.PATH_SEPERATOR}${parameterToUrl(parameterSpec, namespacedParameter[TOKENS.PATH_SEPERATOR])}`,
-    // eslint-disable-next-line require-yield
     fromUrl: function (tokenizer) {
       const result = handleParameter(parameterSpec, tokenizer);
 
@@ -29,7 +27,7 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
 }
 
 function createRoute<T extends NamespaceTemplate>(routeParser: {
-  toUrl: (value: RouteToParameter<T>) => string;
+  toUrl: (value: NamespaceToParameter<T>) => string;
   fromUrl: (tokenizer: Tokenizer) => RouteToLinkParameter<T> | null;
 }): Route<T> {
   return {
@@ -83,11 +81,11 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
 
           return `${parentUrl === TOKENS.PATH_SEPERATOR ? "" : parentUrl}${TOKENS.PATH_SEPERATOR}${namespace}${parameterToUrl(parameterSpec, namespacedParameter[namespace])}`;
         },
-        // eslint-disable-next-line require-yield
         fromUrl: function (tokenizer) {
           const parentResult = routeParser.fromUrl(tokenizer);
 
           if (
+            parentResult === null ||
             tokenizer.lookahead({ type: "TEXT", value: namespace }) === null
           ) {
             return null;
