@@ -125,6 +125,9 @@ function flattenUrlResult(
   name: string,
   urlResult: toUrlResult,
 ): [string, string][] {
+  if (urlResult === null) {
+    return [];
+  }
   if (typeof urlResult === "string") {
     return [[name, urlResult]];
   }

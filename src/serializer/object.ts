@@ -8,10 +8,10 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
   serializers: T,
 ): Serializer<
   {
-    [PropertyName in keyof T]: InferSerializerToUrl<T[PropertyName]>;
+    [PropertyName in keyof T]: InferSerializerFromUrl<T[PropertyName]>;
   },
   {
-    [PropertyName in keyof T]: InferSerializerFromUrl<T[PropertyName]>;
+    [PropertyName in keyof T]: InferSerializerToUrl<T[PropertyName]>;
   }
 > => {
   const serializerEntries = Object.entries(serializers);
@@ -90,6 +90,16 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
 
       if (hasValues === false) {
         // @TODO implement default handling
+        for (const [propertyName, serializer] of serializerEntries) {
+          if (propertyName in result === false) {
+            const propertyGenerator = serializer.fromUrl(tokenizer, false);
+            const propertyResult = propertyGenerator.next(false);
+            if (propertyResult.done === false) {
+              throw new Error("When null given serializer needs to finish");
+            }
+            result[propertyName as keyof T] = propertyResult.value;
+          }
+        }
         return result;
       }
 

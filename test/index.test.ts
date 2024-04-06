@@ -122,5 +122,55 @@ describe("map", () => {
         hasChildRouteActive: false,
       });
     });
+
+    describe("number", () => {
+      it("default", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.number({ default: 10 }),
+        });
+        const alternativeDefault = createRootRoute({
+          foo: serializer.number({ default: 20 }),
+        });
+        const inputValue = { "/": { foo: null } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: number | null };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: number };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: { "/": { foo: 10 } },
+          hasChildRouteActive: false,
+        });
+        expect(
+          alternativeDefault.map(
+            rootRoute.createPath({ "/": { foo: 10 } }),
+            id,
+          ),
+        ).to.eql({
+          parameter: { "/": { foo: 20 } },
+          hasChildRouteActive: false,
+        });
+        expect(
+          alternativeDefault.map(rootRoute.createPath(inputValue), id),
+        ).to.eql({
+          parameter: { "/": { foo: 20 } },
+          hasChildRouteActive: false,
+        });
+      });
+    });
   });
 });

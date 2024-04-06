@@ -9,20 +9,20 @@ export type Token =
       value: string;
     };
 
-export type toUrlResult = string | { [parameter: string]: toUrlResult };
+export type toUrlResult = null | string | { [parameter: string]: toUrlResult };
 
 export type Serializer<T, U> = {
-  toUrl: (value: T) => toUrlResult;
+  toUrl: (value: U) => toUrlResult;
   fromUrl: (
     tokenizer: Tokenizer,
     hasValues: boolean,
-  ) => Generator<undefined, U, boolean>;
+  ) => Generator<undefined, T, boolean>;
 };
 
 export type InferSerializerToUrl<T extends Serializer<any, any>> =
-  T extends Serializer<infer R, any> ? R : never;
-export type InferSerializerFromUrl<T extends Serializer<any, any>> =
   T extends Serializer<any, infer R> ? R : never;
+export type InferSerializerFromUrl<T extends Serializer<any, any>> =
+  T extends Serializer<infer R, any> ? R : never;
 
 export type ParameterSpecificationTemplate = {
   [ParameterName: string]: Serializer<any, any>;
