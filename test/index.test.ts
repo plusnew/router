@@ -90,36 +90,77 @@ describe("map", () => {
   });
 
   describe("serializer", () => {
-    it("objects", () => {
-      const rootRoute = createRootRoute({
-        foo: serializer.object({
-          bar: serializer.number(),
-          baz: serializer.number(),
-        }),
-        mep: serializer.number(),
-      });
-      const inputValue = { "/": { foo: { bar: 2, baz: 5 }, mep: 1 } };
-      const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+    describe("objects", () => {
+      it("standard", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.object({
+            bar: serializer.number(),
+            baz: serializer.number(),
+          }),
+          mep: serializer.number(),
+        });
+        const inputValue = { "/": { foo: { bar: 2, baz: 5 }, mep: 1 } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
 
-      assertType<
-        IsEqual<
-          Parameters<typeof rootRoute.createPath>[0],
-          {
-            "/": { foo: { bar: number; baz: number }; mep: number };
-          }
-        >
-      >();
-      assertType<
-        IsEqual<
-          Exclude<typeof outputValue, null>["parameter"],
-          {
-            "/": { foo: { bar: number; baz: number }; mep: number };
-          }
-        >
-      >();
-      expect(outputValue).to.eql({
-        parameter: inputValue,
-        hasChildRouteActive: false,
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: { bar: number; baz: number }; mep: number };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: { bar: number; baz: number }; mep: number };
+            }
+          >
+        >();
+        expect(outputValue).to.eql({
+          parameter: inputValue,
+          hasChildRouteActive: false,
+        });
+      });
+
+      it("default", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.object({
+            bar: serializer.number(),
+            baz: serializer.number({ default: 10 }),
+          }),
+        });
+        const inputValue = { "/": { foo: { bar: 2, baz: null } } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: { bar: number; baz: number | null } };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: { bar: number; baz: number } };
+            }
+          >
+        >();
+        expect(outputValue).to.eql({
+          parameter: {
+            "/": {
+              foo: {
+                bar: 2,
+                baz: 10,
+              },
+            },
+          },
+          hasChildRouteActive: false,
+        });
       });
     });
 

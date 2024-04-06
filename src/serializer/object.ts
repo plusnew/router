@@ -4,7 +4,9 @@ import type {
   Serializer,
 } from "../types";
 
-export default <T extends { [Property: string]: Serializer<any, any> }>(
+export default function <
+  T extends { [Property: string]: Serializer<any, any> },
+>(
   serializers: T,
 ): Serializer<
   {
@@ -13,8 +15,9 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
   {
     [PropertyName in keyof T]: InferSerializerToUrl<T[PropertyName]>;
   }
-> => {
+> {
   const serializerEntries = Object.entries(serializers);
+
   return {
     toUrl: function (parameter) {
       return Object.fromEntries(
@@ -59,9 +62,11 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
             throw new Error("Assignments have to be done after one call");
           } else {
             hasValues = yield;
-            const nextProperty = tokenizer.lookahead(propertyToken);
 
-            if (nextProperty === null) {
+            if (
+              hasValues === false ||
+              tokenizer.lookahead(propertyToken) === null
+            ) {
               const propertyResult = propertyGenerator.next(false);
 
               if (propertyResult.done === true) {
@@ -100,10 +105,9 @@ export default <T extends { [Property: string]: Serializer<any, any> }>(
             result[propertyName as keyof T] = propertyResult.value;
           }
         }
-        return result;
       }
 
       return result;
     },
   };
-};
+}
