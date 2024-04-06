@@ -1,9 +1,13 @@
 import { expect } from "@esm-bundle/chai";
-import type { RouteToParameter } from "../";
 import { createRootRoute, serializer } from "../";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function assertType<T extends true>() {}
+function assertType<T extends true>(): T {
+  return true as T;
+}
+
+function id<T>(value: T) {
+  return value;
+}
 
 type IsEqual<CheckA, CheckB> =
   (<T>() => T extends CheckA ? 1 : 2) extends <T>() => T extends CheckB ? 1 : 2
@@ -14,20 +18,30 @@ describe("map", () => {
   describe("Path handling", () => {
     it("root", () => {
       const rootRoute = createRootRoute({ foo: serializer.number() });
-      const values = { "/": { foo: 3 } } as const;
+      const inputValue = { "/": { foo: 3 } };
+
+      const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
 
       assertType<
         IsEqual<
-          RouteToParameter<typeof rootRoute>,
+          Parameters<typeof rootRoute.createPath>[0],
           {
             "/": { foo: number };
           }
         >
       >();
-
-      expect({ parameter: values, hasChildRouteActive: false }).to.eql(
-        rootRoute.map(rootRoute.createPath(values), (result) => result),
-      );
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            "/": { foo: number };
+          }
+        >
+      >();
+      expect(outputValue).to.eql({
+        parameter: inputValue,
+        hasChildRouteActive: false,
+      });
     });
 
     it("child", () => {
@@ -35,26 +49,43 @@ describe("map", () => {
       const childRoute = rootRoute.createChildRoute("child", {
         bar: serializer.number(),
       });
-
-      const values = { "/": { foo: 1 }, child: { bar: 2 } };
-
-      expect({ parameter: values, hasChildRouteActive: false }).to.eql(
-        childRoute.map(childRoute.createPath(values), (result) => result),
-      );
-
       const anotherChildRoute = rootRoute.createChildRoute(
         "anotherChildRoute",
         {
           bar: serializer.number(),
         },
       );
+      const inputValue = { "/": { foo: 1 }, child: { bar: 2 } };
+      const outputValue = childRoute.map(childRoute.createPath(inputValue), id);
 
-      expect(null).to.eql(
+      assertType<
+        IsEqual<
+          Parameters<typeof childRoute.createPath>[0],
+          {
+            "/": { foo: number };
+            child: { bar: number };
+          }
+        >
+      >();
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            "/": { foo: number };
+            child: { bar: number };
+          }
+        >
+      >();
+      expect(outputValue).to.eql({
+        parameter: inputValue,
+        hasChildRouteActive: false,
+      });
+      expect(
         anotherChildRoute.map(
-          childRoute.createPath(values),
+          childRoute.createPath(inputValue),
           (result) => result,
         ),
-      );
+      ).to.eql(null);
     });
   });
 
@@ -67,11 +98,29 @@ describe("map", () => {
         }),
         mep: serializer.number(),
       });
-      const values = { "/": { foo: { bar: 2, baz: 5 }, mep: 1 } } as const;
+      const inputValue = { "/": { foo: { bar: 2, baz: 5 }, mep: 1 } };
+      const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
 
-      expect({ parameter: values, hasChildRouteActive: false }).to.eql(
-        rootRoute.map(rootRoute.createPath(values), (result) => result),
-      );
+      assertType<
+        IsEqual<
+          Parameters<typeof rootRoute.createPath>[0],
+          {
+            "/": { foo: { bar: number; baz: number }; mep: number };
+          }
+        >
+      >();
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            "/": { foo: { bar: number; baz: number }; mep: number };
+          }
+        >
+      >();
+      expect(outputValue).to.eql({
+        parameter: inputValue,
+        hasChildRouteActive: false,
+      });
     });
   });
 });
