@@ -4,6 +4,7 @@ import { Tokenizer } from "./tokenizer";
 import { TOKENS } from "./tokenizer";
 import type {
   NamespaceTemplate,
+  NamespaceToLinkParameter,
   NamespaceToParameter,
   ParameterSpecificationTemplate,
   Route,
@@ -27,8 +28,8 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
 }
 
 function createRoute<T extends NamespaceTemplate>(routeParser: {
-  toUrl: (value: NamespaceToParameter<T>) => string;
-  fromUrl: (tokenizer: Tokenizer) => RouteToLinkParameter<T> | null;
+  toUrl: (value: NamespaceToLinkParameter<T>) => string;
+  fromUrl: (tokenizer: Tokenizer) => NamespaceToParameter<T> | null;
 }): Route<T> {
   return {
     createPath(namespacedParameter) {

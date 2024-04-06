@@ -36,7 +36,7 @@ export type Route<T extends NamespaceTemplate> = {
   map: <U>(
     url: string,
     cb: (data: {
-      parameter: NamespaceToLinkParameter<T>;
+      parameter: NamespaceToParameter<T>;
       hasChildRouteActive: boolean;
     }) => U,
   ) => U | null;
@@ -47,10 +47,10 @@ export type Route<T extends NamespaceTemplate> = {
     namespace: U,
     parameterSpec: V,
   ) => Route<T & { [namespace in U]: V }>;
-  createPath: (parameter: NamespaceToParameter<T>) => string;
+  createPath: (parameter: NamespaceToLinkParameter<T>) => string;
 };
 
-type NamespaceToLinkParameter<T extends NamespaceTemplate> = {
+export type NamespaceToLinkParameter<T extends NamespaceTemplate> = {
   [NamespaceName in keyof T]: {
     [ParameterName in keyof T[NamespaceName]]: InferSerializerToUrl<
       T[NamespaceName][ParameterName]
