@@ -1,5 +1,6 @@
 import { expect } from "@esm-bundle/chai";
 import { createRootRoute, serializer } from "../";
+import { TOKENS } from "../src/tokenizer";
 
 function assertType<T extends true>(): T {
   return true as T;
@@ -203,6 +204,70 @@ describe("map", () => {
           ),
         ).to.eql({
           parameter: { "/": { foo: 20 } },
+          hasChildRouteActive: false,
+        });
+      });
+    });
+
+    describe("string", () => {
+      it("standard", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.string(),
+        });
+
+        const inputValue = { "/": { foo: "bar" } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: string | null };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: string };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: inputValue,
+          hasChildRouteActive: false,
+        });
+      });
+
+      it("tokens", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.string(),
+        });
+
+        const inputValue = { "/": { foo: Object.values(TOKENS).join("") } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: string | null };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: string };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: inputValue,
           hasChildRouteActive: false,
         });
       });

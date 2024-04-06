@@ -3,7 +3,7 @@ import type { Token } from "./types";
 export const TOKENS = {
   PATH_SEPERATOR: "/" as const,
   VALUE_SEPERATOR: ";" as const,
-  LIST_SEPERATOR: " as const," as const,
+  LIST_SEPERATOR: "," as const,
   PROPERTY_SEPERATOR: "." as const,
   VALUE_ASSIGNMENT: "=" as const,
   LIST_OPEN: "[" as const,
