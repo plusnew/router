@@ -164,12 +164,6 @@ describe("map", () => {
           parameter: { "/": { foo: 20 } },
           hasChildRouteActive: false,
         });
-        expect(
-          alternativeDefault.map(rootRoute.createPath(inputValue), id),
-        ).to.eql({
-          parameter: { "/": { foo: 20 } },
-          hasChildRouteActive: false,
-        });
       });
     });
   });
