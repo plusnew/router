@@ -222,7 +222,7 @@ describe("map", () => {
           IsEqual<
             Parameters<typeof rootRoute.createPath>[0],
             {
-              "/": { foo: string | null };
+              "/": { foo: string };
             }
           >
         >();
@@ -253,7 +253,7 @@ describe("map", () => {
           IsEqual<
             Parameters<typeof rootRoute.createPath>[0],
             {
-              "/": { foo: string | null };
+              "/": { foo: string };
             }
           >
         >();

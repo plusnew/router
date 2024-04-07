@@ -1,12 +1,17 @@
 import { TOKENS, type Tokenizer } from "../tokenizer";
 import type { Serializer } from "../types";
 
-export default function (): Serializer<string, string | null> {
+export default function <T extends "" | null = null>(opt?: {
+  default: T;
+}): Serializer<string, T extends null ? string : string | null> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
       if (hasValues === false) {
-        return "";
+        if (opt?.default) {
+          return opt.default;
+        }
+        throw new Error("No default value provided");
       }
       let result =
         getText(tokenizer) ??
@@ -26,7 +31,7 @@ export default function (): Serializer<string, string | null> {
       return decodeURIComponent(result);
     },
     toUrl: function (value) {
-      if (value === null || value === "") {
+      if (value === null || value === opt?.default) {
         return null;
       }
       return encodeURIComponent(value);
