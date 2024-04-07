@@ -1,8 +1,17 @@
 import type { Serializer } from "../types";
 
-export default function <T extends number | null = null>(opt?: {
-  default: T;
-}): Serializer<number, T extends null ? number : number | null> {
+type IfAny<T, Then, Else> = 0 extends 1 & T ? Then : Else;
+
+export default function <
+  T extends number = number,
+  U extends number | null = null,
+>(opt?: {
+  validate?: (value: number) => value is T;
+  default?: U;
+}): Serializer<
+  IfAny<T, number, T>,
+  U extends null ? IfAny<T, number, T> : IfAny<T, number, T> | null
+> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
@@ -26,7 +35,14 @@ export default function <T extends number | null = null>(opt?: {
         throw new Error(`${value} is not a valid number`);
       }
 
-      return parsedValue;
+      if (opt?.validate) {
+        const isValid = opt.validate(parsedValue);
+        if (isValid) {
+          return parsedValue;
+        }
+        throw new Error("Not valid");
+      }
+      return parsedValue as any;
     },
     toUrl: function (value) {
       if (value === null || value === opt?.default) {

@@ -209,6 +209,41 @@ describe("map", () => {
       });
     });
 
+    it("validate", () => {
+      const rootRoute = createRootRoute({
+        foo: serializer.number({
+          validate: function (value): value is 10 | 20 {
+            return [10, 20].includes(value);
+          },
+        }),
+      });
+
+      const inputValue = { "/": { foo: 10 as const } };
+      const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+      assertType<
+        IsEqual<
+          Parameters<typeof rootRoute.createPath>[0],
+          {
+            "/": { foo: 10 | 20 };
+          }
+        >
+      >();
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            "/": { foo: 10 | 20 };
+          }
+        >
+      >();
+
+      expect(outputValue).to.eql({
+        parameter: { "/": { foo: 10 } },
+        hasChildRouteActive: false,
+      });
+    });
+
     describe("string", () => {
       it("standard", () => {
         const rootRoute = createRootRoute({

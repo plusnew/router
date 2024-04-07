@@ -2,7 +2,7 @@ import { TOKENS, type Tokenizer } from "../tokenizer";
 import type { Serializer } from "../types";
 
 export default function <T extends "" | null = null>(opt?: {
-  default: T;
+  default?: T;
 }): Serializer<string, T extends null ? string : string | null> {
   return {
     // eslint-disable-next-line require-yield
