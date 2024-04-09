@@ -1,6 +1,8 @@
 import type { Serializer } from "../types";
 
-type IfAny<T, Then, Else> = 0 extends 1 & T ? Then : Else;
+type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
+  ? Else
+  : Then;
 
 export default function <
   T extends number = number,
@@ -9,8 +11,8 @@ export default function <
   validate?: (value: number) => value is T;
   default?: U;
 }): Serializer<
-  IfAny<T, number, T>,
-  U extends null ? IfAny<T, number, T> : IfAny<T, number, T> | null
+  IsAny<T, number, T>,
+  U extends null ? IsAny<T, number, T> : IsAny<T, number, T> | null
 > {
   return {
     // eslint-disable-next-line require-yield
@@ -35,13 +37,10 @@ export default function <
         throw new Error(`${value} is not a valid number`);
       }
 
-      if (opt?.validate) {
-        const isValid = opt.validate(parsedValue);
-        if (isValid) {
-          return parsedValue;
-        }
-        throw new Error("Not valid");
+      if (opt?.validate && opt.validate(parsedValue) === false) {
+        throw new Error("Validation failed");
       }
+
       return parsedValue as any;
     },
     toUrl: function (value) {

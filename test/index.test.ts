@@ -314,6 +314,49 @@ describe("map", () => {
           hasChildRouteActive: false,
         });
       });
+
+      it("validate", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.string({
+            validate: function (value): value is "bar" | "baz" {
+              return ["bar", "baz"].includes(value);
+            },
+          }),
+        });
+
+        const inputValue = { "/": { foo: "bar" as const } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: "bar" | "baz" };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: "bar" | "baz" };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: { "/": { foo: "bar" } },
+          hasChildRouteActive: false,
+        });
+
+        expect(() => {
+          rootRoute.createPath({
+            "/": {
+              foo: "mep" as "bar",
+            },
+          });
+        }).to.throw();
+      });
     });
   });
 });

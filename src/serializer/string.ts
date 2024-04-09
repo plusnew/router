@@ -1,9 +1,20 @@
 import { TOKENS, type Tokenizer } from "../tokenizer";
 import type { Serializer } from "../types";
 
-export default function <T extends "" | null = null>(opt?: {
-  default?: T;
-}): Serializer<string, T extends null ? string : string | null> {
+type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
+  ? Else
+  : Then;
+
+export default function <
+  T extends string = string,
+  U extends "" | null = null,
+>(opt?: {
+  validate?: (value: string) => value is T;
+  default?: U;
+}): Serializer<
+  IsAny<T, string, T>,
+  U extends null ? IsAny<T, string, T> : IsAny<T, string, T> | null
+> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
@@ -28,12 +39,22 @@ export default function <T extends "" | null = null>(opt?: {
           result += more;
         }
       }
-      return decodeURIComponent(result);
+
+      if (opt?.validate && opt.validate(result) === false) {
+        throw new Error("Validation failed");
+      }
+
+      return result as any;
     },
     toUrl: function (value) {
       if (value === null || value === opt?.default) {
         return null;
       }
+
+      if (opt?.validate && opt.validate(value) === false) {
+        throw new Error("Validation failed");
+      }
+
       return encodeURIComponent(value);
     },
   };
@@ -41,7 +62,7 @@ export default function <T extends "" | null = null>(opt?: {
 
 function getText(tokenizer: Tokenizer) {
   if (tokenizer.lookahead({ type: "TEXT" })) {
-    return tokenizer.eat({ type: "TEXT" }).value;
+    return decodeURIComponent(tokenizer.eat({ type: "TEXT" }).value);
   } else if (tokenizer.lookahead({ type: "PROPERTY_SEPERATOR" })) {
     tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
     return TOKENS.PROPERTY_SEPERATOR;
