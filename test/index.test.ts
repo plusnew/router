@@ -242,6 +242,14 @@ describe("map", () => {
         parameter: { "/": { foo: 10 } },
         hasChildRouteActive: false,
       });
+
+      expect(() => {
+        rootRoute.createPath({
+          "/": {
+            foo: 30 as 20,
+          },
+        });
+      }).to.throw();
     });
 
     describe("string", () => {

@@ -48,6 +48,9 @@ export default function <
       if (value === null || value === opt?.default) {
         return null;
       }
+      if (opt?.validate && opt.validate(value) === false) {
+        throw new Error("Validation failed");
+      }
       return value.toString();
     },
   };
