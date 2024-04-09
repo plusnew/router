@@ -358,5 +358,40 @@ describe("map", () => {
         }).to.throw();
       });
     });
+
+    describe("list", () => {
+      it("standard", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.list({
+            entities: serializer.number(),
+          }),
+        });
+
+        const inputValue = { "/": { foo: [1, 2, 3] } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: number[] };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: number[] };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: { "/": { foo: [1, 2, 3] } },
+          hasChildRouteActive: false,
+        });
+      });
+    });
   });
 });
