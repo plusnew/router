@@ -521,5 +521,68 @@ describe("map", () => {
         });
       });
     });
+
+    describe("boolean", () => {
+      it("true", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.boolean(),
+        });
+
+        const inputValue = { "/": { foo: true } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: boolean };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: boolean };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: inputValue,
+          hasChildRouteActive: false,
+        });
+      });
+      it("false", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.boolean(),
+        });
+
+        const inputValue = { "/": { foo: false } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: boolean };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: boolean };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: inputValue,
+          hasChildRouteActive: false,
+        });
+      });
+    });
   });
 });
