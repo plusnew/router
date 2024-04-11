@@ -357,6 +357,42 @@ describe("map", () => {
           });
         }).to.throw();
       });
+
+      it("default", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.string({
+            default: null,
+          }),
+        });
+
+        const inputValue = { "/": { foo: null } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        rootRoute.createPath({
+          "/": { foo: "" },
+        });
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: string | null };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: string | null };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: { "/": { foo: null } },
+          hasChildRouteActive: false,
+        });
+      });
     });
 
     describe("list", () => {

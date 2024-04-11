@@ -5,30 +5,28 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
   ? Else
   : Then;
 
+type StringSerializer<T, U> = Serializer<
+  T | (U extends null ? null : never),
+  T | (U extends undefined ? T : never | null) | (U extends null ? null : never)
+>;
+
 export default function <
   T extends string = string,
-  U extends "" | null = null,
+  U extends string | null | undefined = undefined,
 >(opt?: {
   validate?: (value: string) => value is T;
   default?: U;
-}): Serializer<
-  IsAny<T, string, T>,
-  U extends null ? IsAny<T, string, T> : IsAny<T, string, T> | null
-> {
+}): StringSerializer<IsAny<T, string, T>, IsAny<U, undefined, U>> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
       if (hasValues === false) {
-        if (opt?.default) {
+        if (opt?.default !== undefined) {
           return opt.default;
         }
         throw new Error("No default value provided");
       }
-      let result =
-        getText(tokenizer) ??
-        (() => {
-          throw new Error("Expected text");
-        })();
+      let result = getText(tokenizer) ?? "";
 
       // eslint-disable-next-line no-constant-condition
       while (tokenizer.done === false) {

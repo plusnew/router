@@ -4,21 +4,23 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
   ? Else
   : Then;
 
+type NumberSerializer<T, U> = Serializer<
+  T | (U extends null ? null : never),
+  T | (U extends undefined ? T : never | null) | (U extends null ? null : never)
+>;
+
 export default function <
   T extends number = number,
-  U extends number | null = null,
+  U extends number | null | undefined = undefined,
 >(opt?: {
   validate?: (value: number) => value is T;
   default?: U;
-}): Serializer<
-  IsAny<T, number, T>,
-  U extends null ? IsAny<T, number, T> : IsAny<T, number, T> | null
-> {
+}): NumberSerializer<IsAny<T, number, T>, IsAny<U, undefined, U>> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
       if (hasValues === false) {
-        if (opt?.default) {
+        if (opt?.default !== undefined) {
           return opt.default;
         }
         throw new Error("No default value provided");
