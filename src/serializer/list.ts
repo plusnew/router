@@ -23,7 +23,10 @@ export default function <T extends Serializer<any, any>>(opt: {
 
       tokenizer.eat({ type: "LIST_OPEN" });
 
-      while (tokenizer.done === false) {
+      while (
+        tokenizer.done === false &&
+        tokenizer.lookahead({ type: "LIST_CLOSE" }) === null
+      ) {
         let hasValues = true;
         if (tokenizer.lookahead({ type: "LIST_SEPERATOR" }) !== null) {
           tokenizer.eat({ type: "LIST_SEPERATOR" });
