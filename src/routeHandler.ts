@@ -105,7 +105,7 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
 
 function parameterToUrl(
   parameterSpec: ParameterSpecificationTemplate,
-  parameter: {},
+  parameter: object,
 ) {
   return Object.entries(parameter).reduce((accumulator, [name, value]) => {
     const urlResult = parameterSpec[name].toUrl(value);
