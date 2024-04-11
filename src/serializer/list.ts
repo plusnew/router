@@ -8,7 +8,6 @@ import { containerHandler, flattenUrlResult } from "./util";
 
 export default function <T extends Serializer<any, any>>(opt: {
   entities: T;
-  validate?(): null;
 }): Serializer<InferSerializerFromUrl<T>[], InferSerializerToUrl<T>[]> {
   return {
     toUrl: function (entities) {
