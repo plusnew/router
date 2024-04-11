@@ -1,5 +1,5 @@
-import type { Tokenizer } from "../tokenizer";
-import type { Serializer } from "../types";
+import { TOKENS, type Tokenizer } from "../tokenizer";
+import type { Serializer, toUrlResult } from "../types";
 
 export function containerHandler<T>(
   serializer: Serializer<any, T>,
@@ -45,4 +45,24 @@ export function containerHandler<T>(
       }
     }
   }
+}
+
+export function flattenUrlResult(
+  name: string,
+  urlResult: toUrlResult,
+): [string, string][] {
+  if (urlResult === null) {
+    return [];
+  }
+  if (typeof urlResult === "string") {
+    return [[name, urlResult]];
+  }
+  return Object.entries(urlResult).flatMap(([propertyName, value]) =>
+    flattenUrlResult(propertyName, value).map(
+      ([nestedName, value]): [string, string] => [
+        `${name}${TOKENS.PROPERTY_SEPERATOR}${nestedName}`,
+        value,
+      ],
+    ),
+  );
 }

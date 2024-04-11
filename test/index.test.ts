@@ -458,6 +458,68 @@ describe("map", () => {
           hasChildRouteActive: false,
         });
       });
+
+      it("object", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.list({
+            entities: serializer.object({
+              bar: serializer.string(),
+              baz: serializer.number(),
+            }),
+          }),
+        });
+
+        const inputValue = {
+          "/": {
+            foo: [
+              {
+                bar: "mep",
+                baz: 1,
+              },
+              {
+                bar: "sup",
+                baz: 2,
+              },
+            ],
+          },
+        };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: { bar: string; baz: number }[] };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: { bar: string; baz: number }[] };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: {
+            "/": {
+              foo: [
+                {
+                  bar: "mep",
+                  baz: 1,
+                },
+                {
+                  bar: "sup",
+                  baz: 2,
+                },
+              ],
+            },
+          },
+          hasChildRouteActive: false,
+        });
+      });
     });
   });
 });

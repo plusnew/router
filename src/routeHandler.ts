@@ -1,5 +1,5 @@
 import { object } from "./serializer";
-import { containerHandler } from "./serializer/util";
+import { containerHandler, flattenUrlResult } from "./serializer/util";
 import { Tokenizer } from "./tokenizer";
 import { TOKENS } from "./tokenizer";
 import type {
@@ -8,7 +8,6 @@ import type {
   NamespaceToParameter,
   ParameterSpecificationTemplate,
   Route,
-  toUrlResult,
 } from "./types";
 
 export function createRootRoute<T extends ParameterSpecificationTemplate>(
@@ -119,26 +118,6 @@ function parameterToUrl(
       "",
     )}`;
   }, "");
-}
-
-function flattenUrlResult(
-  name: string,
-  urlResult: toUrlResult,
-): [string, string][] {
-  if (urlResult === null) {
-    return [];
-  }
-  if (typeof urlResult === "string") {
-    return [[name, urlResult]];
-  }
-  return Object.entries(urlResult).flatMap(([propertyName, value]) =>
-    flattenUrlResult(propertyName, value).map(
-      ([nestedName, value]): [string, string] => [
-        `${name}${TOKENS.PROPERTY_SEPERATOR}${nestedName}`,
-        value,
-      ],
-    ),
-  );
 }
 
 function handleParameter<T extends ParameterSpecificationTemplate>(

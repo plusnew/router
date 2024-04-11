@@ -4,7 +4,7 @@ import type {
   InferSerializerFromUrl,
   Serializer,
 } from "../types";
-import { containerHandler } from "./util";
+import { containerHandler, flattenUrlResult } from "./util";
 
 export default function <T extends Serializer<any, any>>(opt: {
   entities: T;
@@ -12,7 +12,26 @@ export default function <T extends Serializer<any, any>>(opt: {
 }): Serializer<InferSerializerFromUrl<T>[], InferSerializerToUrl<T>[]> {
   return {
     toUrl: function (entities) {
-      return `${TOKENS.LIST_OPEN}${entities.map(opt.entities.toUrl).join(TOKENS.LIST_SEPERATOR)}${TOKENS.LIST_CLOSE}`;
+      return `${TOKENS.LIST_OPEN}${entities
+        .map(opt.entities.toUrl)
+        .reduce((accumulator: string, currentValue, index, list) => {
+          let result = "";
+          if (currentValue === null) {
+            result = "";
+          } else if (typeof currentValue === "string") {
+            result = currentValue;
+          } else {
+            result = Object.entries(currentValue)
+              .map(([key, value]) =>
+                flattenUrlResult(key, value).map(
+                  ([key, value]) => `${key}${TOKENS.VALUE_ASSIGNMENT}${value}`,
+                ),
+              )
+              .join(TOKENS.VALUE_SEPERATOR);
+          }
+
+          return `${accumulator}${result}${result === "" || index + 1 < list.length ? TOKENS.LIST_SEPERATOR : ""}`;
+        }, "")}${TOKENS.LIST_CLOSE}`;
     },
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
