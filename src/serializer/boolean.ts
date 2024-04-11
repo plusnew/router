@@ -1,4 +1,3 @@
-import { TOKENS, type Tokenizer } from "../tokenizer";
 import type { Serializer } from "../types";
 
 type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
