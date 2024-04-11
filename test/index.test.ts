@@ -368,9 +368,6 @@ describe("map", () => {
         const inputValue = { "/": { foo: null } };
         const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
 
-        rootRoute.createPath({
-          "/": { foo: "" },
-        });
         assertType<
           IsEqual<
             Parameters<typeof rootRoute.createPath>[0],
