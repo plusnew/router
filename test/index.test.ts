@@ -584,5 +584,39 @@ describe("map", () => {
         });
       });
     });
+
+    describe("date", () => {
+      it("standard", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.date(),
+        });
+
+        const now = new Date();
+        const inputValue = { "/": { foo: now } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": { foo: Date };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": { foo: Date };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: inputValue,
+          hasChildRouteActive: false,
+        });
+      });
+    });
   });
 });
