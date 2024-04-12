@@ -1,7 +1,9 @@
 {
   "include": [
     "src",
-    "test"
+    "test",
+    "demo",
+    "demo/demo.ts"
   ],
   "compilerOptions": {
     /* Basic Options */
