@@ -17,7 +17,12 @@ export function createRootRoute<T extends ParameterSpecificationTemplate>(
     toUrl: (namespacedParameter) =>
       `${TOKENS.PATH_SEPERATOR}${parameterToUrl(parameterSpec, namespacedParameter[TOKENS.PATH_SEPERATOR])}`,
     fromUrl: function (tokenizer) {
+      const hasNamespace = tokenizer.lookahead({ type: "TEXT" }) !== null;
       const result = handleParameter(parameterSpec, tokenizer);
+
+      if (hasNamespace === false) {
+        tokenizer.eat({ type: "PATH_SEPERATOR" });
+      }
 
       return {
         [TOKENS.PATH_SEPERATOR]: result,
@@ -46,33 +51,6 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
         hasChildRouteActive: tokenizer.done === false,
         parameter: result,
       });
-
-      // while (index < tokens.length) {
-      //   if (tokens[index].type === "PATH_SEPERATOR") {
-      //     const [namespace, parameterSpec] = routeValues[routeIndex];
-      //     if (routeIndex === 0) {
-      //       if (tokens[index + 1].type !== "VALUE_SEPERATOR") {
-      //         routeIndex++;
-      //         continue;
-      //       }
-      //     } else {
-      //       index++;
-      //       const namespaceToken = tokens[index];
-      //       if (namespaceToken.type === "TEXT") {
-      //         if (namespaceToken.value !== namespace) {
-      //           return null;
-      //         }
-      //         index++;
-      //       } else {
-      //         throw new Error("Didnt expect anything but text here");
-      //       }
-      //     }
-      //   } else {
-      //     throw new Error(`Didn't expect this character here ${index} ${url}`);
-      //   }
-      // }
-
-      return null;
     },
     createChildRoute(namespace, parameterSpec) {
       return createRoute({
@@ -86,12 +64,15 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
 
           if (
             parentResult === null ||
+            tokenizer.done === true ||
             tokenizer.lookahead({ type: "TEXT", value: namespace }) === null
           ) {
             return null;
           }
           tokenizer.eat({ type: "TEXT", value: namespace });
           const result = handleParameter(parameterSpec, tokenizer);
+
+          tokenizer.eat({ type: "PATH_SEPERATOR" });
 
           return {
             ...parentResult,
@@ -136,8 +117,6 @@ function handleParameter<T extends ParameterSpecificationTemplate>(
     tokenizer,
     hasValues,
   );
-
-  tokenizer.eat({ type: "PATH_SEPERATOR" });
 
   return result;
 }

@@ -88,6 +88,50 @@ describe("map", () => {
         ),
       ).to.eql(null);
     });
+
+    it("child", () => {
+      const rootRoute = createRootRoute({});
+      const childRoute = rootRoute.createChildRoute("child", {
+        bar: serializer.number(),
+      });
+      const anotherChildRoute = rootRoute.createChildRoute(
+        "anotherChildRoute",
+        {
+          bar: serializer.number(),
+        },
+      );
+      const inputValue = { "/": {}, child: { bar: 2 } };
+      const outputValue = childRoute.map(childRoute.createPath(inputValue), id);
+
+      assertType<
+        IsEqual<
+          Parameters<typeof childRoute.createPath>[0],
+          {
+            "/": {};
+            child: { bar: number };
+          }
+        >
+      >();
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            "/": {};
+            child: { bar: number };
+          }
+        >
+      >();
+      expect(outputValue).to.eql({
+        parameter: inputValue,
+        hasChildRouteActive: false,
+      });
+      expect(
+        anotherChildRoute.map(
+          childRoute.createPath(inputValue),
+          (result) => result,
+        ),
+      ).to.eql(null);
+    });
   });
 
   describe("serializer", () => {
