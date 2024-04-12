@@ -107,6 +107,7 @@ describe("map", () => {
         IsEqual<
           Parameters<typeof childRoute.createPath>[0],
           {
+            // eslint-disable-next-line @typescript-eslint/ban-types
             "/": {};
             child: { bar: number };
           }
@@ -116,6 +117,7 @@ describe("map", () => {
         IsEqual<
           Exclude<typeof outputValue, null>["parameter"],
           {
+            // eslint-disable-next-line @typescript-eslint/ban-types
             "/": {};
             child: { bar: number };
           }
