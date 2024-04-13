@@ -599,6 +599,7 @@ describe("map", () => {
           hasChildRouteActive: false,
         });
       });
+
       it("false", () => {
         const rootRoute = createRootRoute({
           foo: serializer.boolean(),
@@ -654,6 +655,52 @@ describe("map", () => {
             Exclude<typeof outputValue, null>["parameter"],
             {
               "/": { foo: Date };
+            }
+          >
+        >();
+
+        expect(outputValue).to.eql({
+          parameter: inputValue,
+          hasChildRouteActive: false,
+        });
+      });
+    });
+
+    describe("enum", () => {
+      it("standard", () => {
+        const rootRoute = createRootRoute({
+          foo: serializer.enum({
+            enumerations: {
+              bar: null,
+              baz: serializer.number(),
+            },
+          }),
+        });
+
+        const inputValue = { "/": { foo: { type: "baz" as const, value: 2 } } };
+        const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+        assertType<
+          IsEqual<
+            Parameters<typeof rootRoute.createPath>[0],
+            {
+              "/": {
+                foo:
+                  | { type: "bar"; value: null }
+                  | { type: "baz"; value: number };
+              };
+            }
+          >
+        >();
+        assertType<
+          IsEqual<
+            Exclude<typeof outputValue, null>["parameter"],
+            {
+              "/": {
+                foo:
+                  | { type: "bar"; value: null }
+                  | { type: "baz"; value: number };
+              };
             }
           >
         >();

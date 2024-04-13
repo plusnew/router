@@ -1,5 +1,5 @@
 import { TOKENS, type Tokenizer } from "../tokenizer";
-import type { Serializer, toUrlResult } from "../types";
+import type { InferSerializerFromUrl, Serializer, toUrlResult } from "../types";
 
 export function containerHandler<T>(
   serializer: Serializer<any, T>,
@@ -65,4 +65,48 @@ export function flattenUrlResult(
       ],
     ),
   );
+}
+
+export function* propertyHandler<T extends Serializer<any, any>>(
+  tokenizer: Tokenizer,
+  serializer: T,
+): Generator<undefined, InferSerializerFromUrl<T>, boolean> {
+  let hasValueAssignment = false;
+  let hasNestedProperty = false;
+
+  if (tokenizer.lookahead({ type: "VALUE_ASSIGNMENT" }) !== null) {
+    hasValueAssignment = true;
+    tokenizer.eat({ type: "VALUE_ASSIGNMENT" });
+  } else if (tokenizer.lookahead({ type: "PROPERTY_SEPERATOR" }) !== null) {
+    hasNestedProperty = true;
+    tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
+  }
+
+  let hasValues = hasValueAssignment || hasNestedProperty;
+
+  const generator = serializer.fromUrl(tokenizer, hasValues);
+
+  while (true) {
+    const result = generator.next(hasValues);
+
+    if (result.done === true) {
+      return result.value;
+    } else {
+      if (hasValues === true) {
+        hasValues = yield;
+        if (hasValues === false) {
+          const result = generator.next(false);
+          if (result.done === true) {
+            return result.value;
+          } else {
+            throw new Error("Serializer needed to stop when it got no values");
+          }
+        } else {
+          tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
+        }
+      } else {
+        throw new Error("Serializer needed to stop when it got no values");
+      }
+    }
+  }
 }

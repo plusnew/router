@@ -3,6 +3,7 @@ import type {
   InferSerializerFromUrl,
   Serializer,
 } from "../types";
+import { propertyHandler } from "./util";
 
 export default function <
   T extends { [Property: string]: Serializer<any, any> },
@@ -35,20 +36,9 @@ export default function <
       while (hasValues) {
         const propertyToken = tokenizer.eat({ type: "TEXT" });
 
-        const propertySeperator = tokenizer.lookahead({
-          type: "PROPERTY_SEPERATOR",
-        });
-
-        const hasMultipleValues = propertySeperator !== null;
-        if (hasMultipleValues) {
-          tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
-        } else {
-          tokenizer.eat({ type: "VALUE_ASSIGNMENT" });
-        }
-
-        const propertyGenerator = serializers[propertyToken.value].fromUrl(
+        const propertyGenerator = propertyHandler(
           tokenizer,
-          true,
+          serializers[propertyToken.value],
         );
 
         while (true) {
@@ -56,10 +46,7 @@ export default function <
 
           if (propertyResult.done === true) {
             result[propertyToken.value as keyof T] = propertyResult.value;
-
             break;
-          } else if (hasMultipleValues === false) {
-            throw new Error("Assignments have to be done after one call");
           } else {
             hasValues = yield;
 
@@ -80,7 +67,6 @@ export default function <
               }
             } else {
               tokenizer.eat(propertyToken);
-              tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
             }
           }
         }

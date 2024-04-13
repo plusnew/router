@@ -6,8 +6,8 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
   : Then;
 
 type StringSerializer<T, U> = Serializer<
-  T | (U extends null ? null : never),
-  T | (U extends undefined ? T : never | null) | (U extends null ? null : never)
+  T | (null extends U ? null : never),
+  T | (U extends T ? null : never) | (null extends U ? null : never)
 >;
 
 export default function <
@@ -45,7 +45,7 @@ export default function <
       return result as any;
     },
     toUrl: function (value) {
-      if (value === null || value === opt?.default) {
+      if (value === null || value === (opt?.default as string | undefined)) {
         return null;
       }
 
