@@ -64,7 +64,6 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
 
           if (
             parentResult === null ||
-            tokenizer.done === true ||
             tokenizer.lookahead({ type: "TEXT", value: namespace }) === null
           ) {
             return null;

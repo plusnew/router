@@ -25,6 +25,10 @@ export class Tokenizer {
   eat<T extends keyof typeof TOKENS | "TEXT">(
     eatToken: { type: T } | { type: "TEXT"; value: string },
   ): Extract<Token, { type: T }> {
+    if (this.done === true) {
+      throw new Error("No new tokens available");
+    }
+
     const currentToken = this.lookahead(eatToken);
 
     if (currentToken === null) {
@@ -40,7 +44,9 @@ export class Tokenizer {
   lookahead<T extends keyof typeof TOKENS | "TEXT">(
     eatToken: { type: T } | { type: "TEXT"; value: string },
   ): Extract<Token, { type: T }> | null {
-    this.checkDone();
+    if (this.done) {
+      return null;
+    }
 
     const currentToken = this.tokens[this.index];
     if (currentToken.type === eatToken.type) {
@@ -54,12 +60,6 @@ export class Tokenizer {
       return currentToken as any;
     } else {
       return null;
-    }
-  }
-
-  private checkDone() {
-    if (this.done === true) {
-      throw new Error("No new tokens available");
     }
   }
 }

@@ -27,12 +27,9 @@ export default function <
       }
       let value = tokenizer.eat({ type: "TEXT" }).value;
 
-      if (tokenizer.done === false) {
-        const hasDot = tokenizer.lookahead({ type: "PROPERTY_SEPERATOR" });
-        if (hasDot !== null) {
-          tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
-          value += `.${tokenizer.eat({ type: "TEXT" }).value}`;
-        }
+      if (tokenizer.lookahead({ type: "PROPERTY_SEPERATOR" }) !== null) {
+        tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
+        value += `.${tokenizer.eat({ type: "TEXT" }).value}`;
       }
       const parsedValue = Number(value);
       if (Number.isNaN(parsedValue)) {

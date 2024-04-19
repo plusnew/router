@@ -28,7 +28,6 @@ export default function <
       }
       let result = getText(tokenizer) ?? "";
 
-      // eslint-disable-next-line no-constant-condition
       while (tokenizer.done === false) {
         const more = getText(tokenizer);
         if (more === null) {

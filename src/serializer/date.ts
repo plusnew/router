@@ -59,10 +59,7 @@ export default function <
 function getText(tokenizer: Tokenizer) {
   let result = tokenizer.eat({ type: "TEXT" }).value;
 
-  while (
-    tokenizer.done === false &&
-    tokenizer.lookahead({ type: "PROPERTY_SEPERATOR" }) !== null
-  ) {
+  while (tokenizer.lookahead({ type: "PROPERTY_SEPERATOR" }) !== null) {
     tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
     result += `${TOKENS.PROPERTY_SEPERATOR}${tokenizer.eat({ type: "TEXT" }).value}`;
   }

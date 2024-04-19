@@ -19,6 +19,7 @@ describe("map", () => {
   describe("Path handling", () => {
     it("root", () => {
       const rootRoute = createRootRoute({ foo: serializer.number() });
+      const childRoute = rootRoute.createChildRoute("foo", {});
       const inputValue = { "/": { foo: 3 } };
 
       const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
@@ -43,6 +44,8 @@ describe("map", () => {
         parameter: inputValue,
         hasChildRouteActive: false,
       });
+
+      expect(childRoute.map(rootRoute.createPath(inputValue), id)).to.eql(null);
     });
 
     it("child", () => {
