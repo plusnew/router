@@ -137,6 +137,24 @@ describe("map", () => {
         ),
       ).to.eql(null);
     });
+
+    it("to few parameters", () => {
+      const rootRoute = createRootRoute({ foo: serializer.number() });
+      const anotherRootRoute = createRootRoute({});
+
+      expect(
+        rootRoute.map(anotherRootRoute.createPath({ "/": {} }), id),
+      ).to.eql(null);
+    });
+
+    it("to many parameters", () => {
+      const rootRoute = createRootRoute({});
+      const anotherRootRoute = createRootRoute({ foo: serializer.number() });
+
+      expect(
+        rootRoute.map(anotherRootRoute.createPath({ "/": { foo: 1 } }), id),
+      ).to.eql(null);
+    });
   });
 
   describe("serializer", () => {

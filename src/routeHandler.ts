@@ -41,7 +41,13 @@ function createRoute<T extends NamespaceTemplate>(routeParser: {
     },
     map(url, cb) {
       const tokenizer = new Tokenizer(url);
-      const result = routeParser.fromUrl(tokenizer);
+      let result: NamespaceToParameter<T> | null;
+
+      try {
+        result = routeParser.fromUrl(tokenizer);
+      } catch (_) {
+        result = null;
+      }
 
       if (result === null) {
         return null;
