@@ -80,10 +80,12 @@ describe("map", () => {
           }
         >
       >();
+
       expect(outputValue).to.eql({
         parameter: inputValue,
         hasChildRouteActive: false,
       });
+
       expect(
         anotherChildRoute.map(
           childRoute.createPath(inputValue),

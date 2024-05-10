@@ -13,19 +13,23 @@ export const TOKENS = {
 const TOKEN_KEYS = Object.keys(TOKENS) as (keyof typeof TOKENS)[];
 const TOKEN_VALUES = Object.values(TOKENS);
 
+export const state: { index: number | null; tokens: Token[] } = {
+  index: null,
+  tokens: [],
+};
+
 export class Tokenizer {
-  private index = 0;
-  private tokens: Token[];
-  public done: boolean;
-  constructor(url: string) {
-    this.tokens = tokenize(url);
-    this.done = this.index === this.tokens.length;
+  isDone() {
+    return state.index === state.tokens.length;
   }
 
   eat<T extends keyof typeof TOKENS | "TEXT">(
     eatToken: { type: T } | { type: "TEXT"; value: string },
   ): Extract<Token, { type: T }> {
-    if (this.done === true) {
+    if (state.index === null) {
+      throw new Error("Tokens are not initialised");
+    }
+    if (this.isDone() === true) {
       throw new Error("No new tokens available");
     }
 
@@ -33,22 +37,26 @@ export class Tokenizer {
 
     if (currentToken === null) {
       throw new Error(
-        `Couldnt find token ${eatToken.type}, but ${this.tokens[this.index].type}`,
+        `Couldnt find token ${eatToken.type}, but ${state.tokens[state.index].type}`,
       );
     }
-    this.index++;
-    this.done = this.index === this.tokens.length;
+
+    state.index++;
 
     return currentToken;
   }
   lookahead<T extends keyof typeof TOKENS | "TEXT">(
     eatToken: { type: T } | { type: "TEXT"; value: string },
   ): Extract<Token, { type: T }> | null {
-    if (this.done) {
+    if (state.index === null) {
+      throw new Error("Tokens are not initialised");
+    }
+    if (this.isDone()) {
       return null;
     }
 
-    const currentToken = this.tokens[this.index];
+    const currentToken = state.tokens[state.index];
+
     if (currentToken.type === eatToken.type) {
       if (
         "value" in currentToken &&
@@ -64,7 +72,7 @@ export class Tokenizer {
   }
 }
 
-function tokenize(url: string) {
+export function tokenize(url: string) {
   const tokens: Token[] = [];
   for (let i = 0; i < url.length; i++) {
     let result = getToken(url, i);
@@ -91,18 +99,9 @@ function tokenize(url: string) {
       }
     }
 
-    if (i === 0 && result.type === "PATH_SEPERATOR") {
-      continue;
-    }
-
     tokens.push(result);
   }
-  if (
-    tokens.length === 0 ||
-    tokens[tokens.length - 1].type !== "PATH_SEPERATOR"
-  ) {
-    tokens.push({ type: "PATH_SEPERATOR" });
-  }
+
   return tokens;
 }
 

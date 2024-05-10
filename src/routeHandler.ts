@@ -1,92 +1,134 @@
 import { object } from "./serializer";
 import { containerHandler, flattenUrlResult } from "./serializer/util";
-import { Tokenizer } from "./tokenizer";
+import { Tokenizer, state, tokenize } from "./tokenizer";
 import { TOKENS } from "./tokenizer";
 import type {
   NamespaceTemplate,
   NamespaceToLinkParameter,
   NamespaceToParameter,
   ParameterSpecificationTemplate,
-  Route,
 } from "./types";
 
 export function createRootRoute<T extends ParameterSpecificationTemplate>(
   parameterSpec: T,
 ): Route<{ "/": T }> {
-  return createRoute({
-    toUrl: (namespacedParameter) =>
-      `${TOKENS.PATH_SEPERATOR}${parameterToUrl(parameterSpec, namespacedParameter[TOKENS.PATH_SEPERATOR])}`,
-    fromUrl: function (tokenizer) {
-      const hasNamespace = tokenizer.lookahead({ type: "TEXT" }) !== null;
-      const result = handleParameter(parameterSpec, tokenizer);
-
-      if (hasNamespace === false) {
-        tokenizer.eat({ type: "PATH_SEPERATOR" });
-      }
-
-      return {
-        [TOKENS.PATH_SEPERATOR]: result,
-      };
-    },
-  });
+  return new Route(TOKENS.PATH_SEPERATOR, parameterSpec);
 }
 
-function createRoute<T extends NamespaceTemplate>(routeParser: {
-  toUrl: (value: NamespaceToLinkParameter<T>) => string;
-  fromUrl: (tokenizer: Tokenizer) => NamespaceToParameter<T> | null;
-}): Route<T> {
-  return {
-    createPath(namespacedParameter) {
-      return routeParser.toUrl(namespacedParameter) as string;
-    },
-    map(url, cb) {
-      const tokenizer = new Tokenizer(url);
-      let result: NamespaceToParameter<T> | null;
+class Route<T extends NamespaceTemplate> {
+  constructor(
+    protected namespace: string,
+    protected parameterSpec: ParameterSpecificationTemplate,
+    protected parentRoute?: Route<any>,
+  ) {}
+  map<U>(
+    url: string,
+    cb: (data: {
+      parameter: NamespaceToParameter<T>;
+      hasChildRouteActive: boolean;
+    }) => U,
+  ): U | null {
+    let isOuterMap = false;
+    if (state.index === null) {
+      state.index = 0;
+      state.tokens = tokenize(url);
 
-      try {
-        result = routeParser.fromUrl(tokenizer);
-      } catch (_) {
-        result = null;
+      if (
+        state.tokens.length === 0 ||
+        state.tokens[state.tokens.length - 1].type !== "PATH_SEPERATOR"
+      ) {
+        state.tokens.push({ type: "PATH_SEPERATOR" });
       }
 
-      if (result === null) {
-        return null;
+      isOuterMap = true;
+    }
+
+    const tokenizer = new Tokenizer();
+
+    let parameter =
+      this.parentRoute === undefined
+        ? null
+        : this.parentRoute.map(url, ({ parameter }) => parameter);
+    const hasChildRouteActive = false;
+    let validRoute = this.parentRoute === undefined ? true : parameter !== null;
+
+    if (validRoute) {
+      const segmentTokens = tokenize(this.namespace);
+      for (const segmentToken of segmentTokens) {
+        if (tokenizer.lookahead(segmentToken) === null) {
+          validRoute = false;
+          break;
+        } else {
+          tokenizer.eat(segmentToken);
+        }
       }
 
-      return cb({
-        hasChildRouteActive: tokenizer.done === false,
-        parameter: result,
-      });
-    },
-    createChildRoute(namespace, parameterSpec) {
-      return createRoute({
-        toUrl: (namespacedParameter) => {
-          const parentUrl = routeParser.toUrl(namespacedParameter);
+      const hasParameter =
+        tokenizer.lookahead({ type: "VALUE_SEPERATOR" }) !== null;
 
-          return `${parentUrl === TOKENS.PATH_SEPERATOR ? "" : parentUrl}${TOKENS.PATH_SEPERATOR}${namespace}${parameterToUrl(parameterSpec, namespacedParameter[namespace])}`;
-        },
-        fromUrl: function (tokenizer) {
-          const parentResult = routeParser.fromUrl(tokenizer);
-
-          if (
-            parentResult === null ||
-            tokenizer.lookahead({ type: "TEXT", value: namespace }) === null
-          ) {
-            return null;
-          }
-          tokenizer.eat({ type: "TEXT", value: namespace });
-          const result = handleParameter(parameterSpec, tokenizer);
-
-          tokenizer.eat({ type: "PATH_SEPERATOR" });
-
-          return {
-            ...parentResult,
-            [namespace]: result,
+      if (validRoute === true)
+        try {
+          parameter = {
+            ...parameter,
+            [this.parentRoute === undefined
+              ? TOKENS.PATH_SEPERATOR
+              : this.namespace]: handleParameter(this.parameterSpec, tokenizer),
           };
-        },
-      });
-    },
-  };
+        } catch (error) {
+          validRoute = false;
+        }
+
+      if (
+        validRoute === true &&
+        (this.namespace !== TOKENS.PATH_SEPERATOR || hasParameter === true)
+      ) {
+        if (tokenizer.lookahead({ type: "PATH_SEPERATOR" }) === null) {
+          validRoute = false;
+        } else {
+          tokenizer.eat({ type: "PATH_SEPERATOR" });
+        }
+      }
+
+      tokenizer.isDone() === false;
+    }
+
+    if (isOuterMap === true) {
+      state.index = null;
+    }
+
+    return validRoute === true
+      ? cb({
+          parameter: parameter as NamespaceToParameter<any>,
+          hasChildRouteActive: hasChildRouteActive,
+        })
+      : null;
+  }
+  createChildRoute<U extends string, V extends ParameterSpecificationTemplate>(
+    namespace: U,
+    parameterSpec: V,
+  ): Route<T & { [namespace in U]: V }> {
+    return new Route(namespace, parameterSpec, this);
+  }
+
+  createPath(namespacedParameter: NamespaceToLinkParameter<T>): string {
+    let path =
+      this.parentRoute === undefined
+        ? ""
+        : this.parentRoute.createPath(namespacedParameter);
+
+    path += this.namespace;
+
+    path += parameterToUrl(
+      this.parameterSpec,
+      namespacedParameter[this.namespace],
+    );
+
+    if (path.endsWith(TOKENS.PATH_SEPERATOR) === false) {
+      path += TOKENS.PATH_SEPERATOR;
+    }
+
+    return path;
+  }
 }
 
 function parameterToUrl(

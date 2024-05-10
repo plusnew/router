@@ -32,7 +32,7 @@ export type NamespaceTemplate = {
   [Namespace: string]: ParameterSpecificationTemplate;
 };
 
-export type Route<T extends NamespaceTemplate> = {
+export interface Route<T extends NamespaceTemplate> {
   map: <U>(
     url: string,
     cb: (data: {
@@ -48,7 +48,7 @@ export type Route<T extends NamespaceTemplate> = {
     parameterSpec: V,
   ) => Route<T & { [namespace in U]: V }>;
   createPath: (parameter: NamespaceToLinkParameter<T>) => string;
-};
+}
 
 export type NamespaceToLinkParameter<T extends NamespaceTemplate> = {
   [NamespaceName in keyof T]: {
