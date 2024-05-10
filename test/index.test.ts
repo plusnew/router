@@ -48,6 +48,43 @@ describe("map", () => {
       expect(childRoute.map(rootRoute.createPath(inputValue), id)).to.eql(null);
     });
 
+    it("custom path prefix", () => {
+      const rootRoute = createRootRoute("/foo", { foo: serializer.number() });
+      const rootRouteWithoutPrefix = createRootRoute({
+        foo: serializer.number(),
+      });
+      const childRoute = rootRoute.createChildRoute("foo", {});
+      const inputValue = { "/": { foo: 3 } };
+
+      const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+      assertType<
+        IsEqual<
+          Parameters<typeof rootRoute.createPath>[0],
+          {
+            "/": { foo: number };
+          }
+        >
+      >();
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            "/": { foo: number };
+          }
+        >
+      >();
+      expect(outputValue).to.eql({
+        parameter: inputValue,
+        hasChildRouteActive: false,
+      });
+
+      expect(childRoute.map(rootRoute.createPath(inputValue), id)).to.eql(null);
+      expect(
+        rootRouteWithoutPrefix.map(rootRoute.createPath(inputValue), id),
+      ).to.eql(null);
+    });
+
     it("child", () => {
       const rootRoute = createRootRoute({ foo: serializer.number() });
       const childRoute = rootRoute.createChildRoute("child", {

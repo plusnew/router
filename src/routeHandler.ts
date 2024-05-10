@@ -10,9 +10,20 @@ import type {
 } from "./types";
 
 export function createRootRoute<T extends ParameterSpecificationTemplate>(
-  parameterSpec: T,
+  parameterSchema: T,
+): Route<{ "/": T }>;
+export function createRootRoute<T extends ParameterSpecificationTemplate>(
+  segment: string,
+  parameterSchema: T,
+): Route<{ "/": T }>;
+export function createRootRoute<T extends ParameterSpecificationTemplate>(
+  segmentOrParameterSchema: string | T,
+  parameterSpec?: T,
 ): Route<{ "/": T }> {
-  return new Route(TOKENS.PATH_SEPERATOR, parameterSpec);
+  if (parameterSpec === undefined) {
+    return new Route(TOKENS.PATH_SEPERATOR, segmentOrParameterSchema as T);
+  }
+  return new Route(segmentOrParameterSchema as string, parameterSpec);
 }
 
 class Route<T extends NamespaceTemplate> {
@@ -120,7 +131,9 @@ class Route<T extends NamespaceTemplate> {
 
     path += parameterToUrl(
       this.parameterSpec,
-      namespacedParameter[this.namespace],
+      namespacedParameter[
+        this.parentRoute === undefined ? TOKENS.PATH_SEPERATOR : this.namespace
+      ],
     );
 
     if (path.endsWith(TOKENS.PATH_SEPERATOR) === false) {
