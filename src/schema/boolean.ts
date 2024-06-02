@@ -1,22 +1,21 @@
-import { TOKENS, type Tokenizer } from "../tokenizer";
-import type { Serializer } from "../types";
+import type { schema } from "../types";
 
 type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
   ? Else
   : Then;
 
-type DateSerializer<T, U> = Serializer<
+type Booleanschema<T, U> = schema<
   T | (null extends U ? null : never),
   T | (U extends T ? null : never) | (null extends U ? null : never)
 >;
 
 export default function <
-  T extends Date = Date,
-  U extends Date | null | undefined = undefined,
+  T extends boolean = boolean,
+  U extends boolean | null | undefined = undefined,
 >(opt?: {
-  validate?: (value: Date) => value is T;
+  validate?: (value: boolean) => value is T;
   default?: U;
-}): DateSerializer<IsAny<T, Date, T>, IsAny<U, undefined, U>> {
+}): Booleanschema<IsAny<T, boolean, T>, IsAny<U, undefined, U>> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
@@ -26,10 +25,13 @@ export default function <
         }
         throw new Error("No default value provided");
       }
-      const result = new Date(getText(tokenizer));
-
-      if (isNaN(result.getTime()) === true) {
-        throw new Error("Not a valid date");
+      let result: boolean;
+      if (tokenizer.lookahead({ type: "TEXT", value: "true" }) === null) {
+        tokenizer.eat({ type: "TEXT", value: "false" });
+        result = false;
+      } else {
+        tokenizer.eat({ type: "TEXT", value: "true" });
+        result = true;
       }
 
       if (opt?.validate && opt.validate(result) === false) {
@@ -38,7 +40,7 @@ export default function <
 
       return result as any;
     },
-    toUrl: function (value: Date | null) {
+    toUrl: function (value: boolean | null) {
       if (value === null) {
         if (opt?.default === undefined) {
           throw new Error("No default value provided");
@@ -54,20 +56,10 @@ export default function <
         throw new Error("Validation failed");
       }
 
-      return encodeURIComponent(value.toISOString());
+      return encodeURIComponent(value);
     },
     isDefault: function (value) {
-      return value === null || opt?.default?.getTime() === value.getTime();
+      return value === null || (value as boolean) === opt?.default;
     },
   };
-}
-
-function getText(tokenizer: Tokenizer) {
-  let result = tokenizer.eat({ type: "TEXT" }).value;
-
-  while (tokenizer.lookahead({ type: "PROPERTY_SEPERATOR" }) !== null) {
-    tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
-    result += `${TOKENS.PROPERTY_SEPERATOR}${tokenizer.eat({ type: "TEXT" }).value}`;
-  }
-  return decodeURIComponent(result);
 }

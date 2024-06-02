@@ -1,28 +1,22 @@
-import type {
-  InferSerializerToUrl,
-  InferSerializerFromUrl,
-  Serializer,
-} from "../types";
+import type { InferschemaToUrl, InferschemaFromUrl, schema } from "../types";
 import { propertyHandler } from "./util";
 
-export default function <
-  T extends { [Property: string]: Serializer<any, any> },
->(
-  serializers: T,
-): Serializer<
+export default function <T extends { [Property: string]: schema<any, any> }>(
+  schemas: T,
+): schema<
   {
-    [PropertyName in keyof T]: InferSerializerFromUrl<T[PropertyName]>;
+    [PropertyName in keyof T]: InferschemaFromUrl<T[PropertyName]>;
   },
   {
-    [PropertyName in keyof T]: InferSerializerToUrl<T[PropertyName]>;
+    [PropertyName in keyof T]: InferschemaToUrl<T[PropertyName]>;
   }
 > {
-  const serializerEntries = Object.entries(serializers);
+  const schemaEntries = Object.entries(schemas);
 
   return {
     fromUrl: function* (tokenizer, hasValues) {
       const result = {} as {
-        [PropertyName in keyof T]: InferSerializerFromUrl<T[PropertyName]>;
+        [PropertyName in keyof T]: InferschemaFromUrl<T[PropertyName]>;
       };
 
       while (hasValues) {
@@ -30,7 +24,7 @@ export default function <
 
         const propertyGenerator = propertyHandler(
           tokenizer,
-          serializers[propertyToken.value],
+          schemas[propertyToken.value],
         );
 
         while (true) {
@@ -64,7 +58,7 @@ export default function <
         }
 
         if (hasValues === true) {
-          if (Object.keys(result).length === serializerEntries.length) {
+          if (Object.keys(result).length === schemaEntries.length) {
             break;
           }
           hasValues = yield;
@@ -73,12 +67,12 @@ export default function <
 
       if (hasValues === false) {
         // @TODO implement default handling
-        for (const [propertyName, serializer] of serializerEntries) {
+        for (const [propertyName, schema] of schemaEntries) {
           if (propertyName in result === false) {
-            const propertyGenerator = serializer.fromUrl(tokenizer, false);
+            const propertyGenerator = schema.fromUrl(tokenizer, false);
             const propertyResult = propertyGenerator.next(false);
             if (propertyResult.done === false) {
-              throw new Error("When null given serializer needs to finish");
+              throw new Error("When null given schema needs to finish");
             }
             result[propertyName as keyof T] = propertyResult.value;
           }
@@ -89,19 +83,19 @@ export default function <
     },
     toUrl: function (parameter) {
       return Object.fromEntries(
-        serializerEntries.map(([key, serializer]) => {
+        schemaEntries.map(([key, schema]) => {
           return [
             key,
-            serializer.isDefault(parameter[key])
+            schema.isDefault(parameter[key])
               ? null
-              : serializer.toUrl(parameter[key]),
+              : schema.toUrl(parameter[key]),
           ];
         }),
       );
     },
     isDefault: function (parameter) {
-      return serializerEntries.every(([key, serializer]) =>
-        serializer.isDefault(parameter[key]),
+      return schemaEntries.every(([key, schema]) =>
+        schema.isDefault(parameter[key]),
       );
     },
   };

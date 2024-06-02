@@ -1,5 +1,5 @@
 import { expect } from "@esm-bundle/chai";
-import { createRootRoute, serializer } from "../";
+import { createRootRoute, schema } from "../";
 import { TOKENS } from "../src/tokenizer";
 
 function assertType<T extends true>(): T {
@@ -18,7 +18,7 @@ type IsEqual<CheckA, CheckB> =
 describe("map", () => {
   describe("Path handling", () => {
     it("root", () => {
-      const rootRoute = createRootRoute({ foo: serializer.number() });
+      const rootRoute = createRootRoute({ foo: schema.number() });
       const childRoute = rootRoute.createChildRoute("foo", {});
       const inputValue = { "/": { foo: 3 } };
 
@@ -49,9 +49,9 @@ describe("map", () => {
     });
 
     it("custom path prefix", () => {
-      const rootRoute = createRootRoute("/foo", { foo: serializer.number() });
+      const rootRoute = createRootRoute("/foo", { foo: schema.number() });
       const rootRouteWithoutPrefix = createRootRoute({
-        foo: serializer.number(),
+        foo: schema.number(),
       });
       const childRoute = rootRoute.createChildRoute("foo", {});
       const inputValue = { "/": { foo: 3 } };
@@ -86,14 +86,14 @@ describe("map", () => {
     });
 
     it("child", () => {
-      const rootRoute = createRootRoute({ foo: serializer.number() });
+      const rootRoute = createRootRoute({ foo: schema.number() });
       const childRoute = rootRoute.createChildRoute("child", {
-        bar: serializer.number(),
+        bar: schema.number(),
       });
       const anotherChildRoute = rootRoute.createChildRoute(
         "anotherChildRoute",
         {
-          bar: serializer.number(),
+          bar: schema.number(),
         },
       );
       const inputValue = { "/": { foo: 1 }, child: { bar: 2 } };
@@ -134,12 +134,12 @@ describe("map", () => {
     it("child", () => {
       const rootRoute = createRootRoute({});
       const childRoute = rootRoute.createChildRoute("child", {
-        bar: serializer.number(),
+        bar: schema.number(),
       });
       const anotherChildRoute = rootRoute.createChildRoute(
         "anotherChildRoute",
         {
-          bar: serializer.number(),
+          bar: schema.number(),
         },
       );
       const inputValue = { "/": {}, child: { bar: 2 } };
@@ -178,7 +178,7 @@ describe("map", () => {
     });
 
     it("to few parameters", () => {
-      const rootRoute = createRootRoute({ foo: serializer.number() });
+      const rootRoute = createRootRoute({ foo: schema.number() });
       const anotherRootRoute = createRootRoute({});
 
       expect(
@@ -188,7 +188,7 @@ describe("map", () => {
 
     it("to many parameters", () => {
       const rootRoute = createRootRoute({});
-      const anotherRootRoute = createRootRoute({ foo: serializer.number() });
+      const anotherRootRoute = createRootRoute({ foo: schema.number() });
 
       expect(
         rootRoute.map(anotherRootRoute.createPath({ "/": { foo: 1 } }), id),
@@ -196,15 +196,15 @@ describe("map", () => {
     });
   });
 
-  describe("serializer", () => {
+  describe("schema", () => {
     describe("objects", () => {
       it("standard", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.object({
-            bar: serializer.number(),
-            baz: serializer.number(),
+          foo: schema.object({
+            bar: schema.number(),
+            baz: schema.number(),
           }),
-          mep: serializer.number(),
+          mep: schema.number(),
         });
         const inputValue = { "/": { foo: { bar: 2, baz: 5 }, mep: 1 } };
         const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
@@ -233,9 +233,9 @@ describe("map", () => {
 
       it("default", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.object({
-            bar: serializer.number(),
-            baz: serializer.number({ default: 10 }),
+          foo: schema.object({
+            bar: schema.number(),
+            baz: schema.number({ default: 10 }),
           }),
         });
         const inputValue = { "/": { foo: { bar: 2, baz: null } } };
@@ -274,10 +274,10 @@ describe("map", () => {
     describe("number", () => {
       it("default", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.number({ default: 10 }),
+          foo: schema.number({ default: 10 }),
         });
         const alternativeDefault = createRootRoute({
-          foo: serializer.number({ default: 20 }),
+          foo: schema.number({ default: 20 }),
         });
         const inputValue = { "/": { foo: null } };
         const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
@@ -317,7 +317,7 @@ describe("map", () => {
 
     it("validate", () => {
       const rootRoute = createRootRoute({
-        foo: serializer.number({
+        foo: schema.number({
           validate: function (value): value is 10 | 20 {
             return [10, 20].includes(value);
           },
@@ -361,7 +361,7 @@ describe("map", () => {
     describe("string", () => {
       it("standard", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.string(),
+          foo: schema.string(),
         });
 
         const inputValue = { "/": { foo: "bar" } };
@@ -392,7 +392,7 @@ describe("map", () => {
 
       it("tokens", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.string(),
+          foo: schema.string(),
         });
 
         const inputValue = { "/": { foo: Object.values(TOKENS).join("") } };
@@ -423,7 +423,7 @@ describe("map", () => {
 
       it("validate", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.string({
+          foo: schema.string({
             validate: function (value): value is "bar" | "baz" {
               return ["bar", "baz"].includes(value);
             },
@@ -466,7 +466,7 @@ describe("map", () => {
 
       it("default", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.string({
+          foo: schema.string({
             default: null,
           }),
         });
@@ -499,7 +499,7 @@ describe("map", () => {
 
       it("empty", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.string({
+          foo: schema.string({
             default: "",
           }),
         });
@@ -534,8 +534,8 @@ describe("map", () => {
     describe("list", () => {
       it("standard", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.list({
-            entities: serializer.number(),
+          foo: schema.list({
+            entities: schema.number(),
           }),
         });
 
@@ -567,8 +567,8 @@ describe("map", () => {
 
       it("empty", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.list({
-            entities: serializer.number(),
+          foo: schema.list({
+            entities: schema.number(),
           }),
         });
 
@@ -600,10 +600,10 @@ describe("map", () => {
 
       it("object", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.list({
-            entities: serializer.object({
-              bar: serializer.string(),
-              baz: serializer.number(),
+          foo: schema.list({
+            entities: schema.object({
+              bar: schema.string(),
+              baz: schema.number(),
             }),
           }),
         });
@@ -664,7 +664,7 @@ describe("map", () => {
     describe("boolean", () => {
       it("true", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.boolean(),
+          foo: schema.boolean(),
         });
 
         const inputValue = { "/": { foo: true } };
@@ -695,7 +695,7 @@ describe("map", () => {
 
       it("false", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.boolean(),
+          foo: schema.boolean(),
         });
 
         const inputValue = { "/": { foo: false } };
@@ -728,7 +728,7 @@ describe("map", () => {
     describe("date", () => {
       it("standard", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.date(),
+          foo: schema.date(),
         });
 
         const now = new Date();
@@ -762,10 +762,10 @@ describe("map", () => {
     describe("enum", () => {
       it("standard", () => {
         const rootRoute = createRootRoute({
-          foo: serializer.enum({
+          foo: schema.enum({
             enumerations: {
               bar: null,
-              baz: serializer.number(),
+              baz: schema.number(),
             },
           }),
         });

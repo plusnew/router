@@ -1,12 +1,12 @@
 import { TOKENS, type Tokenizer } from "../tokenizer";
-import type { InferSerializerFromUrl, Serializer, toUrlResult } from "../types";
+import type { InferschemaFromUrl, schema, toUrlResult } from "../types";
 
 export function containerHandler<T>(
-  serializer: Serializer<any, T>,
+  schema: schema<any, T>,
   tokenizer: Tokenizer,
   hasValues: boolean,
 ) {
-  const generator = serializer.fromUrl(tokenizer, hasValues);
+  const generator = schema.fromUrl(tokenizer, hasValues);
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -62,10 +62,10 @@ export function flattenUrlResult(
   );
 }
 
-export function* propertyHandler<T extends Serializer<any, any>>(
+export function* propertyHandler<T extends schema<any, any>>(
   tokenizer: Tokenizer,
-  serializer: T,
-): Generator<undefined, InferSerializerFromUrl<T>, boolean> {
+  schema: T,
+): Generator<undefined, InferschemaFromUrl<T>, boolean> {
   let hasValueAssignment = false;
   let hasNestedProperty = false;
 
@@ -79,7 +79,7 @@ export function* propertyHandler<T extends Serializer<any, any>>(
 
   let hasValues = hasValueAssignment || hasNestedProperty;
 
-  const generator = serializer.fromUrl(tokenizer, hasValues);
+  const generator = schema.fromUrl(tokenizer, hasValues);
 
   while (true) {
     const result = generator.next(hasValues);
@@ -94,13 +94,13 @@ export function* propertyHandler<T extends Serializer<any, any>>(
           if (result.done === true) {
             return result.value;
           } else {
-            throw new Error("Serializer needed to stop when it got no values");
+            throw new Error("schema needed to stop when it got no values");
           }
         } else {
           tokenizer.eat({ type: "PROPERTY_SEPERATOR" });
         }
       } else {
-        throw new Error("Serializer needed to stop when it got no values");
+        throw new Error("schema needed to stop when it got no values");
       }
     }
   }

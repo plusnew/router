@@ -1,11 +1,11 @@
 import { TOKENS, type Tokenizer } from "../tokenizer";
-import type { Serializer } from "../types";
+import type { schema } from "../types";
 
 type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
   ? Else
   : Then;
 
-type StringSerializer<T, U> = Serializer<
+type Stringschema<T, U> = schema<
   T | (null extends U ? null : never),
   T | (U extends T ? null : never) | (null extends U ? null : never)
 >;
@@ -16,7 +16,7 @@ export default function <
 >(opt?: {
   validate?: (value: string) => value is T;
   default?: U;
-}): StringSerializer<IsAny<T, string, T>, IsAny<U, undefined, U>> {
+}): Stringschema<IsAny<T, string, T>, IsAny<U, undefined, U>> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {

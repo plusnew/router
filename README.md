@@ -5,7 +5,7 @@ At compile and runtime the typesafety is guaranteed, for the Route-Components an
 
 ```ts
 import plusnew, { component } from '@plusnew/core';
-import { createRoute, Invalid, NotFound, serializer } from '@plusnew/router';
+import { createRoute, Invalid, NotFound, schema } from '@plusnew/router';
 
 const rootRoute = createRoute(
   // With the paths the route will be responsible for
@@ -13,8 +13,8 @@ const rootRoute = createRoute(
 
   // Defines what parameter the route can have
   {
-    oneParameter: [serializer.number()], // This parameter is required and a normal number
-    sortOrder: [serializer.string('asc'), serializer.string('desc'), serializer.undefined()], // This paramter is optional, when given it has to be the string literal 'asc' | 'desc'
+    oneParameter: [schema.number()], // This parameter is required and a normal number
+    sortOrder: [schema.string('asc'), schema.string('desc'), schema.undefined()], // This paramter is optional, when given it has to be the string literal 'asc' | 'desc'
   } as const,
 
   // This Component will be shown, when the path is matching the routeName and the parameters
@@ -35,7 +35,7 @@ const rootRoute = createRoute(
 const childRoute = rootRoute.createChildRoute(
   'childRouteName',
   {
-    optionalParameter: [serializer.undefined(), serializer.boolean()], // Optional boolean parameter
+    optionalParameter: [schema.undefined(), schema.boolean()], // Optional boolean parameter
   } as const,
   component(
     'ChildRouteComponent',

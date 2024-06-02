@@ -1,21 +1,17 @@
 import { TOKENS } from "../tokenizer";
-import type {
-  InferSerializerToUrl,
-  InferSerializerFromUrl,
-  Serializer,
-} from "../types";
+import type { InferschemaToUrl, InferschemaFromUrl, schema } from "../types";
 import { containerHandler, flattenUrlResult } from "./util";
 
-export default function <T extends Serializer<any, any>>(opt: {
+export default function <T extends schema<any, any>>(opt: {
   entities: T;
-}): Serializer<InferSerializerFromUrl<T>[], InferSerializerToUrl<T>[]> {
+}): schema<InferschemaFromUrl<T>[], InferschemaToUrl<T>[]> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
       if (hasValues === null) {
         throw new Error("default not implemented");
       }
-      const result: InferSerializerFromUrl<T>[] = [];
+      const result: InferschemaFromUrl<T>[] = [];
 
       tokenizer.eat({ type: "LIST_OPEN" });
 

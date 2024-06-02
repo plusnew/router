@@ -1,5 +1,5 @@
-import { object } from "./serializer";
-import { containerHandler, flattenUrlResult } from "./serializer/util";
+import { object } from "./schema";
+import { containerHandler, flattenUrlResult } from "./schema/util";
 import { Tokenizer, state, tokenize } from "./tokenizer";
 import { TOKENS } from "./tokenizer";
 import type {

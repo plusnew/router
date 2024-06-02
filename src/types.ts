@@ -11,7 +11,7 @@ export type Token =
 
 export type toUrlResult = null | string | { [parameter: string]: toUrlResult };
 
-export type Serializer<T, U> = {
+export type schema<T, U> = {
   toUrl: (value: U) => toUrlResult;
   fromUrl: (
     tokenizer: Tokenizer,
@@ -20,13 +20,13 @@ export type Serializer<T, U> = {
   isDefault: (value: U) => boolean;
 };
 
-export type InferSerializerToUrl<T extends Serializer<any, any>> =
-  T extends Serializer<any, infer R> ? R : never;
-export type InferSerializerFromUrl<T extends Serializer<any, any>> =
-  T extends Serializer<infer R, any> ? R : never;
+export type InferschemaToUrl<T extends schema<any, any>> =
+  T extends schema<any, infer R> ? R : never;
+export type InferschemaFromUrl<T extends schema<any, any>> =
+  T extends schema<infer R, any> ? R : never;
 
 export type ParameterSpecificationTemplate = {
-  [ParameterName: string]: Serializer<any, any>;
+  [ParameterName: string]: schema<any, any>;
 };
 
 export type NamespaceTemplate = {
@@ -53,7 +53,7 @@ export interface Route<T extends NamespaceTemplate> {
 
 export type NamespaceToLinkParameter<T extends NamespaceTemplate> = {
   [NamespaceName in keyof T]: {
-    [ParameterName in keyof T[NamespaceName]]: InferSerializerToUrl<
+    [ParameterName in keyof T[NamespaceName]]: InferschemaToUrl<
       T[NamespaceName][ParameterName]
     >;
   };
@@ -61,7 +61,7 @@ export type NamespaceToLinkParameter<T extends NamespaceTemplate> = {
 
 export type NamespaceToParameter<T extends NamespaceTemplate> = {
   [NamespaceName in keyof T]: {
-    [ParameterName in keyof T[NamespaceName]]: InferSerializerFromUrl<
+    [ParameterName in keyof T[NamespaceName]]: InferschemaFromUrl<
       T[NamespaceName][ParameterName]
     >;
   };

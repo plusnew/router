@@ -1,28 +1,28 @@
-import type { Serializer } from "../types";
+import type { schema } from "../types";
 import { propertyHandler } from "./util";
 
 type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
   ? Else
   : Then;
 
-type EnumSerializer<T, U> = Serializer<
+type Enumschema<T, U> = schema<
   T | (null extends U ? null : never),
   T | (U extends T ? null : never) | (null extends U ? null : never)
 >;
 
 export default function <
-  T extends { [key: string]: Serializer<any, any> | null },
+  T extends { [key: string]: schema<any, any> | null },
   U extends null | undefined = undefined,
 >(opt: {
   enumerations: T;
   default?: U;
-}): EnumSerializer<
+}): Enumschema<
   {
     [PropertyName in keyof T]: {
       type: PropertyName;
       value:
         | (null extends T[PropertyName] ? null : never)
-        | (T[PropertyName] extends Serializer<infer R, any> ? R : never);
+        | (T[PropertyName] extends schema<infer R, any> ? R : never);
     };
   }[keyof T],
   IsAny<U, undefined, U>
