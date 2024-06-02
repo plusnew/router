@@ -43,9 +43,16 @@ export default function <
 
       return result as any;
     },
-    toUrl: function (value) {
-      if (value === null || value === (opt?.default as string | undefined)) {
-        return null;
+    toUrl: function (value: string | null) {
+      if (value === null) {
+        if (opt?.default === undefined) {
+          throw new Error("No default value provided");
+        }
+
+        if (opt.default === null) {
+          return null;
+        }
+        value = opt.default;
       }
 
       if (opt?.validate && opt.validate(value) === false) {
@@ -53,6 +60,9 @@ export default function <
       }
 
       return encodeURIComponent(value);
+    },
+    isDefault: function (value) {
+      return value === null || (value as string) === opt?.default;
     },
   };
 }

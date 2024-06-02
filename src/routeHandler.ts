@@ -149,6 +149,9 @@ function parameterToUrl(
   parameter: object,
 ) {
   return Object.entries(parameter).reduce((accumulator, [name, value]) => {
+    if (parameterSpec[name].isDefault(value)) {
+      return accumulator;
+    }
     const urlResult = parameterSpec[name].toUrl(value);
     if (urlResult === "") {
       return accumulator;

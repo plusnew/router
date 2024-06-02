@@ -17,6 +17,7 @@ export type Serializer<T, U> = {
     tokenizer: Tokenizer,
     hasValues: boolean,
   ) => Generator<undefined, T, boolean>;
+  isDefault: (value: U) => boolean;
 };
 
 export type InferSerializerToUrl<T extends Serializer<any, any>> =

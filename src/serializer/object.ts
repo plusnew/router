@@ -20,14 +20,6 @@ export default function <
   const serializerEntries = Object.entries(serializers);
 
   return {
-    toUrl: function (parameter) {
-      return Object.fromEntries(
-        serializerEntries.map(([key, serializer]) => [
-          key,
-          serializer.toUrl(parameter[key]),
-        ]),
-      );
-    },
     fromUrl: function* (tokenizer, hasValues) {
       const result = {} as {
         [PropertyName in keyof T]: InferSerializerFromUrl<T[PropertyName]>;
@@ -94,6 +86,23 @@ export default function <
       }
 
       return result;
+    },
+    toUrl: function (parameter) {
+      return Object.fromEntries(
+        serializerEntries.map(([key, serializer]) => {
+          return [
+            key,
+            serializer.isDefault(parameter[key])
+              ? null
+              : serializer.toUrl(parameter[key]),
+          ];
+        }),
+      );
+    },
+    isDefault: function (parameter) {
+      return serializerEntries.every(([key, serializer]) =>
+        serializer.isDefault(parameter[key]),
+      );
     },
   };
 }

@@ -38,13 +38,16 @@ export default function <
 
       return result as any;
     },
-    toUrl: function (value) {
-      if (
-        value === null ||
-        (opt?.default !== undefined &&
-          (opt.default === null || opt.default.getTime() === value.getTime()))
-      ) {
-        return null;
+    toUrl: function (value: Date | null) {
+      if (value === null) {
+        if (opt?.default === undefined) {
+          throw new Error("No default value provided");
+        }
+
+        if (opt.default === null) {
+          return null;
+        }
+        value = opt.default;
       }
 
       if (opt?.validate && opt.validate(value) === false) {
@@ -52,6 +55,9 @@ export default function <
       }
 
       return encodeURIComponent(value.toISOString());
+    },
+    isDefault: function (value) {
+      return value === null || opt?.default?.getTime() === value.getTime();
     },
   };
 }

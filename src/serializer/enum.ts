@@ -93,5 +93,8 @@ export default function <
           opt.enumerations[enumValue.type]?.toUrl(enumValue.value) ?? null,
       };
     },
+    isDefault: function (value) {
+      return value === null;
+    },
   };
 }

@@ -42,14 +42,24 @@ export default function <
 
       return parsedValue as any;
     },
-    toUrl: function (value) {
-      if (value === null || value === (opt?.default as number | undefined)) {
-        return null;
+    toUrl: function (value: number | null) {
+      if (value === null) {
+        if (opt?.default === undefined) {
+          throw new Error("No default value provided");
+        }
+
+        if (opt.default === null) {
+          return null;
+        }
+        value = opt.default;
       }
       if (opt?.validate && opt.validate(value) === false) {
         throw new Error("Validation failed");
       }
       return value.toString();
+    },
+    isDefault: function (value) {
+      return value === null || (value as number) === opt?.default;
     },
   };
 }
