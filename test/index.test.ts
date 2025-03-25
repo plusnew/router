@@ -48,6 +48,39 @@ describe("map", () => {
       expect(childRoute.map(rootRoute.createPath(inputValue), id)).to.eql(null);
     });
 
+    it("child handling", () => {
+      const rootRoute = createRootRoute({});
+      const childRoute = rootRoute.createChildRoute("foo", {});
+      const inputValue = { "/": {}, foo: {} };
+
+      const outputValue = rootRoute.map(childRoute.createPath(inputValue), id);
+
+      assertType<
+        IsEqual<
+          Parameters<typeof rootRoute.createPath>[0],
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-types
+            "/": {};
+          }
+        >
+      >();
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            // eslint-disable-next-line @typescript-eslint/ban-types
+            "/": {};
+          }
+        >
+      >();
+      expect(outputValue).to.eql({
+        parameter: { "/": {} },
+        hasChildRouteActive: true,
+      });
+
+      expect(childRoute.map(rootRoute.createPath(inputValue), id)).to.eql(null);
+    });
+
     it("custom path prefix", () => {
       const rootRoute = createRootRoute("/foo", { foo: schema.number() });
       const rootRouteWithoutPrefix = createRootRoute({

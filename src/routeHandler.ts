@@ -60,7 +60,7 @@ class Route<T extends NamespaceTemplate> {
       this.parentRoute === undefined
         ? null
         : this.parentRoute.map(url, ({ parameter }) => parameter);
-    const hasChildRouteActive = false;
+    let hasChildRouteActive = false;
     let validRoute = this.parentRoute === undefined ? true : parameter !== null;
 
     if (validRoute) {
@@ -100,7 +100,7 @@ class Route<T extends NamespaceTemplate> {
         }
       }
 
-      tokenizer.isDone() === false;
+      hasChildRouteActive = tokenizer.isDone() === false;
     }
 
     if (isOuterMap === true) {
