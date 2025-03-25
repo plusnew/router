@@ -6,7 +6,7 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
 
 type Numberschema<T, U> = schema<
   T | (null extends U ? null : never),
-  T | (U extends T ? null : never) | (null extends U ? null : never)
+  T | (undefined extends U ? never : null)
 >;
 
 export default function <
