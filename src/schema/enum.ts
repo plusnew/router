@@ -7,7 +7,7 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
 
 type Enumschema<T, U> = schema<
   T | (null extends U ? null : never),
-  T | (undefined extends U ? never : null)
+  T | (U extends T ? null : never) | (null extends U ? null : never)
 >;
 
 export default function <

@@ -7,7 +7,7 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
 
 type Dateschema<T, U> = schema<
   T | (null extends U ? null : never),
-  T | (undefined extends U ? never : null)
+  T | (U extends Date ? null : never) | (null extends U ? null : never)
 >;
 
 export default function <
