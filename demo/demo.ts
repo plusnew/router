@@ -28,7 +28,7 @@ ${content(url)}
 function content(url: string) {
   return (
     rootRoute.map(url, ({ hasChildRouteActive }) =>
-      hasChildRouteActive ? null : `<article>Hi there!</article`,
+      hasChildRouteActive ? null : `<article>Hi there!</article>`,
     ) ?? "Not found"
   );
 }
