@@ -7,12 +7,12 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
 
 type Stringschema<T, U> = schema<
   T | (null extends U ? null : never),
-  T | (U extends string ? null : never) | (null extends U ? null : never)
+  T | (U extends T ? null : never) | (null extends U ? null : never)
 >;
 
 export default function <
   T extends string = string,
-  U extends string | null | undefined = undefined,
+  U extends IsAny<T, string, T> | null | undefined = undefined,
 >(opt?: {
   validate?: (value: string) => value is T;
   default?: U;

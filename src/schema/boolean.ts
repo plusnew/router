@@ -11,7 +11,7 @@ type Booleanschema<T, U> = schema<
 
 export default function <
   T extends boolean = boolean,
-  U extends boolean | null | undefined = undefined,
+  U extends IsAny<T, boolean, T> | null | undefined = undefined,
 >(opt?: {
   validate?: (value: boolean) => value is T;
   default?: U;

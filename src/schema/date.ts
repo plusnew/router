@@ -7,12 +7,12 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
 
 type Dateschema<T, U> = schema<
   T | (null extends U ? null : never),
-  T | (U extends Date ? null : never) | (null extends U ? null : never)
+  T | (U extends T ? null : never) | (null extends U ? null : never)
 >;
 
 export default function <
   T extends Date = Date,
-  U extends Date | null | undefined = undefined,
+  U extends IsAny<T, Date, T> | null | undefined = undefined,
 >(opt?: {
   validate?: (value: Date) => value is T;
   default?: U;
