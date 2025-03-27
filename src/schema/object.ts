@@ -1,15 +1,17 @@
 import type { InferschemaToUrl, InferschemaFromUrl, schema } from "../types";
-import { propertyHandler } from "./util";
+import { isDefault, propertyHandler } from "./util";
 
 export default function <T extends { [Property: string]: schema<any, any> }>(
   schemas: T,
-): schema<
-  {
-    [PropertyName in keyof T]: InferschemaFromUrl<T[PropertyName]>;
-  },
-  {
-    [PropertyName in keyof T]: InferschemaToUrl<T[PropertyName]>;
-  }
+): NoInfer<
+  schema<
+    {
+      [PropertyName in keyof T]: InferschemaFromUrl<T[PropertyName]>;
+    },
+    {
+      [PropertyName in keyof T]: InferschemaToUrl<T[PropertyName]>;
+    }
+  >
 > {
   const schemaEntries = Object.entries(schemas);
 
@@ -86,16 +88,24 @@ export default function <T extends { [Property: string]: schema<any, any> }>(
         schemaEntries.map(([key, schema]) => {
           return [
             key,
-            schema.isDefault(parameter[key])
+
+            isDefault(schema, parameter[key])
               ? null
               : schema.toUrl(parameter[key]),
           ];
         }),
       );
     },
-    isDefault: function (parameter) {
+    isEqual: function (
+      a: {
+        [PropertyName in keyof T]: InferschemaToUrl<T[PropertyName]>;
+      },
+      b: {
+        [PropertyName in keyof T]: InferschemaToUrl<T[PropertyName]>;
+      },
+    ) {
       return schemaEntries.every(([key, schema]) =>
-        schema.isDefault(parameter[key]),
+        schema.isEqual(a[key], b[key]),
       );
     },
   };

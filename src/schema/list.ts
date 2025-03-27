@@ -2,14 +2,28 @@ import { TOKENS } from "../tokenizer";
 import type { InferschemaToUrl, InferschemaFromUrl, schema } from "../types";
 import { containerHandler, flattenUrlResult } from "./util";
 
-export default function <T extends schema<any, any>>(opt: {
+export default function <
+  T extends schema<any, any>,
+  U extends InferschemaToUrl<T>[] | null | undefined = undefined,
+>(opt: {
   entities: T;
-}): schema<InferschemaFromUrl<T>[], InferschemaToUrl<T>[]> {
+  default?: U;
+}): NoInfer<
+  schema<
+    InferschemaFromUrl<T>[] | (null extends U ? null : never),
+    | InferschemaToUrl<T>[]
+    | (U extends InferschemaToUrl<T>[] ? null : never)
+    | (U extends null ? null : never)
+  >
+> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
-      if (hasValues === null) {
-        throw new Error("default not implemented");
+      if (hasValues === false) {
+        if (opt?.default !== undefined) {
+          return opt.default as InferschemaFromUrl<T>[];
+        }
+        throw new Error("No default value provided");
       }
       const result: InferschemaFromUrl<T>[] = [];
 
@@ -36,6 +50,22 @@ export default function <T extends schema<any, any>>(opt: {
     },
 
     toUrl: function (entities) {
+      if (entities === null) {
+        return null;
+      } else if (opt.default !== undefined) {
+        if (Array.isArray(entities)) {
+          if (
+            opt.default !== null &&
+            opt.default.length === entities.length &&
+            opt.default.every((value, index) =>
+              opt.entities.isEqual(value, entities[index]),
+            )
+          ) {
+            return null;
+          }
+        }
+      }
+
       return `${TOKENS.LIST_OPEN}${entities
         .map(opt.entities.toUrl)
         .reduce((accumulator: string, currentValue, index, list) => {
@@ -57,8 +87,9 @@ export default function <T extends schema<any, any>>(opt: {
           return `${accumulator}${result}${result === "" || index + 1 < list.length ? TOKENS.LIST_SEPERATOR : ""}`;
         }, "")}${TOKENS.LIST_CLOSE}`;
     },
-    isDefault: function (value) {
+    isEqual: function (value) {
       return value === null;
     },
+    default: opt?.default,
   };
 }

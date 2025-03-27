@@ -1,21 +1,17 @@
 import type { schema } from "../types";
 
-type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
-  ? Else
-  : Then;
-
-type Numberschema<T, U> = schema<
-  T | (null extends U ? null : never),
-  T | (U extends T ? null : never) | (null extends U ? null : never)
->;
-
 export default function <
   T extends number = number,
-  U extends IsAny<T, number, T> | null | undefined = undefined,
+  U extends T | null | undefined = undefined,
 >(opt?: {
   validate?: (value: number) => value is T;
   default?: U;
-}): Numberschema<IsAny<T, number, T>, IsAny<U, undefined, U>> {
+}): NoInfer<
+  schema<
+    T | (null extends U ? null : never),
+    T | (U extends T ? null : never) | (U extends null ? null : never)
+  >
+> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
@@ -58,8 +54,9 @@ export default function <
       }
       return value.toString();
     },
-    isDefault: function (value) {
-      return value === null || (value as number) === opt?.default;
+    isEqual: function (a: number | null, b: number) {
+      return a === b;
     },
+    default: opt?.default,
   };
 }

@@ -1,22 +1,18 @@
 import { TOKENS, type Tokenizer } from "../tokenizer";
 import type { schema } from "../types";
 
-type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
-  ? Else
-  : Then;
-
-type Dateschema<T, U> = schema<
-  T | (null extends U ? null : never),
-  T | (U extends T ? null : never) | (null extends U ? null : never)
->;
-
 export default function <
   T extends Date = Date,
-  U extends IsAny<T, Date, T> | null | undefined = undefined,
+  U extends T | null | undefined = undefined,
 >(opt?: {
   validate?: (value: Date) => value is T;
   default?: U;
-}): Dateschema<IsAny<T, Date, T>, IsAny<U, undefined, U>> {
+}): NoInfer<
+  schema<
+    T | (null extends U ? null : never),
+    T | (U extends T ? null : never) | (U extends null ? null : never)
+  >
+> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
@@ -56,9 +52,10 @@ export default function <
 
       return encodeURIComponent(value.toISOString());
     },
-    isDefault: function (value) {
-      return value === null || opt?.default?.getTime() === value.getTime();
+    isEqual: function (a: Date, b: Date) {
+      return a.getTime() === b.getTime();
     },
+    default: opt?.default,
   };
 }
 

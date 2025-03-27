@@ -11,27 +11,26 @@ export type Token =
 
 export type toUrlResult = null | string | { [parameter: string]: toUrlResult };
 
-export type schema<T, U> = {
+export interface schema<T, U> {
   toUrl: (value: U) => toUrlResult;
   fromUrl: (
     tokenizer: Tokenizer,
     hasValues: boolean,
   ) => Generator<undefined, T, boolean>;
-  isDefault: (value: U) => boolean;
-};
+  isEqual: (a: Exclude<U, null>, b: Exclude<U, null>) => boolean;
+  default?: U | null;
+}
 
-export type InferschemaToUrl<T extends schema<any, any>> =
-  T extends schema<any, infer R> ? R : never;
-export type InferschemaFromUrl<T extends schema<any, any>> =
-  T extends schema<infer R, any> ? R : never;
+export type InferschemaToUrl<T> = T extends schema<any, infer R> ? R : never;
+export type InferschemaFromUrl<T> = T extends schema<infer R, any> ? R : never;
 
-export type ParameterSpecificationTemplate = {
+export interface ParameterSpecificationTemplate {
   [ParameterName: string]: schema<any, any>;
-};
+}
 
-export type NamespaceTemplate = {
+export interface NamespaceTemplate {
   [Namespace: string]: ParameterSpecificationTemplate;
-};
+}
 
 export interface Route<T extends NamespaceTemplate> {
   map: <U>(

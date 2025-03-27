@@ -1,21 +1,17 @@
 import type { schema } from "../types";
 
-type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
-  ? Else
-  : Then;
-
-type Booleanschema<T, U> = schema<
-  T | (null extends U ? null : never),
-  T | (U extends boolean ? null : never) | (null extends U ? null : never)
->;
-
 export default function <
   T extends boolean = boolean,
-  U extends IsAny<T, boolean, T> | null | undefined = undefined,
+  U extends T | null | undefined = undefined,
 >(opt?: {
   validate?: (value: boolean) => value is T;
   default?: U;
-}): Booleanschema<IsAny<T, boolean, T>, IsAny<U, undefined, U>> {
+}): NoInfer<
+  schema<
+    T | (null extends U ? null : never),
+    T | (U extends number ? null : never) | (U extends null ? null : never)
+  >
+> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
@@ -58,8 +54,9 @@ export default function <
 
       return encodeURIComponent(value);
     },
-    isDefault: function (value) {
-      return value === null || (value as boolean) === opt?.default;
+    isEqual: function (a: boolean, b: boolean) {
+      return a === b;
     },
+    default: opt?.default,
   };
 }

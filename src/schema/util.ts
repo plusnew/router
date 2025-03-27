@@ -105,3 +105,12 @@ export function* propertyHandler<T extends schema<any, any>>(
     }
   }
 }
+
+export function isDefault<T, U>(schema: schema<T, U>, a: U | null) {
+  return (
+    a === null ||
+    (schema.default !== null &&
+      schema.default !== undefined &&
+      schema.isEqual(schema.default as Exclude<U, null>, a as Exclude<U, null>))
+  );
+}

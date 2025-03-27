@@ -1,5 +1,5 @@
 import { object } from "./schema";
-import { containerHandler, flattenUrlResult } from "./schema/util";
+import { containerHandler, flattenUrlResult, isDefault } from "./schema/util";
 import { Tokenizer, state, tokenize } from "./tokenizer";
 import { TOKENS } from "./tokenizer";
 import type {
@@ -149,7 +149,7 @@ function parameterToUrl(
   parameter: object,
 ) {
   return Object.entries(parameter).reduce((accumulator, [name, value]) => {
-    if (parameterSpec[name].isDefault(value)) {
+    if (isDefault(parameterSpec[name], value)) {
       return accumulator;
     }
     const urlResult = parameterSpec[name].toUrl(value);

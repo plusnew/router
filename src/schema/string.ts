@@ -1,22 +1,18 @@
 import { TOKENS, type Tokenizer } from "../tokenizer";
 import type { schema } from "../types";
 
-type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
-  ? Else
-  : Then;
-
-type Stringschema<T, U> = schema<
-  T | (null extends U ? null : never),
-  T | (U extends T ? null : never) | (null extends U ? null : never)
->;
-
 export default function <
   T extends string = string,
-  U extends IsAny<T, string, T> | null | undefined = undefined,
+  U extends T | null | undefined = undefined,
 >(opt?: {
   validate?: (value: string) => value is T;
   default?: U;
-}): Stringschema<IsAny<T, string, T>, IsAny<U, undefined, U>> {
+}): NoInfer<
+  schema<
+    T | (null extends U ? null : never),
+    T | (U extends T ? null : never) | (U extends null ? null : never)
+  >
+> {
   return {
     // eslint-disable-next-line require-yield
     fromUrl: function* (tokenizer, hasValues) {
@@ -61,9 +57,10 @@ export default function <
 
       return encodeURIComponent(value);
     },
-    isDefault: function (value) {
+    isEqual: function (value) {
       return value === null || (value as string) === opt?.default;
     },
+    default: opt?.default,
   };
 }
 

@@ -5,9 +5,11 @@ type IsAny<T, Then, Else> = (T extends never ? true : false) extends false
   ? Else
   : Then;
 
-type Enumschema<T, U> = schema<
-  T | (null extends U ? null : never),
-  T | (U extends T ? null : never) | (null extends U ? null : never)
+type Enumschema<T, U> = NoInfer<
+  schema<
+    T | (null extends U ? null : never),
+    T | (U extends T ? null : never) | (U extends null ? null : never)
+  >
 >;
 
 export default function <
@@ -93,8 +95,9 @@ export default function <
           opt.enumerations[enumValue.type]?.toUrl(enumValue.value) ?? null,
       };
     },
-    isDefault: function (value) {
+    isEqual: function (value) {
       return value === null;
     },
+    default: opt?.default,
   };
 }

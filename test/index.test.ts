@@ -631,6 +631,121 @@ describe("map", () => {
         });
       });
 
+      describe("default", () => {
+        it("empty", () => {
+          const rootRoute = createRootRoute({
+            foo: schema.list({
+              default: [],
+              entities: schema.number(),
+            }),
+          });
+          const alternativeDefault = createRootRoute({
+            foo: schema.list({
+              default: [1],
+              entities: schema.number(),
+            }),
+          });
+
+          const inputValue = { "/": { foo: [] } };
+          const outputValue = rootRoute.map(
+            rootRoute.createPath(inputValue),
+            id,
+          );
+
+          assertType<
+            IsEqual<
+              Parameters<typeof rootRoute.createPath>[0],
+              {
+                "/": { foo: number[] | null };
+              }
+            >
+          >();
+          assertType<
+            IsEqual<
+              Exclude<typeof outputValue, null>["parameter"],
+              {
+                "/": { foo: number[] };
+              }
+            >
+          >();
+
+          expect(outputValue).to.eql({
+            parameter: { "/": { foo: [] } },
+            hasChildRouteActive: false,
+          });
+          expect(
+            alternativeDefault.map(
+              rootRoute.createPath({ "/": { foo: [] } }),
+              id,
+            ),
+          ).to.eql({
+            parameter: { "/": { foo: [1] } },
+            hasChildRouteActive: false,
+          });
+          expect(
+            alternativeDefault.map(
+              rootRoute.createPath({ "/": { foo: null } }),
+              id,
+            ),
+          ).to.eql({
+            parameter: { "/": { foo: [1] } },
+            hasChildRouteActive: false,
+          });
+        });
+
+        it("empty", () => {
+          const rootRoute = createRootRoute({
+            foo: schema.list({
+              default: [1],
+              entities: schema.number(),
+            }),
+          });
+          const alternativeDefault = createRootRoute({
+            foo: schema.list({
+              default: [2],
+              entities: schema.number(),
+            }),
+          });
+
+          const inputValue = { "/": { foo: [] } };
+          const outputValue = rootRoute.map(
+            rootRoute.createPath(inputValue),
+            id,
+          );
+
+          assertType<
+            IsEqual<
+              Parameters<typeof rootRoute.createPath>[0],
+              {
+                "/": { foo: number[] | null };
+              }
+            >
+          >();
+          assertType<
+            IsEqual<
+              Exclude<typeof outputValue, null>["parameter"],
+              {
+                "/": { foo: number[] };
+              }
+            >
+          >();
+
+          expect(outputValue).to.eql({
+            parameter: { "/": { foo: [] } },
+            hasChildRouteActive: false,
+          });
+          expect(
+            alternativeDefault.map(
+              rootRoute.createPath({ "/": { foo: [1] } }),
+              id,
+            ),
+          ).to.eql({
+            parameter: { "/": { foo: [2] } },
+            hasChildRouteActive: false,
+          });
+        });
+      });
+
       it("object", () => {
         const rootRoute = createRootRoute({
           foo: schema.list({
