@@ -1,6 +1,6 @@
 {
 	"name": "@plusnew/router",
-	"version": "4.0.0",
+	"version": "4.0.1",
 	"description": "typesafe router",
 	"main": "src/index.ts",
 	"module": "src/index.ts",

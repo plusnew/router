@@ -54,13 +54,7 @@ export default function <
         return null;
       } else if (opt.default !== undefined) {
         if (Array.isArray(entities)) {
-          if (
-            opt.default !== null &&
-            opt.default.length === entities.length &&
-            opt.default.every((value, index) =>
-              opt.entities.isEqual(value, entities[index]),
-            )
-          ) {
+          if (opt.default !== null && this.isEqual(opt.default, entities)) {
             return null;
           }
         }
@@ -87,8 +81,11 @@ export default function <
           return `${accumulator}${result}${result === "" || index + 1 < list.length ? TOKENS.LIST_SEPERATOR : ""}`;
         }, "")}${TOKENS.LIST_CLOSE}`;
     },
-    isEqual: function (value) {
-      return value === null;
+    isEqual: function (a, b: U[]) {
+      return (
+        a.length === b.length &&
+        a.every((value, index) => opt.entities.isEqual(value, b[index]))
+      );
     },
     default: opt?.default,
   };

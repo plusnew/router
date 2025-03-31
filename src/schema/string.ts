@@ -57,8 +57,8 @@ export default function <
 
       return encodeURIComponent(value);
     },
-    isEqual: function (value) {
-      return value === null || (value as string) === opt?.default;
+    isEqual: function (a: string, b: string) {
+      return a === b;
     },
     default: opt?.default,
   };

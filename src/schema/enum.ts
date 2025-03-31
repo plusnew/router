@@ -95,8 +95,8 @@ export default function <
           opt.enumerations[enumValue.type]?.toUrl(enumValue.value) ?? null,
       };
     },
-    isEqual: function (value) {
-      return value === null;
+    isEqual: function () {
+      return false;
     },
     default: opt?.default,
   };

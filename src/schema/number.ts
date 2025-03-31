@@ -54,7 +54,7 @@ export default function <
       }
       return value.toString();
     },
-    isEqual: function (a: number | null, b: number) {
+    isEqual: function (a, b) {
       return a === b;
     },
     default: opt?.default,
