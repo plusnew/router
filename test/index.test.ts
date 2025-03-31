@@ -48,6 +48,38 @@ describe("map", () => {
       expect(childRoute.map(rootRoute.createPath(inputValue), id)).to.eql(null);
     });
 
+    it("optional handling", () => {
+      const rootRoute = createRootRoute({
+        foo: schema.number(),
+        bar: schema.number({ default: 23 }),
+      });
+      const inputValue = { "/": { foo: 3, bar: null, baz: null } };
+
+      const outputValue = rootRoute.map(rootRoute.createPath(inputValue), id);
+
+      assertType<
+        IsEqual<
+          Parameters<typeof rootRoute.createPath>[0],
+          {
+            "/": { foo: number; bar: number | null };
+          }
+        >
+      >();
+      assertType<
+        IsEqual<
+          Exclude<typeof outputValue, null>["parameter"],
+          {
+            "/": { foo: number; bar: number };
+          }
+        >
+      >();
+
+      expect(outputValue).to.eql({
+        parameter: { "/": { foo: 3, bar: 23 } },
+        hasChildRouteActive: false,
+      });
+    });
+
     it("child handling", () => {
       const rootRoute = createRootRoute({});
       const childRoute = rootRoute.createChildRoute("foo", {});

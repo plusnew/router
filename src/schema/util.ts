@@ -23,18 +23,16 @@ export function containerHandler<T>(
 
       if (valueSeperator === null) {
         hasValues = false;
-      } else {
-        tokenizer.eat({ type: "VALUE_SEPERATOR" });
-      }
 
-      const result = generator.next(hasValues);
+        const result = generator.next(hasValues);
 
-      if (result.done === true) {
-        return result.value;
-      } else if (hasValues === false) {
-        throw new Error(
-          "When generator gets null for next, then it has to finish",
-        );
+        if (result.done === true) {
+          return result.value;
+        } else {
+          throw new Error(
+            "When generator gets null for next, then it has to finish",
+          );
+        }
       } else {
         tokenizer.eat({ type: "VALUE_SEPERATOR" });
       }
