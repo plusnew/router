@@ -1,8 +1,17 @@
+import { existsSync } from "fs"
+import { join } from "path"
 import { esbuildPlugin } from '@web/dev-server-esbuild';
 
 export default {
   nodeResolve: true,
-  files: "test/**/*.test.ts",
   plugins: [esbuildPlugin({ ts: true })],
-  appIndex: "index.html"
+  middleware: [
+    function (ctx, next) {
+      if (existsSync(join("./", ctx.url)) === false && ctx.headers.accept.includes('text/html')) {
+        ctx.url = "index.html";
+      }
+
+      return next();
+    }
+  ]
 }
