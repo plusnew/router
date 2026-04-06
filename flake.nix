@@ -12,7 +12,6 @@
     flake-utils.lib.eachDefaultSystem
       (system:
         let pkgs = nixpkgs.legacyPackages.${system};
-            npmlock2nix = import npmlock2nixSrc { inherit pkgs; };
 
         in {
           devShells.default = pkgs.mkShell (with pkgs; {

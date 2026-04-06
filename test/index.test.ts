@@ -1,4 +1,4 @@
-import { expect } from "@esm-bundle/chai";
+import { expect } from "chai";
 import { createRootRoute, schema } from "../";
 import { TOKENS } from "../src/tokenizer";
 
