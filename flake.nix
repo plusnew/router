@@ -20,25 +20,14 @@
               nodejs
             ];
 
-            npmDeps = importNpmLock.buildNodeModules {
-              npmRoot = ./.;
-              inherit nodejs;
-            };
+            npmDeps = npmDeps;
           });
 
-          checks.default = pkgs.importNpmLock.buildNodeModules (with pkgs;  {
-            npmRoot = ./.;
-            inherit nodejs;
-            derivationArgs = {
-              buildCommands = [
-                "npm exec tsc -- --noEmit"
-                "CHROME_PATH=${pkgs.chromium}/bin/chromium XDG_CONFIG_HOME=$TMPDIR/chromium-config XDG_CACHE_HOME=$TMPDIR=/chromium-cache npm run test"
-              ];
-              installPhase = ''
-                touch $out
-              '';
-            };
-          });
+          checks.default = pkgs.buildNpmPackage {
+            name = "plusnew-router";
+            src = ./.;
+            npmDeps = npmDeps;
+          };
         }
       );
 }

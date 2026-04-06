@@ -5,6 +5,7 @@
 	"main": "src/index.ts",
 	"module": "src/index.ts",
 	"scripts": {
+		"check": "tsc --noEmit",
 		"start": "web-dev-server",
 		"test": "web-test-runner  --coverage",
 		"test:watch": "web-test-runner --watch --coverage"

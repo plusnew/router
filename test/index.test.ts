@@ -42,7 +42,7 @@ describe("map", () => {
       >();
       expect(outputValue).to.eql({
         parameter: inputValue,
-        hasChildRouteActive: false,
+        hasChildRouteActive: true,
       });
 
       expect(childRoute.map(rootRoute.createPath(inputValue), id)).to.eql(null);
