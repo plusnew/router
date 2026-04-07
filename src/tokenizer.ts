@@ -13,23 +13,18 @@ export const TOKENS = {
 const TOKEN_KEYS = Object.keys(TOKENS) as (keyof typeof TOKENS)[];
 const TOKEN_VALUES = Object.values(TOKENS);
 
-export const state: { index: number | null; tokens: Token[] } = {
-  index: null,
-  tokens: [],
-};
-
 export class Tokenizer {
-  isDone() {
-    return state.index === state.tokens.length;
+  public currentToken: Token | null = null;
+  public index = 0;
+
+  constructor(public path: string) {
+    this.tokenize();
   }
 
-  eat<T extends keyof typeof TOKENS | "TEXT">(
+  public eat<T extends keyof typeof TOKENS | "TEXT">(
     eatToken: { type: T } | { type: "TEXT"; value: string },
   ): Extract<Token, { type: T }> {
-    if (state.index === null) {
-      throw new Error("Tokens are not initialised");
-    }
-    if (this.isDone() === true) {
+    if (this.currentToken === null) {
       throw new Error("No new tokens available");
     }
 
@@ -37,81 +32,73 @@ export class Tokenizer {
 
     if (currentToken === null) {
       throw new Error(
-        `Couldnt find token ${eatToken.type}, but ${state.tokens[state.index].type}`,
+        `Couldnt find token ${eatToken.type}, but ${this.currentToken.type}`,
       );
     }
 
-    state.index++;
+    this.tokenize();
 
     return currentToken;
   }
-  lookahead<T extends keyof typeof TOKENS | "TEXT">(
+
+  public lookahead<T extends keyof typeof TOKENS | "TEXT">(
     eatToken: { type: T } | { type: "TEXT"; value: string },
   ): Extract<Token, { type: T }> | null {
-    if (state.index === null) {
-      throw new Error("Tokens are not initialised");
-    }
-    if (this.isDone()) {
+    if (this.currentToken === null) {
       return null;
     }
 
-    const currentToken = state.tokens[state.index];
-
-    if (currentToken.type === eatToken.type) {
+    if (this.currentToken.type === eatToken.type) {
       if (
-        "value" in currentToken &&
+        "value" in this.currentToken &&
         "value" in eatToken &&
-        currentToken.value !== eatToken.value
+        this.currentToken.value !== eatToken.value
       ) {
         return null;
       }
-      return currentToken as any;
+      return this.currentToken as any;
     } else {
       return null;
     }
   }
-}
 
-export function tokenize(url: string) {
-  const tokens: Token[] = [];
-  for (let i = 0; i < url.length; i++) {
-    let result = getToken(url, i);
-    if (result === null) {
-      result = {
-        type: "TEXT",
-        value: url[i],
-      };
+  private tokenize() {
+    if (this.index >= this.path.length) {
+      this.currentToken = null;
+    } else {
+      let token = this.getToken();
+      let result = token;
+      if (result === null) {
+        result = {
+          type: "TEXT",
+          value: "",
+        };
 
-      while (i + 1 < url.length) {
-        const nextToken = getToken(url, i + 1);
-        if (nextToken === null) {
-          result.value += url[i + 1];
+        do {
+          if (token === null) {
+            result.value += this.path[this.index];
 
-          i++;
-        } else {
-          tokens.push(result);
-          result = nextToken;
-
-          i++;
-
-          break;
-        }
+            this.index++;
+          } else {
+            break;
+          }
+        } while (((token = this.getToken()), this.index < this.path.length));
+      } else {
+        this.index++;
       }
+
+      this.currentToken = result;
     }
-
-    tokens.push(result);
   }
 
-  return tokens;
-}
+  private getToken(): Token | null {
+    const result = (TOKEN_VALUES as string[]).indexOf(this.path[this.index]);
 
-function getToken(url: string, index: number): Token | null {
-  const result = (TOKEN_VALUES as string[]).indexOf(url[index]);
-
-  if (result !== -1) {
-    return {
-      type: TOKEN_KEYS[result],
-    };
+    if (result !== -1) {
+      return {
+        type: TOKEN_KEYS[result],
+      };
+    }
+    return null;
   }
-  return null;
 }

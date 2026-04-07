@@ -32,40 +32,11 @@ export interface NamespaceTemplate {
   [Namespace: string]: ParameterSpecificationTemplate;
 }
 
-export interface Route<T extends NamespaceTemplate> {
-  map: <U>(
-    url: string,
-    cb: (data: {
-      parameter: NamespaceToParameter<T>;
-      hasChildRouteActive: boolean;
-    }) => U,
-  ) => U | null;
-  createChildRoute: <
-    U extends string,
-    V extends ParameterSpecificationTemplate,
-  >(
-    namespace: U,
-    parameterSpec: V,
-  ) => Route<T & { [namespace in U]: V }>;
-  createPath: (parameter: NamespaceToLinkParameter<T>) => string;
-}
-
-export type NamespaceToLinkParameter<T extends NamespaceTemplate> = {
-  [NamespaceName in keyof T]: {
-    [ParameterName in keyof T[NamespaceName]]: InferschemaToUrl<
-      T[NamespaceName][ParameterName]
-    >;
-  };
+export type NamespaceToParameter<T extends ParameterSpecificationTemplate> = {
+  [ParameterName in keyof T]: InferschemaToUrl<T[ParameterName]>;
 };
 
-export type NamespaceToParameter<T extends NamespaceTemplate> = {
-  [NamespaceName in keyof T]: {
-    [ParameterName in keyof T[NamespaceName]]: InferschemaFromUrl<
-      T[NamespaceName][ParameterName]
-    >;
+export type NamespaceToLinkParameter<T extends ParameterSpecificationTemplate> =
+  {
+    [ParameterName in keyof T]: InferschemaFromUrl<T[ParameterName]>;
   };
-};
-
-export type RouteToParameter<T extends Route<any>> = Parameters<
-  Parameters<T["map"]>["1"]
->["0"]["parameter"];
