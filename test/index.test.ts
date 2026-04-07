@@ -54,14 +54,20 @@ describe("map", () => {
       const nestedRoute = ["anotherName", { bar: schema.number() }] as const;
       const path = `${createPath(...route, { foo: 2 })}${createPath(...nestedRoute, { bar: 3 })}`; // "/name;foo=2/anotherName;bar=3"
 
-      const mapResult = mapPath(...route, path, (parameter, rest) =>
-        rest === null
-          ? null
-          : mapPath(...nestedRoute, rest, (nestedParameter, rest) => ({
-              root: parameter,
-              nested: nestedParameter,
-              rest,
-            })),
+      const mapResult = mapPath(
+        ...route,
+        path,
+        (
+          parameter, // {foo: 2}
+          rest, // "/anotherName;bar=3"
+        ) =>
+          rest === null
+            ? null
+            : mapPath(...nestedRoute, rest, (nestedParameter, rest) => ({
+                root: parameter,
+                nested: nestedParameter,
+                rest,
+              })),
       );
       expect(mapResult).to.eql({
         rest: null,
