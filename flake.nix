@@ -20,13 +20,19 @@
               nodejs
             ];
 
-            npmDeps = npmDeps;
+            npmDeps = importNpmLock.buildNodeModules {
+              npmRoot = ./.;
+              inherit nodejs;
+            };
           });
 
-          checks.default = pkgs.buildNpmPackage {
+          checks.default = with pkgs; buildNpmPackage {
             name = "plusnew-router";
             src = ./.;
-            npmDeps = npmDeps;
+            npmDeps = importNpmLock.buildNodeModules {
+              npmRoot = ./.;
+              inherit nodejs;
+            };
           };
         }
       );
