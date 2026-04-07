@@ -1,10 +1,11 @@
 import { object } from "./schema";
-import { containerHandler, flattenUrlResult, isDefault } from "./schema/util";
+import { containerHandler, flattenUrlResult } from "./schema/util";
 import { Tokenizer, TOKENS } from "./tokenizer";
 import type {
   NamespaceToLinkParameter,
   NamespaceToParameter,
   ParameterSpecificationTemplate,
+  toUrlResult,
 } from "./types";
 
 export function createPath<T extends ParameterSpecificationTemplate>(
@@ -12,17 +13,15 @@ export function createPath<T extends ParameterSpecificationTemplate>(
   parameterSpec: T,
   parameter: NamespaceToLinkParameter<T>,
 ) {
+  const parameterUrl = object(parameterSpec).toUrl(parameter as any);
+
   return `${TOKENS.PATH_SEPERATOR}${namespace}${Object.entries(
-    parameter,
+    parameterUrl as { [parameter: string]: toUrlResult },
   ).reduce((accumulator, [name, value]) => {
-    if (isDefault(parameterSpec[name], value)) {
+    if (value === "" || value === null) {
       return accumulator;
     }
-    const urlResult = parameterSpec[name].toUrl(value);
-    if (urlResult === "") {
-      return accumulator;
-    }
-    return `${accumulator}${flattenUrlResult(name, urlResult).reduce(
+    return `${accumulator}${flattenUrlResult(name, value).reduce(
       (accumulator, [name, value]) =>
         `${accumulator}${TOKENS.VALUE_SEPERATOR}${name}${TOKENS.VALUE_ASSIGNMENT}${value}`,
       "",
