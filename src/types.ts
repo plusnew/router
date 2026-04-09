@@ -21,6 +21,9 @@ export interface schema<T, U> {
   default?: U | null;
 }
 
+export type RouteToParameter<T extends { [1]: any }> = NamespaceToParameter<
+  T[1]
+>;
 export type InferschemaToUrl<T> = T extends schema<any, infer R> ? R : never;
 export type InferschemaFromUrl<T> = T extends schema<infer R, any> ? R : never;
 

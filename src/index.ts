@@ -1,3 +1,7 @@
 export { mapPath, createPath } from "./routeHandler";
-export type { InferschemaFromUrl, InferschemaToUrl } from "./types";
+export type {
+  InferschemaFromUrl,
+  InferschemaToUrl,
+  RouteToParameter,
+} from "./types";
 export * as schema from "./schema";

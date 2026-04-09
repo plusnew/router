@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { mapPath, createPath, schema } from "../";
+import { mapPath, createPath, schema, type RouteToParameter } from "../";
 // import { TOKENS } from "../src/tokenizer";
 
 function assertType<T extends true>(): T {
@@ -15,6 +15,7 @@ describe("map", () => {
   describe("Path handling", () => {
     it("basic", () => {
       const route = ["name", { foo: schema.number() }] as const;
+      // type foo = RouteToParameter<typeof route>;
       const path = createPath(...route, { foo: 2 }); // "/name;foo=2"
       const mapResult = mapPath(...route, path, (parameter, rest) => ({
         parameter,
