@@ -36,10 +36,10 @@ export interface NamespaceTemplate {
 }
 
 export type NamespaceToParameter<T extends ParameterSpecificationTemplate> = {
-  [ParameterName in keyof T]: InferschemaToUrl<T[ParameterName]>;
+  [ParameterName in keyof T]: InferschemaFromUrl<T[ParameterName]>;
 };
 
 export type NamespaceToLinkParameter<T extends ParameterSpecificationTemplate> =
   {
-    [ParameterName in keyof T]: InferschemaFromUrl<T[ParameterName]>;
+    [ParameterName in keyof T]: InferschemaToUrl<T[ParameterName]>;
   };
