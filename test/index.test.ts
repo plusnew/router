@@ -2,14 +2,6 @@ import { expect } from "chai";
 import { mapPath, createPath, schema } from "../";
 import { TOKENS } from "../src/tokenizer";
 
-// type foo = { bar: string | null; baz: number | null };
-// type foo2 = { bar: string | null; baz: number | null; blarg: boolean };
-// type OnlyNullable<T> = {
-//   [key in keyof T]: null extends T[key] ? true : false;
-// }[keyof T];
-// type mep = OnlyNullable<foo>;
-// type mep2 = OnlyNullable<foo2>;
-
 function assertType<T extends true>(): T {
   return true as T;
 }
@@ -399,6 +391,52 @@ describe("map", () => {
             hasChildRouteActive: false,
           });
         });
+
+        it("all-default", () => {
+          const rootRoute = [
+            "root",
+            {
+              foo: schema.object({
+                bar: schema.number({ default: 5 }),
+                baz: schema.number({ default: 10 }),
+              }),
+            },
+          ] as const;
+          const outputValue = mapPath(
+            ...rootRoute,
+            createPath(...rootRoute, null),
+
+            (parameter, rest) => ({
+              parameter,
+              hasChildRouteActive: rest !== null,
+            }),
+          );
+          assertType<
+            IsEqual<
+              Parameters<typeof createPath<(typeof rootRoute)[1]>>[2],
+              null | {
+                foo: null | { bar: number | null; baz: number | null };
+              }
+            >
+          >();
+          assertType<
+            IsEqual<
+              Exclude<typeof outputValue, null>["parameter"],
+              {
+                foo: { bar: number; baz: number };
+              }
+            >
+          >();
+          expect(outputValue).to.eql({
+            parameter: {
+              foo: {
+                bar: 5,
+                baz: 10,
+              },
+            },
+            hasChildRouteActive: false,
+          });
+        });
       });
       describe("number", () => {
         it("default", () => {
@@ -427,7 +465,7 @@ describe("map", () => {
           assertType<
             IsEqual<
               Parameters<typeof createPath<(typeof rootRoute)[1]>>[2],
-              {
+              null | {
                 foo: number | null;
               }
             >
@@ -652,7 +690,7 @@ describe("map", () => {
           assertType<
             IsEqual<
               Parameters<typeof createPath<(typeof rootRoute)[1]>>[2],
-              {
+              null | {
                 foo: string | null;
               }
             >
@@ -692,7 +730,7 @@ describe("map", () => {
           assertType<
             IsEqual<
               Parameters<typeof createPath<(typeof rootRoute)[1]>>[2],
-              {
+              null | {
                 foo: string | null;
               }
             >
@@ -825,7 +863,7 @@ describe("map", () => {
             assertType<
               IsEqual<
                 Parameters<typeof createPath<(typeof rootRoute)[1]>>[2],
-                {
+                null | {
                   foo: number[] | null;
                 }
               >
@@ -903,7 +941,7 @@ describe("map", () => {
             assertType<
               IsEqual<
                 Parameters<typeof createPath<(typeof rootRoute)[1]>>[2],
-                {
+                null | {
                   foo: number[] | null;
                 }
               >

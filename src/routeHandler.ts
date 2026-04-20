@@ -2,8 +2,8 @@ import { object } from "./schema";
 import { containerHandler, flattenUrlResult } from "./schema/util";
 import { Tokenizer, TOKENS } from "./tokenizer";
 import type {
-  NamespaceToLinkParameter,
-  NamespaceToParameter,
+  InferschemaToUrl,
+  InferschemaFromUrl,
   ParameterSpecificationTemplate,
   toUrlResult,
 } from "./types";
@@ -11,7 +11,7 @@ import type {
 export function createPath<T extends ParameterSpecificationTemplate>(
   namespace: string,
   parameterSpec: T,
-  parameter: NamespaceToLinkParameter<T>,
+  parameter: InferschemaToUrl<ReturnType<typeof object<T>>>,
 ) {
   const parameterUrl = object(parameterSpec).toUrl(parameter as any);
 
@@ -33,7 +33,10 @@ export function mapPath<T extends ParameterSpecificationTemplate, U>(
   namespace: string,
   parameterSpec: T,
   path: string,
-  cb: (parameter: NamespaceToParameter<T>, rest: string | null) => U,
+  cb: (
+    parameter: InferschemaFromUrl<ReturnType<typeof object<T>>>,
+    rest: string | null,
+  ) => U,
 ): U | null {
   const tokenizer = new Tokenizer(path);
 

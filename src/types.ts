@@ -21,9 +21,6 @@ export interface schema<T, U> {
   default?: U | null;
 }
 
-export type RouteToParameter<T extends { [1]: any }> = NamespaceToParameter<
-  T[1]
->;
 export type InferschemaToUrl<T> = T extends schema<any, infer R> ? R : never;
 export type InferschemaFromUrl<T> = T extends schema<infer R, any> ? R : never;
 
@@ -34,12 +31,3 @@ export interface ParameterSpecificationTemplate {
 export interface NamespaceTemplate {
   [Namespace: string]: ParameterSpecificationTemplate;
 }
-
-export type NamespaceToParameter<T extends ParameterSpecificationTemplate> = {
-  -readonly [ParameterName in keyof T]: InferschemaFromUrl<T[ParameterName]>;
-};
-
-export type NamespaceToLinkParameter<T extends ParameterSpecificationTemplate> =
-  {
-    -readonly [ParameterName in keyof T]: InferschemaToUrl<T[ParameterName]>;
-  };
