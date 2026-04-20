@@ -27,7 +27,3 @@ export type InferschemaFromUrl<T> = T extends schema<infer R, any> ? R : never;
 export interface ParameterSpecificationTemplate {
   [ParameterName: string]: schema<any, any>;
 }
-
-export interface NamespaceTemplate {
-  [Namespace: string]: ParameterSpecificationTemplate;
-}

@@ -6,5 +6,5 @@ import type { InferschemaFromUrl } from "./types";
 import { object } from "./schema";
 
 export type RouteToParameter<T extends { [1]: any }> = InferschemaFromUrl<
-  ReturnType<typeof object<T>>
+  ReturnType<typeof object<T[1]>>
 >;
