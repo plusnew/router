@@ -24,7 +24,7 @@ export default function <
       }
       let result = getText(tokenizer) ?? "";
 
-      while (tokenizer.isDone() === false) {
+      while (tokenizer.currentToken !== null) {
         const more = getText(tokenizer);
         if (more === null) {
           break;

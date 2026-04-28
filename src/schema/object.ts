@@ -6,11 +6,23 @@ export default function <T extends { [Property: string]: schema<any, any> }>(
 ): NoInfer<
   schema<
     {
-      [PropertyName in keyof T]: InferschemaFromUrl<T[PropertyName]>;
+      -readonly [PropertyName in keyof T]: InferschemaFromUrl<T[PropertyName]>;
     },
-    {
+    { [PropertyName in keyof T]: null } extends {
       [PropertyName in keyof T]: InferschemaToUrl<T[PropertyName]>;
     }
+      ?
+          | null
+          | {
+              -readonly [PropertyName in keyof T]: InferschemaToUrl<
+                T[PropertyName]
+              >;
+            }
+      : {
+          -readonly [PropertyName in keyof T]: InferschemaToUrl<
+            T[PropertyName]
+          >;
+        }
   >
 > {
   const schemaEntries = Object.entries(schemas);
@@ -89,9 +101,9 @@ export default function <T extends { [Property: string]: schema<any, any> }>(
           return [
             key,
 
-            isDefault(schema, parameter[key])
+            isDefault(schema, parameter?.[key] ?? null)
               ? null
-              : schema.toUrl(parameter[key]),
+              : schema.toUrl(parameter?.[key] ?? null),
           ];
         }),
       );

@@ -19,8 +19,8 @@ const tableRoute = rootRoute.createChildRoute("table", {
 async function Content(url: string) {
   return rootRoute.map(url, async ({ hasChildRouteActive }) =>
     hasChildRouteActive
-      ? tableRoute.map(url, async ({ hasChildRouteActive, parameter }) => {
-          const { items, totalCount } = await getItems({
+      ? tableRoute.map(url, async ({ parameter }) => {
+          const { items } = await getItems({
             page: parameter.table.page,
             size: parameter.table.size,
             sortField: parameter.table.sort.field,
