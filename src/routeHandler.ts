@@ -36,6 +36,7 @@ export function mapPath<T extends ParameterSpecificationTemplate, U>(
   cb: (
     parameter: InferschemaFromUrl<ReturnType<typeof object<T>>>,
     rest: string | null,
+    current: string,
   ) => U,
 ): U | null {
   const tokenizer = new Tokenizer(path);
@@ -74,6 +75,7 @@ export function mapPath<T extends ParameterSpecificationTemplate, U>(
         tokenizer.currentToken === null
           ? null
           : tokenizer.path.slice(tokenizer.index - 1),
+        path.slice(0, tokenizer.index - 1),
       );
     }
   }
