@@ -55,8 +55,7 @@ export function mapPath<T extends ParameterSpecificationTemplate, U>(
   }
 
   if (matches === true) {
-    const hasParameter =
-      tokenizer.lookahead({ type: "VALUE_SEPERATOR" }) !== null;
+    const hasParameter = tokenizer.lookahead({ type: "VALUE_SEPERATOR" }) !== null;
 
     if (hasParameter) {
       tokenizer.eat({ type: "VALUE_SEPERATOR" });
@@ -72,10 +71,8 @@ export function mapPath<T extends ParameterSpecificationTemplate, U>(
     if (matches === true) {
       return cb(
         result,
-        tokenizer.currentToken === null
-          ? null
-          : tokenizer.path.slice(tokenizer.index - 1),
-        path.slice(0, tokenizer.index - 1),
+        tokenizer.currentToken === null ? null : tokenizer.path.slice(tokenizer.index - 1),
+        path.slice(0, tokenizer.currentToken === null ? tokenizer.index : tokenizer.index - 1),
       );
     }
   }
